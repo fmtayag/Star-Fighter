@@ -1,14 +1,14 @@
 import pygame
 
 class Laser(pygame.sprite.Sprite):
-    def __init__(self, surface, image, xpos, ypos, speedx, speedy):
+    def __init__(self, surface, image, xpos, ypos, spdx, spdy):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.centerx = xpos
         self.rect.y = ypos
-        self.spdx = speedx
-        self.spdy = speedy
+        self.spdx = spdx
+        self.spdy = spdy
         self.surf = surface
         self.surf_w = self.surf.get_width()
         self.surf_h = self.surf.get_height()
@@ -40,7 +40,7 @@ class Fireball(pygame.sprite.Sprite):
         self.scaler = 1
 
     def update(self):
-        
+
         if self.rect.bottom > self.surf_h:
             self.spdy = -self.movspd
         elif self.rect.top < 0:
@@ -55,7 +55,7 @@ class Fireball(pygame.sprite.Sprite):
 
         # Gradually dissolve
         self.dissolve()
-            
+
         self.rect.x += self.spdx
         self.rect.y += self.spdy
 
@@ -67,4 +67,3 @@ class Fireball(pygame.sprite.Sprite):
             y_scale = self.image.get_height() - self.scaler
             self.image = pygame.transform.scale(self.image, (x_scale,y_scale))
             self.scaler += 1
-        

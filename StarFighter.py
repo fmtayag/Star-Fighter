@@ -6,12 +6,15 @@
 # 4. Make spawning animation / opening animation for player
 # 5. Make start, game over, and high score screens
 # 6. Add unique sound cues played on each monster's spawn animation
+# 7. Limit the number of Fattys at any given time to 1.
 
 # Import libraries
 try:
     import pygame, os, random, numpy, math
-    from bullets import Laser, Fireball
-    from monsters import Hellfighter, Raider, Fatty
+    from scripts.bullets import Laser, Fireball
+    from scripts.monsters import Hellfighter, Raider, Fatty
+    from scripts.player import Player
+    from scripts.effects import Explosion, SpawnAnim, Particle
     #from scripts.objects import Player, Hellfighter, Explosion, SpawnAnim
 except Exception as e:
     print(e)
@@ -39,7 +42,7 @@ SFX_DIR = os.path.join(GAME_DIR, "sfx")
 score = 0
 spawn_delay = 1500
 spawn_timer = pygame.time.get_ticks()
-in_debugmode = True # For debugging 
+in_debugmode = True # For debugging
 
 # Images
 def load_png(file, directory, scale):
@@ -187,217 +190,6 @@ explosion1_sfx.set_volume(0.5)
 pygame.mixer.music.load(os.path.join(SFX_DIR, "ost_fighter.ogg"))
 pygame.mixer.music.set_volume(0.3)
 
-# Classes =========================================================================
-class Player(pygame.sprite.Sprite):
-    def __init__(self, data):
-        super().__init__()
-        self.orient = "normal"
-        self.lvls = ["cadet", "captain", "admiral"]
-        self.cur_lvl = 0
-        self.lvl = self.lvls[self.cur_lvl]
-        self.surf = data["surface"]
-        self.surf_w = self.surf.get_width()
-        self.surf_h = self.surf.get_height()
-        self.images = data["images"]
-        self.image = self.images[self.lvl][self.orient][0]
-        self.rect = self.image.get_rect()
-        self.rect.centerx = data["coords"][0]
-        self.rect.bottom = data["coords"][1]
-        self.laser_img = data["laser_img"]
-        self.laser_sfx = data["laser_sfx"]
-        self.health = 100
-        # Sprite groups
-        self.spritegroups = data["sprite_groups"]
-        self.sprites = self.spritegroups[0]
-        self.p_lasers = self.spritegroups[1]
-        # Speed
-        self.movspd = 1
-        self.maxspd = 5
-        self.spdx = 0
-        self.spdy = 0
-        # Shooting
-        self.shoot_delay = 250
-        self.shoot_timer = pygame.time.get_ticks()
-        # For animation
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
-        self.frame = 0
-        # For collision detection
-        self.radius = 16
-        # For spawning animation
-        self.spawn_imgs = data["spawn_imgs"] # TODO
-
-    def update(self):
-        # Reset ship's orientation
-        self.orient = "normal"
- 
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_w]:
-            self.spdy -= self.movspd
-            self.spdy = numpy.clip(self.spdy, -self.maxspd, self.maxspd)
-        if pressed[pygame.K_s]:
-            self.spdy += self.movspd
-            self.spdy = numpy.clip(self.spdy, -self.maxspd, self.maxspd)
-        if pressed[pygame.K_a]:
-            self.spdx -= self.movspd
-            self.spdx = numpy.clip(self.spdx, -self.maxspd, self.maxspd)
-            self.orient = "left"
-        if pressed[pygame.K_d]:
-            self.spdx += self.movspd
-            self.spdx = numpy.clip(self.spdx, -self.maxspd, self.maxspd)
-            self.orient = "right"
-        if pressed[pygame.K_SPACE]:
-            self.shoot()
-
-        # Check if object collides with window bounds
-        if self.rect.top < 0:
-            self.spdy = 1
-        elif self.rect.bottom > self.surf_h:
-            self.spdy = -1
-        elif self.rect.left < 0:
-            self.spdx = 1
-        elif self.rect.right > self.surf_w:
-            self.spdx = -1
-
-        # Animate the sprite
-        self.animate()
-        #self.draw_hp()
-
-        # Move the object
-        self.rect.x += self.spdx
-        self.rect.y += self.spdy
-
-    def shoot(self):
-        now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.shoot_delay:
-            self.shoot_timer = now
-            self.laser_sfx.play()
-            if self.lvl == "cadet":
-                l = Laser(self.surf, self.laser_img, self.rect.centerx,
-                          self.rect.top-32, 0, -8)
-                self.sprites.add(l)
-                self.p_lasers.add(l)
-            elif self.lvl == "captain":
-                offset_x = [-13,13]
-                speed_x = [-1,1]
-                for i in range(2):
-                    l = Laser(self.surf, self.laser_img, self.rect.centerx+offset_x[i],
-                              self.rect.top-32, speed_x[i], -8)
-                    self.sprites.add(l)
-                    self.p_lasers.add(l)
-            elif self.lvl == "admiral":
-                offset_x = [-13,0,13]
-                offset_y = [-6,-32,-6]
-                speed_x = [-1,0,1]
-                for i in range(3):
-                    l = Laser(self.surf, self.laser_img, self.rect.centerx+offset_x[i],
-                              self.rect.top+offset_y[i], speed_x[i], -8)
-                    self.sprites.add(l)
-                    self.p_lasers.add(l)
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        old_rectx = self.rect.x
-        old_recty = self.rect.y
-        if now - self.frame_timer > self.frame_delay:
-            self.frame_timer = now
-            self.frame += 1
-            if self.frame > 1:
-                self.frame = 0
-            self.image = self.images[self.lvl][self.orient][self.frame]
-            self.rect = self.image.get_rect()
-            #pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-    def explode(self, explode_func, xpos, ypos):
-        explode_func(xpos, ypos)
-
-class Particle(pygame.sprite.Sprite):
-    def __init__(self, image, xpos, ypos):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.centerx = xpos
-        self.rect.bottom = ypos
-        self.lifetime = 100
-        self.timer = pygame.time.get_ticks()
-
-    def update(self):
-        now = pygame.time.get_ticks()
-        if now - self.timer > self.lifetime:
-            self.kill()
-
-class SpawnAnim(pygame.sprite.Sprite):
-    def __init__(self, data):
-        super().__init__()
-        self.images = data["images"]
-        self.image = self.images[0]
-        self.rect = self.image.get_rect()
-        self.rect.x = data["coords"][0]
-        self.rect.y = data["coords"][1]
-        self.spritegroups = data["spritegroups"]
-        self.sprites = self.spritegroups[0]
-        self.enemies = self.spritegroups[1]
-        self.spawndata = data["spawndata"]
-        self.spawnclass = data["spawnclass"]
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
-        self.frame = 0
-
-    def update(self):
-        self.animate()
-        if self.frame == 3:
-            spawn = self.spawnclass(self.spawndata)
-            self.sprites.add(spawn)
-            self.enemies.add(spawn)
-            self.kill()
-            
-    def animate(self):
-        now = pygame.time.get_ticks()
-        old_rectx = self.rect.x
-        old_recty = self.rect.y
-        if now - self.frame_timer > self.frame_delay:
-            self.frame_timer = now
-            self.frame += 1
-            if self.frame == 4:
-                self.frame = 0
-            self.image = self.images[self.frame]
-            self.rect = self.image.get_rect()
-            #pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-class Explosion(pygame.sprite.Sprite):
-    def __init__(self, data):
-        super().__init__()
-        self.surface = data["surface"]
-        self.images = data["images"]
-        self.image = self.images[0]
-        self.rect = self.image.get_rect()
-        self.rect.centerx = data["coords"][0]
-        self.rect.bottom = data["coords"][1]
-        # variables for animation
-        self.frame = 0
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
-        # Play the explosion sound effect
-        data["explosion_sfx"].play()
-
-    def update(self):
-        now = pygame.time.get_ticks()
-        if now - self.frame_timer > self.frame_delay:
-            self.frame_timer = now
-            self.frame += 1
-
-            if self.frame == 4:
-                self.kill()
-            else:
-                center = self.rect.center
-                self.image = self.images[self.frame]
-                self.rect = self.image.get_rect()
-                self.rect.center = center
-
 # Sprite Groups ===================================================================
 
 sprites = pygame.sprite.Group()
@@ -414,7 +206,8 @@ player_data = { "surface": window,
                 "sprite_groups": (sprites, p_lasers),
                 "laser_img": p_laser_img,
                 "laser_sfx": laser_sfx,
-                "spawn_imgs": player_spawn_imgs }
+                "spawn_imgs": player_spawn_imgs,
+                "bullet_class": Laser }
 player = Player(player_data)
 sprites.add(player)
 
@@ -422,13 +215,13 @@ def spawn_hellfighter():
     # TODO: Clean up later
     hf_data = { "surface": window,
                  "images": hellfighter_imgs,
-                 "coords": (random.randrange(64, WIDTH-64), random.randrange(0, 100)),
-                 "spritegroups": (sprites, e_lasers),
-                 "laser_img": e_laser_img,
-                 "bullet": Laser}
+                 "coords": [random.randrange(64, WIDTH-64), random.randrange(0, 100)],
+                 "spritegroups": [sprites, e_lasers],
+                 "bullet_img": e_laser_img,
+                 "bullet_class": Laser}
     hf_spawn_data = { "images": hf_spawn_imgs,
                       "coords": hf_data["coords"],
-                      "spritegroups": (sprites, enemies),
+                      "spritegroups": [sprites, enemies],
                       "spawndata": hf_data,
                       "spawnclass": Hellfighter}
     hf_spawn = SpawnAnim(hf_spawn_data)
@@ -438,11 +231,11 @@ def spawn_raider():
     # TODO: Clean up later
     raider_data = { "surface": window,
                     "images": raider_imgs,
-                    "coords": (player.rect.x, 0),
-                    "spritegroups": (sprites)}
+                    "coords": [player.rect.x, 0],
+                    "spritegroups": [sprites]}
     raider_spawn_data = { "images": raider_spawn_imgs,
                           "coords": raider_data["coords"],
-                          "spritegroups": (sprites, enemies),
+                          "spritegroups": [sprites, enemies],
                           "spawndata": raider_data,
                           "spawnclass": Raider}
     raider_spawn = SpawnAnim(raider_spawn_data)
@@ -452,10 +245,10 @@ def spawn_fatty():
     # TODO: Clean up later
     fatty_data = { "surface": window,
                  "images": fatty_imgs,
-                 "coords": (random.randrange(64, WIDTH-64), -64),
-                 "spritegroups": (sprites, e_lasers),
-                 "laser_img": fireball_img,
-                 "bullet": Fireball}
+                 "coords": [random.randrange(64, WIDTH-64), -64],
+                 "spritegroups": [sprites, e_lasers],
+                 "bullet_img": fireball_img,
+                 "bullet_class": Fireball,}
     fatty = Fatty(fatty_data)
     sprites.add(fatty)
     enemies.add(fatty)
@@ -488,8 +281,8 @@ def max_enemy(score):
         return 1
     else:
         limit = math.log(score)*2
-        if limit >= 30: # Caps the limit at 15
-            return 30
+        if limit >= 7: # Caps the limit at 7
+            return 7
         else:
             return limit
 
@@ -499,8 +292,8 @@ def sd_subtractor(score):
         return 0
     else:
         sd_s = math.pow(score, 2)
-        return numpy.clip(sd_s, 0, 500)
-    
+        return numpy.clip(sd_s, 0, 800)
+
 # Game loop =======================================================================
 
 # Play the soundtrack
@@ -525,7 +318,7 @@ while running:
                 player.cur_lvl += 1
                 player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
                 player.lvl = player.lvls[player.cur_lvl]
-    
+
     # Update objects ==============================================================
     now = pygame.time.get_ticks()
     if (now - spawn_timer > spawn_delay - sd_subtractor(score) and
@@ -555,7 +348,7 @@ while running:
             player.spdy -= 3
         else:
             player.spdy += 3
-            
+
         player.explode(spawn_explosion, player.rect.centerx, player.rect.bottom)
 
     # Check if the player collides with an enemy
