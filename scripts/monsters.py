@@ -78,7 +78,7 @@ class Hellfighter(Monster):
 class Raider(Monster):
     def __init__(self, data):
         super().__init__(data)
-        self.health = 4
+        self.health = 3
         self.maxspd = 7
         self.spdy = 8
 
@@ -100,7 +100,7 @@ class Fatty(Monster):
         self.e_lasers = self.spritegroups[1]
         self.laser_img = data["bullet_img"]
         self.bullet = data["bullet_class"]
-        self.health = 6
+        self.health = 4
         self.shoot_timer = pygame.time.get_ticks()
         self.shoot_delay = 3000
         self.spdx = random.choice([-1,1])

@@ -14,7 +14,7 @@ class SpawnAnim(pygame.sprite.Sprite):
         self.spawndata = data["spawndata"]
         self.spawnclass = data["spawnclass"]
         self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 150
+        self.frame_delay = 100
         self.frame = 0
 
     def update(self):

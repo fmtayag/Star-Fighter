@@ -67,4 +67,3 @@ class Fireball(pygame.sprite.Sprite):
             y_scale = self.image.get_height() - self.scaler
             self.image = pygame.transform.scale(self.image, (x_scale,y_scale))
             self.scaler += 1
-            self.movspd -= 1
