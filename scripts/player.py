@@ -74,7 +74,6 @@ class Player(pygame.sprite.Sprite):
 
         # Animate the sprite
         self.animate()
-        #self.draw_hp()
 
         # Move the object
         self.rect.x += self.spdx
