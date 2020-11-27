@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.bullet = data["bullet_class"]
         self.health = 10
         # Sprite groups
-        self.spritegroups = data["sprite_groups"]
+        self.spritegroups = data["spritegroups"]
         self.sprites = self.spritegroups[0]
         self.p_lasers = self.spritegroups[1]
         # Speed
@@ -36,8 +36,6 @@ class Player(pygame.sprite.Sprite):
         self.frame = 0
         # For collision detection
         self.radius = 16
-        # For spawning animation
-        self.spawn_imgs = data["spawn_imgs"] # TODO
 
     def update(self):
         # Reset ship's orientation
@@ -118,6 +116,3 @@ class Player(pygame.sprite.Sprite):
             #pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
             self.rect.x = old_rectx
             self.rect.y = old_recty
-
-    def explode(self, explode_func, xpos, ypos):
-        explode_func(xpos, ypos)

@@ -32,9 +32,6 @@ class Monster(pygame.sprite.Sprite):
             self.rect.x = old_rectx
             self.rect.y = old_recty
 
-    def explode(self, explode_func, xpos, ypos):
-        explode_func(xpos, ypos)
-
 class Hellfighter(Monster):
     def __init__(self, data):
         super().__init__(data)
@@ -89,7 +86,7 @@ class Hellfighter(Monster):
 
     def chase(self):
         now = pygame.time.get_ticks()
-        if now - self.chase_timer > self.chase_delay and self.player.rect.top > self.rect.y:
+        if now - self.chase_timer > self.chase_delay:
             self.chase_timer = now
             if self.rect.centerx < self.player.rect.centerx:
                 self.spdx = self.movspd
@@ -121,7 +118,7 @@ class Fatty(Monster):
         self.e_lasers = self.spritegroups[1]
         self.laser_img = data["bullet_img"]
         self.bullet = data["bullet_class"]
-        self.health = 5
+        self.health = 4
         self.shoot_timer = pygame.time.get_ticks()
         self.shoot_delay = 3000
         self.spdx = random.choice([-1,1])
@@ -147,6 +144,9 @@ class Fatty(Monster):
 
         # Delete object if it goes off-screen or has <= 0 health
         if self.rect.top > self.surf_h or self.health <= 0:
+            f1 = self.bullet(self.surface, self.laser_img, self.rect.centerx, self.rect.bottom, random.choice([10,-10]), 8)
+            self.sprites.add(f1)
+            self.e_lasers.add(f1)
             self.kill()
 
         self.animate()

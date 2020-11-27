@@ -12,6 +12,7 @@ class Laser(pygame.sprite.Sprite):
         self.surf = surface
         self.surf_w = self.surf.get_width()
         self.surf_h = self.surf.get_height()
+        self.damage = 2
 
     def update(self):
         self.rect.x += self.spdx
@@ -38,6 +39,7 @@ class Fireball(pygame.sprite.Sprite):
         self.dissolve_delay = 500
         self.dissolve_timer = pygame.time.get_ticks()
         self.scaler = 1
+        self.damage = 5
 
     def update(self):
 

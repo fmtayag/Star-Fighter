@@ -8,8 +8,8 @@ def max_enemy(score):
         return 1
     else:
         limit = math.log(score)*2
-        if limit >= 6: # Caps the limit at 8
-            return 6
+        if limit >= 7: # Caps the limit at 7
+            return 7
         else:
             return limit
 
@@ -19,4 +19,4 @@ def sd_subtractor(score):
         return 0
     else:
         sd_s = math.pow(score, 2)
-        return numpy.clip(sd_s, 0, 1200)
+        return numpy.clip(sd_s, 0, 1300)

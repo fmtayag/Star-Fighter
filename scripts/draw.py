@@ -18,10 +18,10 @@ def draw_text(surf, text, size, font, x, y, color):
     text_rect.bottom = y
     surf.blit(text_surface, (text_rect.x, text_rect.y))
 
-def draw_hp(surf, x, y, hp, color):
+def draw_hp(surf, x, y, hp, color, height):
     if hp < 0:
         hp = 0
-    rect_height = 10
+    rect_height = height
     rectangle = pygame.Rect(x, y-rect_height,  hp * (surf.get_width() // 10), rect_height)
     pygame.draw.rect(surf, color, rectangle)
 

@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 class SpawnAnim(pygame.sprite.Sprite):
     def __init__(self, data):
@@ -54,7 +54,8 @@ class Explosion(pygame.sprite.Sprite):
         self.frame_timer = pygame.time.get_ticks()
         self.frame_delay = 100
         # Play the explosion sound effect
-        data["explosion_sfx"].play()
+        self.chosen_sfx = random.choice(data["explosions_sfx"])
+        self.chosen_sfx.play()
 
     def update(self):
         now = pygame.time.get_ticks()
