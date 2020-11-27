@@ -44,18 +44,29 @@ class Hellfighter(Monster):
         self.health = 2
         self.shoot_timer = pygame.time.get_ticks()
         self.shoot_delay = 1000
-        self.spdx = random.choice([-3,3])
+        self.movspd = random.randrange(2,3)
+        self.spdx = 0
         self.spdy = 1
+        self.player = data["player"]
+        self.chase_delay = random.randrange(250, 400)
+        self.chase_timer = pygame.time.get_ticks()
+        # the point at which the object will stop moving on the y-axis
+        self.max_disty = self.surf_h * (random.randrange(2, 5) / 10)
 
     def update(self):
-        # Decelerate on the y-axis
+        # Decelerate on the y-axis, for the knockback effect
         if self.spdy < 1:
             self.spdy += 1
 
+        # Check if monster collides with border
         if self.rect.left < 0:
             self.spdx = 3
         elif self.rect.right > self.surf_w:
             self.spdx = -3
+
+        # Stop on the specified y-axis line
+        if self.rect.bottom > self.max_disty:
+            self.rect.y -= 1
 
         # Delete object if it goes off-screen or has <= 0 health
         if self.rect.top > self.surf_h or self.health <= 0:
@@ -63,17 +74,27 @@ class Hellfighter(Monster):
 
         self.animate()
         self.shoot()
+        self.chase()
         self.rect.x += self.spdx
         self.rect.y += self.spdy
 
     def shoot(self):
         now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.shoot_delay:
+        if now - self.shoot_timer > self.shoot_delay and self.player.rect.top > self.rect.y:
             self.shoot_timer = now
             l = self.bullet(self.surface, self.laser_img, self.rect.centerx,
                       self.rect.bottom, 0, 8)
             self.sprites.add(l)
             self.e_lasers.add(l)
+
+    def chase(self):
+        now = pygame.time.get_ticks()
+        if now - self.chase_timer > self.chase_delay and self.player.rect.top > self.rect.y:
+            self.chase_timer = now
+            if self.rect.centerx < self.player.rect.centerx:
+                self.spdx = self.movspd
+            elif self.rect.centerx > self.player.rect.centerx:
+                self.spdx = -self.movspd
 
 class Raider(Monster):
     def __init__(self, data):
@@ -100,7 +121,7 @@ class Fatty(Monster):
         self.e_lasers = self.spritegroups[1]
         self.laser_img = data["bullet_img"]
         self.bullet = data["bullet_class"]
-        self.health = 6
+        self.health = 5
         self.shoot_timer = pygame.time.get_ticks()
         self.shoot_delay = 3000
         self.spdx = random.choice([-1,1])
@@ -114,13 +135,13 @@ class Fatty(Monster):
         if self.spdy < 1:
             self.spdy += 1
 
-        # Bounces object on the sides
+        # Check if monster collides with border
         if self.rect.left < 0:
             self.spdx = 1
         elif self.rect.right > self.surf_w:
             self.spdx = -1
 
-        # Stop on the y-axis
+        # Stop on the specified y-axis line
         if self.rect.bottom > self.max_disty:
             self.rect.y -= 1
 
@@ -144,3 +165,7 @@ class Fatty(Monster):
             self.e_lasers.add(f1)
             self.e_lasers.add(f2)
             self.spdy -= 10 # Recoil effect
+
+class Bomb(Monster):
+    def __init__(self, data):
+        super().__init__(data)

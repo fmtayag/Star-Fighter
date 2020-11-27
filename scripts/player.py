@@ -18,14 +18,13 @@ class Player(pygame.sprite.Sprite):
         self.laser_img = data["laser_img"]
         self.laser_sfx = data["laser_sfx"]
         self.bullet = data["bullet_class"]
-        self.health = 100
+        self.health = 10
         # Sprite groups
         self.spritegroups = data["sprite_groups"]
         self.sprites = self.spritegroups[0]
         self.p_lasers = self.spritegroups[1]
         # Speed
-        self.movspd = 1
-        self.maxspd = 5
+        self.movspd = 6
         self.spdx = 0
         self.spdy = 0
         # Shooting
@@ -43,34 +42,32 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         # Reset ship's orientation
         self.orient = "normal"
+        self.spdy = 0
+        self.spdx = 0
 
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_w]:
             self.spdy -= self.movspd
-            self.spdy = numpy.clip(self.spdy, -self.maxspd, self.maxspd)
         if pressed[pygame.K_s]:
             self.spdy += self.movspd
-            self.spdy = numpy.clip(self.spdy, -self.maxspd, self.maxspd)
         if pressed[pygame.K_a]:
             self.spdx -= self.movspd
-            self.spdx = numpy.clip(self.spdx, -self.maxspd, self.maxspd)
             self.orient = "left"
         if pressed[pygame.K_d]:
             self.spdx += self.movspd
-            self.spdx = numpy.clip(self.spdx, -self.maxspd, self.maxspd)
             self.orient = "right"
         if pressed[pygame.K_SPACE]:
             self.shoot()
 
         # Check if object collides with window bounds
+        if self.rect.right > self.surf_w:
+            self.rect.right = self.surf_w
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.bottom > self.surf_h:
+            self.rect.bottom = self.surf_h
         if self.rect.top < 0:
-            self.spdy = 1
-        elif self.rect.bottom > self.surf_h:
-            self.spdy = -1
-        elif self.rect.left < 0:
-            self.spdx = 1
-        elif self.rect.right > self.surf_w:
-            self.spdx = -1
+            self.rect.top = 0
 
         # Animate the sprite
         self.animate()

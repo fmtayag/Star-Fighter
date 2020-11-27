@@ -3,18 +3,21 @@
 # 2. (DONE) Finish implementing the raider enemy
 # 3. (DONE) Implement the "Fatty" enemy
 # 3.1 (DONE) Implement the "fireball" bullet. IT BOUNCES!
-# 4. Make spawning animation / opening animation for player
-# 5. Make start, game over, and high score screens
-# 6. Add unique sound cues played on each monster's spawn animation
-# 7. Limit the number of Fattys at any given time to 1.
+# 4. Make start, game over, and high score screens
+# 5. (Future update) Make spawning animation / opening animation for player
+# 6. (Future update) Add unique sound cues played on each monster's spawn animation
+# 7. (Future update) Implement a "bomb" enemy that explodes into fireballs when killed
 
 # Import libraries
 try:
     import pygame, os, random, numpy, math
+    from itertools import repeat
     from scripts.bullets import Laser, Fireball
     from scripts.monsters import Hellfighter, Raider, Fatty
     from scripts.player import Player
     from scripts.effects import Explosion, SpawnAnim, Particle
+    from scripts.gameflow import max_enemy, sd_subtractor
+    from scripts.draw import draw_background, draw_text, draw_hp, shake
     #from scripts.objects import Player, Hellfighter, Explosion, SpawnAnim
 except Exception as e:
     print(e)
@@ -45,6 +48,7 @@ spawn_timer = pygame.time.get_ticks()
 in_debugmode = True # For debugging
 background_y = 0
 backgroundp_y = 0
+offset = repeat((0, 0)) # For screen shake
 
 # Images
 def load_png(file, directory, scale):
@@ -62,8 +66,9 @@ def load_png(file, directory, scale):
 # Initialize the window
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 window = pygame.display.set_mode(RES)
+window_rect = window.get_rect()
 pygame.display.set_caption(TITLE)
-window_icon = load_png("upgrd_life.png", IMG_DIR, 1)
+window_icon = load_png("hellfighter1.png", IMG_DIR, 1)
 pygame.display.set_icon(window_icon)
 
 # Images ==========================================================================
@@ -226,7 +231,8 @@ def spawn_hellfighter():
                  "coords": [random.randrange(64, WIDTH-64), random.randrange(0, 100)],
                  "spritegroups": [sprites, e_lasers],
                  "bullet_img": e_laser_img,
-                 "bullet_class": Laser}
+                 "bullet_class": Laser,
+                 "player": player}
     hf_spawn_data = { "images": hf_spawn_imgs,
                       "coords": hf_data["coords"],
                       "spritegroups": [sprites, enemies],
@@ -264,15 +270,14 @@ def spawn_fatty():
 def spawn_explosion(xpos, ypos):
     # TODO: Clean up later
     explosion_data = { "surface": window,
-                       "images": explosion_imgs,
-                       "coords": (xpos, ypos),
-                       "explosion_sfx": explosion1_sfx}
+                 "images": explosion_imgs,
+                 "coords": (xpos, ypos),
+                 "explosion_sfx": explosion1_sfx}
     e = Explosion(explosion_data)
     sprites.add(e)
 
 def roll_spawn():
-    roll = numpy.random.choice(["raider","hellfighter", "fatty"], p=[0.2, 0.7, 0.1])
-    #roll = numpy.random.choice(["raider","hellfighter", "fatty"], p=[0, 0, 1])
+    roll = numpy.random.choice(["raider","hellfighter", "fatty"], p=[0.25, 0.70, 0.05])
     if roll == "raider":
         spawn_raider()
     elif roll == "hellfighter":
@@ -280,129 +285,109 @@ def roll_spawn():
     elif roll == "fatty":
         spawn_fatty()
 
-# Game Flow Functions ===============================================================
-# Functions that controls the "game flow"
-
-def max_enemy(score):
-    # Computes the maximum number of enemies that can spawn
-    if score < 2:
-        return 1
-    else:
-        limit = math.log(score)*2
-        if limit >= 8: # Caps the limit at 8
-            return 8
-        else:
-            return limit
-
-def sd_subtractor(score):
-    # Calculates the subtractor of the spawn delay (sd_s) based on score
-    if score == 0:
-        return 0
-    else:
-        sd_s = math.pow(score, 2)
-        return numpy.clip(sd_s, 0, 1500)
-
-# Draw functions =================================================================
-def draw_background(background_y):
-    rel_y = background_y % background_rect.height
-    window.blit(background_img, (0, rel_y - background_rect.height))
-
-    if rel_y < HEIGHT:
-        window.blit(background_img, (0, rel_y))
-
-def draw_backgroundp(backgroundp_y):
-    rel_y = backgroundp_y % backgroundp_rect.height
-    window.blit(backgroundp_img, (0, rel_y - backgroundp_rect.height))
-
-    if rel_y < HEIGHT:
-        window.blit(backgroundp_img, (0, rel_y))
-
 # Game loop =======================================================================
-
 # Play the soundtrack
 pygame.mixer.music.play(loops=-1)
-
+paused = False
 while running:
+    if not paused:
+        # Lock the FPS
+        clock.tick(FPS)
 
-    # Lock the FPS
-    clock.tick(FPS)
+        # Increment the background and parallax's ypos
+        background_y += 1
+        backgroundp_y += 2
 
-    # Get input ===================================================================
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        # Get input ===================================================================
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN and in_debugmode:
+                # For debugging only
+                if event.key == pygame.K_q:
+                    player.cur_lvl -= 1
+                    player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
+                    player.lvl = player.lvls[player.cur_lvl]
+                elif event.key == pygame.K_e:
+                    player.cur_lvl += 1
+                    player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
+                    player.lvl = player.lvls[player.cur_lvl]
+                elif event.key == pygame.K_ESCAPE:
+                    paused = True
+
+        # Update objects ==============================================================
+        now = pygame.time.get_ticks()
+        if (now - spawn_timer > spawn_delay - sd_subtractor(score) and
+            len(enemies) < max_enemy(score)):
+            spawn_timer = now
+            roll_spawn()
+
+        # Check if enemy is hit by lasers
+        hits = pygame.sprite.groupcollide(enemies, p_lasers, False, True)
+        for hit in hits:
+            hit.spdy = -6 # Knockback effect
+            hit.health -= 1
+            hit.explode(spawn_explosion, hit.rect.centerx, hit.rect.bottom)
+            if hit.health <= 0:
+                score += 1
+                offset = shake(10, 3)
+
+        # Check if player is hit by enemy lasers
+        hits = pygame.sprite.spritecollide(player, e_lasers, True, pygame.sprite.collide_circle)
+        for hit in hits:
+            # Knockback effect (x-axis).
+            if player.rect.x < hit.rect.left:
+                player.spdx -= 3
+            else:
+                player.spdx += 3
+            # Knockback effect (y-axis).
+            if player.rect.y < hit.rect.top:
+                player.spdy -= 3
+            else:
+                player.spdy += 3
+
+            player.health -= random.randrange(1,2)
+            player.explode(spawn_explosion, player.rect.centerx, player.rect.bottom)
+            offset = shake(30, 5)
+
+        # Check if the player collides with an enemy
+        hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
+        for hit in hits:
+            # Knockback effect.
+            if player.rect.y < hit.rect.top:
+                player.spdy -= 6
+            else:
+                player.spdy += 6
+            player.health -= random.randrange(3,5)
+            hit.explode(spawn_explosion, hit.rect.centerx, hit.rect.bottom)
+            player.explode(spawn_explosion, player.rect.centerx, player.rect.bottom)
+            offset = shake(30, 5)
+
+        if player.health <= 0:
             running = False
-        elif event.type == pygame.KEYDOWN and in_debugmode:
-            # For debugging only
-            if event.key == pygame.K_q:
-                player.cur_lvl -= 1
-                player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
-                player.lvl = player.lvls[player.cur_lvl]
-            elif event.key == pygame.K_e:
-                player.cur_lvl += 1
-                player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
-                player.lvl = player.lvls[player.cur_lvl]
 
-    # Update objects ==============================================================
-    now = pygame.time.get_ticks()
-    if (now - spawn_timer > spawn_delay - sd_subtractor(score) and
-        len(enemies) < max_enemy(score)):
-        spawn_timer = now
-        roll_spawn()
+        sprites.update()
+        cur_fps = round(clock.get_fps(), 2)
+        pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
 
-    # Check if enemy is hit by lasers
-    hits = pygame.sprite.groupcollide(enemies, p_lasers, False, True)
-    for hit in hits:
-        hit.spdy = -6 # Knockback effect
-        hit.health -= 1
-        hit.explode(spawn_explosion, hit.rect.centerx, hit.rect.bottom)
-        if hit.health <= 0:
-            score += 1
-
-    # Check if player is hit by enemy lasers
-    hits = pygame.sprite.spritecollide(player, e_lasers, True, pygame.sprite.collide_circle)
-    for hit in hits:
-        # Knockback effect (x-axis).
-        if player.rect.x < hit.rect.left:
-            player.spdx -= 3
-        else:
-            player.spdx += 3
-        # Knockback effect (y-axis).
-        if player.rect.y < hit.rect.top:
-            player.spdy -= 3
-        else:
-            player.spdy += 3
-
-        player.health -= random.randrange(5,10)
-        player.explode(spawn_explosion, player.rect.centerx, player.rect.bottom)
-
-    # Check if the player collides with an enemy
-    hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
-    for hit in hits:
-        # Knockback effect.
-        if player.rect.y < hit.rect.top:
-            player.spdy -= 6
-        else:
-            player.spdy += 6
-        player.health -= random.randrange(25,50)
-        hit.explode(spawn_explosion, hit.rect.centerx, hit.rect.bottom)
-        player.explode(spawn_explosion, player.rect.centerx, player.rect.bottom)
-
-    if player.health <= 0:
-        running = False
-    
-    sprites.update()
-    cur_fps = round(clock.get_fps(), 2)
-    pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
-
-    # Draw objects ================================================================
-    background_y += 1
-    backgroundp_y += 2
-    draw_background(background_y)
-    draw_backgroundp(backgroundp_y)
-    sprites.draw(window)
-
-    # Update the window
-    pygame.display.flip()
+        # Draw objects ================================================================
+        draw_background(window, background_img, background_rect, background_y)
+        draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
+        sprites.draw(window)
+        draw_text(window, f"{score}", 32, "font/VCR_OSD_MONO.ttf", window_rect.centerx, 48, WHITE)
+        draw_hp(window, 0, window_rect.bottom, player.health, RED)
+        window.blit(window, next(offset))
+        # Update the window
+        pygame.display.flip()
+    else:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN and in_debugmode:
+                if event.key == pygame.K_ESCAPE:
+                    paused = False
+        draw_text(window, f"PAUSED", 32, "font/VCR_OSD_MONO.ttf", window_rect.centerx, window_rect.centery, WHITE)
+        pygame.display.flip()
 
 # Quit pygame
 pygame.quit()
