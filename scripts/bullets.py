@@ -1,4 +1,4 @@
-import pygame
+import pygame, numpy
 
 class Laser(pygame.sprite.Sprite):
     def __init__(self, surface, image, xpos, ypos, spdx, spdy):
@@ -12,7 +12,7 @@ class Laser(pygame.sprite.Sprite):
         self.surf = surface
         self.surf_w = self.surf.get_width()
         self.surf_h = self.surf.get_height()
-        self.damage = 2
+        self.damage = 1
 
     def update(self):
         self.rect.x += self.spdx
@@ -39,7 +39,7 @@ class Fireball(pygame.sprite.Sprite):
         self.dissolve_delay = 500
         self.dissolve_timer = pygame.time.get_ticks()
         self.scaler = 1
-        self.damage = 5
+        self.damage = 4
 
     def update(self):
 
@@ -70,3 +70,5 @@ class Fireball(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(self.image, (x_scale,y_scale))
             self.scaler += 1
             self.movspd -= 1
+            self.damage -= 1
+            self.damage = numpy.clip(self.damage,1,5)

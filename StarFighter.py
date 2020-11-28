@@ -160,9 +160,19 @@ explosion_imgs = [
 ]
 
 # Load and store upgrade images
-upgrade_imgs = { "hp": load_png("upgrd_hp.png", IMG_DIR, 4),
-                 "gun": load_png("upgrd_gun.png", IMG_DIR, 4),
-                 "coin": load_png("upgrd_coin.png", IMG_DIR, 4) }
+upgrade_imgs = dict()
+upgrade_imgs["hp"] = [ load_png("upgrd_hp1.png", IMG_DIR, 4),
+                       load_png("upgrd_hp2.png", IMG_DIR, 4),
+                       load_png("upgrd_hp3.png", IMG_DIR, 4),
+                       load_png("upgrd_hp4.png", IMG_DIR, 4) ]
+upgrade_imgs["gun"] = [ load_png("upgrd_gun1.png", IMG_DIR, 4),
+                        load_png("upgrd_gun2.png", IMG_DIR, 4),
+                        load_png("upgrd_gun3.png", IMG_DIR, 4),
+                        load_png("upgrd_gun4.png", IMG_DIR, 4) ]
+upgrade_imgs["coin"] = [ load_png("upgrd_coin1.png", IMG_DIR, 4),
+                         load_png("upgrd_coin2.png", IMG_DIR, 4),
+                         load_png("upgrd_coin3.png", IMG_DIR, 4),
+                         load_png("upgrd_coin4.png", IMG_DIR, 4) ]
 
 p_laser_img = load_png("laser_player.png", IMG_DIR, 4)
 e_laser_img = load_png("laser_enemy.png", IMG_DIR, 4)
@@ -261,10 +271,10 @@ def spawn_fatty():
     sprites.add(fatty)
     enemies.add(fatty)
 
-def roll_spawn(score):
+def roll_spawn(score, player):
     monsters = ["raider","hellfighter", "fatty"]
     roll = None
-    if score < 80:
+    if player.cur_lvl < 1 and score < 80:
         roll = numpy.random.choice(monsters, p=[0.25, 0.70, 0.05])
     else:
         roll = numpy.random.choice(monsters, p=[0.30,0.55,0.15])
@@ -316,7 +326,7 @@ def game_screen():
             if (now - spawn_timer > spawn_delay - sd_subtractor(score) and
                 len(enemies) < max_enemy(score)):
                 spawn_timer = now
-                roll_spawn(score)
+                roll_spawn(score, player)
 
             # Check if enemy is hit by lasers
             hits = pygame.sprite.groupcollide(enemies, p_lasers, False, True)
@@ -334,14 +344,14 @@ def game_screen():
             # Check if player is hit by enemy lasers
             hits = pygame.sprite.spritecollide(player, e_lasers, True, pygame.sprite.collide_circle)
             for hit in hits:
-                player.health -= random.randrange(1,2)
+                player.health -= hit.damage
                 spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
                 offset = shake(20, 10)
 
             # Check if the player collides with an enemy
             hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
             for hit in hits:
-                player.health -= hit.damage
+                player.health -= random.randrange(2,5)
                 spawn_explosion(Explosion, explosion_data, hit.rect.centerx, hit.rect.bottom, sprites)
                 spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
                 offset = shake(30, 10)

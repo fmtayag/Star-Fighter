@@ -19,4 +19,4 @@ def sd_subtractor(score):
         return 0
     else:
         sd_s = math.pow(score, 2)
-        return numpy.clip(sd_s, 0, 1300)
+        return numpy.clip(sd_s, 0, 1000)
