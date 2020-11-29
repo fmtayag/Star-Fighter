@@ -15,15 +15,16 @@ def draw_text(surf, text, size, font, x, y, color):
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect()
     text_rect.centerx = x
-    text_rect.bottom = y
+    text_rect.y = y
     surf.blit(text_surface, (text_rect.x, text_rect.y))
 
-def draw_hp(surf, x, y, hp, color, height):
+def draw_hp(surf, x, y, hp, color, img):
     if hp < 0:
         hp = 0
-    rect_height = height
-    rectangle = pygame.Rect(x, y-rect_height,  hp * (surf.get_width() // 10), rect_height)
+    rect_height = 24
+    rectangle = pygame.Rect(x+24, y+4,  hp * 10, rect_height)
     pygame.draw.rect(surf, color, rectangle)
+    surf.blit(img, (x, y))
 
 def shake(intensity, n):
     # Credits to sloth from StackOverflow, thanks buddy!
