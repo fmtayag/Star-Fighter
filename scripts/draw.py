@@ -21,8 +21,8 @@ def draw_text(surf, text, size, font, x, y, color):
 def draw_hp(surf, x, y, hp, color, img):
     if hp < 0:
         hp = 0
-    rect_height = 24
-    rectangle = pygame.Rect(x+24, y+4,  hp * 10, rect_height)
+    rect_height = img.get_height()*0.5
+    rectangle = pygame.Rect(x+24, y+8,  hp * 10, rect_height)
     pygame.draw.rect(surf, color, rectangle)
     surf.blit(img, (x, y))
 

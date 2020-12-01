@@ -10,7 +10,10 @@
 #   - Downloaded from dafont.com    #
 #####################################
 
-# TODO: Change fireball's damage as it dissolves
+# TODO: Change fireball's damage as it dissolves (DONE)
+# TODO: Clean up the spawner functions
+# TODO: Bundle relevant sprite groups into individual dictionaries. For Monsters class.
+    # TODO: Maybe just add a method that calls a "spawn_laser" function??
 
 # Import libraries
 try:
@@ -32,9 +35,7 @@ except Exception as e:
 pygame.init()
 
 # Program variables
-WIDTH = 640
-HEIGHT = 576
-RES = (WIDTH, HEIGHT)
+WIN_RES = {"w": 640, "h": 576}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
 VERSION = "1.0"
@@ -48,7 +49,7 @@ SFX_DIR = os.path.join(GAME_DIR, "sfx")
 
 # Initialize the window
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-window = pygame.display.set_mode(RES)
+window = pygame.display.set_mode((WIN_RES["w"], WIN_RES["h"]))
 window_rect = window.get_rect()
 pygame.display.set_caption(TITLE)
 
@@ -119,12 +120,12 @@ player_admiral["right"] = [
 player_imgs["admiral"] = player_admiral
 
 # Load and store hellfighter images
-hellfighter_imgs = dict()
-hellfighter_imgs["normal"] = [
+hfighter_imgs = dict()
+hfighter_imgs["normal"] = [
     load_png("hellfighter1.png", IMG_DIR, 4),
     load_png("hellfighter2.png", IMG_DIR, 4)
 ]
-hellfighter_imgs["spawning"] = [
+hfighter_imgs["spawning"] = [
     load_png("hf_spawn1.png", IMG_DIR, 4),
     load_png("hf_spawn2.png", IMG_DIR, 4),
     load_png("hf_spawn3.png", IMG_DIR, 4),
@@ -145,9 +146,16 @@ raider_imgs["spawning"] = [
 ]
 
 # Load and store fatty images
-fatty_imgs = [
+fatty_imgs = dict()
+fatty_imgs["normal"] = [
     load_png("fatty1.png", IMG_DIR, 4),
     load_png("fatty2.png", IMG_DIR, 4)
+]
+fatty_imgs["spawning"] = [
+    load_png("fatty_spawn1.png", IMG_DIR, 4),
+    load_png("fatty_spawn2.png", IMG_DIR, 4),
+    load_png("fatty_spawn3.png", IMG_DIR, 4),
+    load_png("fatty_spawn4.png", IMG_DIR, 4)
 ]
 
 # Load and store explosion images
@@ -175,15 +183,20 @@ upgrade_imgs["coin"] = [ load_png("upgrd_coin1.png", IMG_DIR, 4),
 
 p_laser_img = load_png("laser_player.png", IMG_DIR, 4)
 e_laser_img = load_png("laser_enemy.png", IMG_DIR, 4)
-particle_img = load_png("particle.png", IMG_DIR, 2)
+#particle_img = load_png("particle.png", IMG_DIR, 2)
 fireball_img = load_png("fireball.png", IMG_DIR, 4)
 background_img = load_png("background.png", IMG_DIR, 4)
 background_rect = background_img.get_rect()
 backgroundp_img = load_png("background_parallax.png", IMG_DIR, 4)
 backgroundp_rect = backgroundp_img.get_rect()
 hp_bar_img = load_png("hp_bar.png", IMG_DIR, 4)
-#hp_bar_rect = hp_bar_img.get_rect()
+hp_bar_rect = hp_bar_img.get_rect()
+hp_bar_rect.x = 20
+hp_bar_rect.y = 20
 score_img = load_png("score_icon.png", IMG_DIR, 4)
+score_rect = score_img.get_rect()
+score_rect.x = hp_bar_rect.x
+score_rect.y = hp_bar_rect.y + 44
 
 # Sounds ==========================================================================
 
@@ -204,6 +217,7 @@ pygame.mixer.music.set_volume(0.5)
 
 # Sprite Groups ===================================================================
 
+# Sprite groups
 sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
@@ -211,15 +225,12 @@ p_lasers = pygame.sprite.Group()
 e_lasers = pygame.sprite.Group()
 upgrades = pygame.sprite.Group()
 
+# Sprite supergroups
+p_spr_supergroup = {"sprites": sprites, "p_lasers": p_lasers}
+e_spr_supergroup = {"sprites": sprites, "e_lasers": e_lasers}
+
 # Instantiate the player ==========================================================
-player_data = { "surface": window,
-                "images": player_imgs,
-                "coords": (WIDTH/2, HEIGHT-64),
-                "spritegroups": (sprites, p_lasers),
-                "laser_img": p_laser_img,
-                "laser_sfx": laser_sfx,
-                "bullet_class": Laser }
-player = Player(player_data)
+player = Player(WIN_RES, player_imgs, p_spr_supergroup, Laser, p_laser_img, laser_sfx)
 player_group.add(player)
 sprites.add(player)
 
@@ -229,48 +240,31 @@ explosion_data = { "surface": window,
                    "images": explosion_imgs,
                    "explosions_sfx": explosions_sfx}
 
-def spawn_hellfighter(player):
-    # TODO: Clean up later
-    hf_data = { "surface": window,
-                 "images": hellfighter_imgs["normal"],
-                 "coords": [random.randrange(64, WIDTH-64), random.randrange(0, 100)],
-                 "spritegroups": [sprites, e_lasers],
-                 "bullet_img": e_laser_img,
-                 "bullet_class": Laser,
-                 "player": player}
-    hf_spawn_data = { "images": hellfighter_imgs["spawning"],
-                      "coords": hf_data["coords"],
-                      "spritegroups": [sprites, enemies],
-                      "spawndata": hf_data,
-                      "spawnclass": Hellfighter}
-    hf_spawn = SpawnAnim(hf_spawn_data)
-    sprites.add(hf_spawn)
+def spawn_hfighter():
+    hfighter = Hellfighter(WIN_RES, hfighter_imgs, e_spr_supergroup, Laser, e_laser_img, player)
+    enemies.add(hfighter)
+    sprites.add(hfighter)
 
 def spawn_raider():
-    # TODO: Clean up later
-    raider_data = { "surface": window,
-                    "images": raider_imgs["normal"],
-                    "coords": [random.randrange(64, WIDTH-64), random.randrange(0, 100)],
-                    "spritegroups": [sprites]}
-    raider_spawn_data = { "images": raider_imgs["spawning"],
-                          "coords": raider_data["coords"],
-                          "spritegroups": [sprites, enemies],
-                          "spawndata": raider_data,
-                          "spawnclass": Raider}
-    raider_spawn = SpawnAnim(raider_spawn_data)
-    sprites.add(raider_spawn)
+    raider = Raider(WIN_RES, raider_imgs)
+    enemies.add(raider)
+    sprites.add(raider)
 
 def spawn_fatty():
-    # TODO: Clean up later
-    fatty_data = { "surface": window,
-                   "images": fatty_imgs,
-                   "coords": [random.randrange(64, WIDTH-64), -64],
-                   "spritegroups": [sprites, e_lasers],
-                   "bullet_img": fireball_img,
-                   "bullet_class": Fireball }
-    fatty = Fatty(fatty_data)
+    fatty = Fatty(WIN_RES, fatty_imgs, e_spr_supergroup, Fireball, fireball_img)
     sprites.add(fatty)
     enemies.add(fatty)
+
+##def spawn_fatty():
+##    # TODO: Clean up later
+##    fatty_data = { "WIN_RES": WIN_RES,
+##                   "images": fatty_imgs,
+##                   "spritegroups": [sprites, e_lasers],
+##                   "bullet_img": fireball_img,
+##                   "bullet_class": Fireball }
+##    fatty = Fatty(fatty_data)
+##    sprites.add(fatty)
+##    enemies.add(fatty)
 
 # Game loop =======================================================================
 
@@ -317,7 +311,10 @@ class Game():
                 if (now - self.spawn_timer > self.spawn_delay - sd_subtractor(self.score) and
                     len(enemies) < max_enemy(self.score)):
                     self.spawn_timer = now
-                    self.roll_spawn(self.score, player)
+                    spawn_fatty()
+                    #spawn_raider()
+                    #spawn_hfighter()
+                    #self.roll_spawn(self.score, player)
 
                 # Check if enemy is hit by lasers
                 hits = pygame.sprite.groupcollide(enemies, p_lasers, False, True)
@@ -374,8 +371,8 @@ class Game():
                 draw_background(window, background_img, background_rect, self.background_y)
                 draw_background(window, backgroundp_img, backgroundp_rect, self.backgroundp_y)
                 sprites.draw(window)
-                self.window.blit(score_img, (10, 50))
-                draw_text(window, f"{str(self.score).zfill(3)}", 24, game_font, 70, 54, WHITE)
+                self.window.blit(score_img, (score_rect.x, score_rect.y))
+                draw_text(window, f"{str(self.score).zfill(3)}", 24, game_font, score_rect.x*4, score_rect.y+4, WHITE)
                 draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
                 self.window.blit(window, next(self.offset))
                 # Update the window
@@ -383,10 +380,10 @@ class Game():
             else:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
-                        running = False
+                        self.running = False
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            paused = False
+                            self.paused = False
 
                 draw_text(window, f"PAUSED", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE)
                 draw_text(window, f"ESC to Resume", 32, game_font, window_rect.centerx, window_rect.centery, WHITE)
