@@ -37,8 +37,8 @@ class Hellfighter(pygame.sprite.Sprite):
         self.images = images
         self.image = self.images["spawning"][0]
         self.rect = self.image.get_rect()
-        self.rect.x = 100 # TODO
-        self.rect.y = 100 # TODO
+        self.rect.x = random.randrange(64, self.win_res["w"]-64)
+        self.rect.y = random.randrange(64, self.win_res["h"]/4)
         self.Bullet = Bullet
         self.bullet_img = bullet_img
         self.health = 2
@@ -150,12 +150,12 @@ class Raider(pygame.sprite.Sprite):
         self.images = images
         self.image = self.images["spawning"][0]
         self.rect = self.image.get_rect()
-        self.rect.x = 100 # TODO
-        self.rect.y = 100 # TODO
+        self.rect.x = random.randrange(64, self.win_res["w"]-64)
+        self.rect.y = random.randrange(64, self.win_res["h"]/4)
         self.health = 4
         # For moving
-        self.maxspd = 8
-        self.spdy = 10
+        self.maxspd = 6
+        self.spdy = 8
         # For animation
         self.frame = 0
         self.frame_timer = pygame.time.get_ticks()
@@ -216,8 +216,8 @@ class Fatty(pygame.sprite.Sprite):
         self.images = images
         self.image = self.images["spawning"][0]
         self.rect = self.image.get_rect()
-        self.rect.x = 100
-        self.rect.y = 100
+        self.rect.x = random.randrange(64, self.win_res["w"]-64)
+        self.rect.y = random.randrange(64, self.win_res["h"]/4)
         self.sprite_supergroup = sprite_supergroup
         self.sprites = self.sprite_supergroup["sprites"]
         self.e_lasers = self.sprite_supergroup["e_lasers"]
@@ -262,9 +262,6 @@ class Fatty(pygame.sprite.Sprite):
 
             # Delete object if it goes off-screen or has <= 0 health
             if self.rect.top > self.win_res["h"] or self.health <= 0:
-                f1 = self.Bullet(self.win_res, self.bullet_img, self.rect.centerx, self.rect.bottom, random.choice([10,-10]), 8)
-                self.sprites.add(f1)
-                self.e_lasers.add(f1)
                 self.kill()
 
             self.animate()

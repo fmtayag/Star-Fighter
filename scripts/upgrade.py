@@ -1,11 +1,11 @@
 import pygame, numpy
 
 class Upgrade(pygame.sprite.Sprite):
-    def __init__(self, surface, images, center):
+    def __init__(self, surface, images, center, score):
         super().__init__()
         self.surf_h = surface.get_height()
         self.type = str()
-        self.roll_type()
+        self.roll_type(score)
         self.images = images
         self.image = self.images[self.type][0]
         self.rect = self.image.get_rect()
@@ -23,10 +23,14 @@ class Upgrade(pygame.sprite.Sprite):
         if self.rect.top > self.surf_h:
             self.kill()
 
-    def roll_type(self):
+    def roll_type(self, score):
         choices = ["gun", "coin", "hp"]
-        roll = numpy.random.choice(choices, p=[0.05, 0.85, 0.10])
-        self.type = roll
+        if score < 20:
+            roll = numpy.random.choice(choices, p=[0, 0.80, 0.20])
+            self.type = roll
+        else:
+            roll = numpy.random.choice(choices, p=[0.05, 0.80, 0.15])
+            self.type = roll
 
     def animate(self):
         now = pygame.time.get_ticks()

@@ -19,6 +19,7 @@ def draw_text(surf, text, size, font, x, y, color):
     surf.blit(text_surface, (text_rect.x, text_rect.y))
 
 def draw_hp(surf, x, y, hp, color, img):
+    # This is a rusty code but it works!
     if hp < 0:
         hp = 0
     rect_height = img.get_height()*0.5
