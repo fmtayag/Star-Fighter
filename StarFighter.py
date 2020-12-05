@@ -5,15 +5,10 @@
 #   - Website: zyenapz.github.io    #
 # Soundtrack by: yoitsrion          #
 #   - Soundcloud: yoitsrion         #
-# Font: VCR OSD Mono                #
-#   - By: Riciery Leal              #
-#   - Downloaded from dafont.com    #
+# Font: Press Start                 #
+#   - By: codeman38 (awesome dude!!)#
+#   - Downloaded from 1001fonts.com #
 #####################################
-
-# TODO: Change fireball's damage as it dissolves (DONE)
-# TODO: Clean up the spawner functions
-# TODO: Bundle relevant sprite groups into individual dictionaries. For Monsters class.
-    # TODO: Maybe just add a method that calls a "spawn_laser" function??
 
 # Import libraries
 try:
@@ -46,17 +41,17 @@ FPS = 60
 GAME_DIR = os.path.dirname(__file__)
 IMG_DIR = os.path.join(GAME_DIR, "img")
 SFX_DIR = os.path.join(GAME_DIR, "sfx")
-game_font = "font/VCR_OSD_MONO.ttf"
+game_font = "font/prstartk.ttf"
 clock = pygame.time.Clock()
 score = 0
 spawn_delay = 2000
-spawn_timer = pygame.time.get_ticks()
 background_y = 0
 backgroundp_y = 0
 running = True
 game_over = False
 paused = False
 offset = repeat((0, 0)) # For screen shake
+scale = 4
 
 # Initialize the window
 os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -85,126 +80,133 @@ player_imgs = dict()
 # Load and store cadet player frames
 player_cadet = dict()
 player_cadet["left"] = [
-    load_png("player_cadet_l1.png", IMG_DIR, 4),
-    load_png("player_cadet_l2.png", IMG_DIR, 4)
+    load_png("player_cadet_l1.png", IMG_DIR, scale),
+    load_png("player_cadet_l2.png", IMG_DIR, scale)
 ]
 player_cadet["normal"] = [
-    load_png("player_cadet_n1.png", IMG_DIR, 4),
-    load_png("player_cadet_n2.png", IMG_DIR, 4)
+    load_png("player_cadet_n1.png", IMG_DIR, scale),
+    load_png("player_cadet_n2.png", IMG_DIR, scale)
 ]
 player_cadet["right"] = [
-    load_png("player_cadet_r1.png", IMG_DIR, 4),
-    load_png("player_cadet_r2.png", IMG_DIR, 4)
+    load_png("player_cadet_r1.png", IMG_DIR, scale),
+    load_png("player_cadet_r2.png", IMG_DIR, scale)
 ]
 player_imgs["cadet"] = player_cadet
 
 # Load and store captain player frames
 player_captain = dict()
 player_captain["left"] = [
-    load_png("player_captain_l1.png", IMG_DIR, 4),
-    load_png("player_captain_l2.png", IMG_DIR, 4)
+    load_png("player_captain_l1.png", IMG_DIR, scale),
+    load_png("player_captain_l2.png", IMG_DIR, scale)
 ]
 player_captain["normal"] = [
-    load_png("player_captain_n1.png", IMG_DIR, 4),
-    load_png("player_captain_n2.png", IMG_DIR, 4)
+    load_png("player_captain_n1.png", IMG_DIR, scale),
+    load_png("player_captain_n2.png", IMG_DIR, scale)
 ]
 player_captain["right"] = [
-    load_png("player_captain_r1.png", IMG_DIR, 4),
-    load_png("player_captain_r2.png", IMG_DIR, 4)
+    load_png("player_captain_r1.png", IMG_DIR, scale),
+    load_png("player_captain_r2.png", IMG_DIR, scale)
 ]
 player_imgs["captain"] = player_captain
 
 # Load and store admiral player frames
 player_admiral = dict()
 player_admiral["left"] = [
-    load_png("player_admiral_l1.png", IMG_DIR, 4),
-    load_png("player_admiral_l2.png", IMG_DIR, 4)
+    load_png("player_admiral_l1.png", IMG_DIR, scale),
+    load_png("player_admiral_l2.png", IMG_DIR, scale)
 ]
 player_admiral["normal"] = [
-    load_png("player_admiral_n1.png", IMG_DIR, 4),
-    load_png("player_admiral_n2.png", IMG_DIR, 4)
+    load_png("player_admiral_n1.png", IMG_DIR, scale),
+    load_png("player_admiral_n2.png", IMG_DIR, scale)
 ]
 player_admiral["right"] = [
-    load_png("player_admiral_r1.png", IMG_DIR, 4),
-    load_png("player_admiral_r2.png", IMG_DIR, 4)
+    load_png("player_admiral_r1.png", IMG_DIR, scale),
+    load_png("player_admiral_r2.png", IMG_DIR, scale)
 ]
 player_imgs["admiral"] = player_admiral
+
+# Load and store spawning player frames
+player_imgs["spawning"] = [
+    load_png("player_spawn1.png", IMG_DIR, scale),
+    load_png("player_spawn2.png", IMG_DIR, scale),
+    load_png("player_spawn3.png", IMG_DIR, scale),
+    load_png("player_spawn4.png", IMG_DIR, scale)
+]
 
 # Load and store hellfighter images
 hfighter_imgs = dict()
 hfighter_imgs["normal"] = [
-    load_png("hellfighter1.png", IMG_DIR, 4),
-    load_png("hellfighter2.png", IMG_DIR, 4)
+    load_png("hellfighter1.png", IMG_DIR, scale),
+    load_png("hellfighter2.png", IMG_DIR, scale)
 ]
 hfighter_imgs["spawning"] = [
-    load_png("hf_spawn1.png", IMG_DIR, 4),
-    load_png("hf_spawn2.png", IMG_DIR, 4),
-    load_png("hf_spawn3.png", IMG_DIR, 4),
-    load_png("hf_spawn4.png", IMG_DIR, 4)
+    load_png("hf_spawn1.png", IMG_DIR, scale),
+    load_png("hf_spawn2.png", IMG_DIR, scale),
+    load_png("hf_spawn3.png", IMG_DIR, scale),
+    load_png("hf_spawn4.png", IMG_DIR, scale)
 ]
 
 # Load and store raider images
 raider_imgs = dict()
 raider_imgs["normal"] = [
-    load_png("raider1.png", IMG_DIR, 4),
-    load_png("raider2.png", IMG_DIR, 4)
+    load_png("raider1.png", IMG_DIR, scale),
+    load_png("raider2.png", IMG_DIR, scale)
 ]
 raider_imgs["spawning"] = [
-    load_png("raider_spawn1.png", IMG_DIR, 4),
-    load_png("raider_spawn2.png", IMG_DIR, 4),
-    load_png("raider_spawn3.png", IMG_DIR, 4),
-    load_png("raider_spawn4.png", IMG_DIR, 4),
+    load_png("raider_spawn1.png", IMG_DIR, scale),
+    load_png("raider_spawn2.png", IMG_DIR, scale),
+    load_png("raider_spawn3.png", IMG_DIR, scale),
+    load_png("raider_spawn4.png", IMG_DIR, scale),
 ]
 
 # Load and store fatty images
 fatty_imgs = dict()
 fatty_imgs["normal"] = [
-    load_png("fatty1.png", IMG_DIR, 4),
-    load_png("fatty2.png", IMG_DIR, 4)
+    load_png("fatty1.png", IMG_DIR, scale),
+    load_png("fatty2.png", IMG_DIR, scale)
 ]
 fatty_imgs["spawning"] = [
-    load_png("fatty_spawn1.png", IMG_DIR, 4),
-    load_png("fatty_spawn2.png", IMG_DIR, 4),
-    load_png("fatty_spawn3.png", IMG_DIR, 4),
-    load_png("fatty_spawn4.png", IMG_DIR, 4)
+    load_png("fatty_spawn1.png", IMG_DIR, scale),
+    load_png("fatty_spawn2.png", IMG_DIR, scale),
+    load_png("fatty_spawn3.png", IMG_DIR, scale),
+    load_png("fatty_spawn4.png", IMG_DIR, scale)
 ]
 
 # Load and store explosion images
 explosion_imgs = [
-    load_png("explosion1.png", IMG_DIR, 4),
-    load_png("explosion2.png", IMG_DIR, 4),
-    load_png("explosion3.png", IMG_DIR, 4),
-    load_png("explosion4.png", IMG_DIR, 4)
+    load_png("explosion1.png", IMG_DIR, scale),
+    load_png("explosion2.png", IMG_DIR, scale),
+    load_png("explosion3.png", IMG_DIR, scale),
+    load_png("explosion4.png", IMG_DIR, scale)
 ]
 
 # Load and store upgrade images
 upgrade_imgs = dict()
-upgrade_imgs["hp"] = [ load_png("upgrd_hp1.png", IMG_DIR, 4),
-                       load_png("upgrd_hp2.png", IMG_DIR, 4),
-                       load_png("upgrd_hp3.png", IMG_DIR, 4),
-                       load_png("upgrd_hp4.png", IMG_DIR, 4) ]
-upgrade_imgs["gun"] = [ load_png("upgrd_gun1.png", IMG_DIR, 4),
-                        load_png("upgrd_gun2.png", IMG_DIR, 4),
-                        load_png("upgrd_gun3.png", IMG_DIR, 4),
-                        load_png("upgrd_gun4.png", IMG_DIR, 4) ]
-upgrade_imgs["coin"] = [ load_png("upgrd_coin1.png", IMG_DIR, 4),
-                         load_png("upgrd_coin2.png", IMG_DIR, 4),
-                         load_png("upgrd_coin3.png", IMG_DIR, 4),
-                         load_png("upgrd_coin4.png", IMG_DIR, 4) ]
+upgrade_imgs["hp"] = [ load_png("upgrd_hp1.png", IMG_DIR, scale),
+                       load_png("upgrd_hp2.png", IMG_DIR, scale),
+                       load_png("upgrd_hp3.png", IMG_DIR, scale),
+                       load_png("upgrd_hp4.png", IMG_DIR, scale) ]
+upgrade_imgs["gun"] = [ load_png("upgrd_gun1.png", IMG_DIR, scale),
+                        load_png("upgrd_gun2.png", IMG_DIR, scale),
+                        load_png("upgrd_gun3.png", IMG_DIR, scale),
+                        load_png("upgrd_gun4.png", IMG_DIR, scale) ]
+upgrade_imgs["coin"] = [ load_png("upgrd_coin1.png", IMG_DIR, scale),
+                         load_png("upgrd_coin2.png", IMG_DIR, scale),
+                         load_png("upgrd_coin3.png", IMG_DIR, scale),
+                         load_png("upgrd_coin4.png", IMG_DIR, scale) ]
 
-p_laser_img = load_png("laser_player.png", IMG_DIR, 4)
-e_laser_img = load_png("laser_enemy.png", IMG_DIR, 4)
-#particle_img = load_png("particle.png", IMG_DIR, 2)
-fireball_img = load_png("fireball.png", IMG_DIR, 4)
-background_img = load_png("background.png", IMG_DIR, 4)
+p_laser_img = load_png("laser_player.png", IMG_DIR, scale)
+e_laser_img = load_png("laser_enemy.png", IMG_DIR, scale)
+fireball_img = load_png("fireball.png", IMG_DIR, scale)
+background_img = load_png("background.png", IMG_DIR, scale)
 background_rect = background_img.get_rect()
-backgroundp_img = load_png("background_parallax.png", IMG_DIR, 4)
+backgroundp_img = load_png("background_parallax.png", IMG_DIR, scale)
 backgroundp_rect = backgroundp_img.get_rect()
-hp_bar_img = load_png("hp_bar.png", IMG_DIR, 4)
+hp_bar_img = load_png("hp_bar.png", IMG_DIR, scale)
 hp_bar_rect = hp_bar_img.get_rect()
 hp_bar_rect.x = 20
 hp_bar_rect.y = 20
-score_img = load_png("score_icon.png", IMG_DIR, 4)
+score_img = load_png("score_icon.png", IMG_DIR, scale)
 score_rect = score_img.get_rect()
 score_rect.x = 10
 score_rect.y = hp_bar_rect.y + 30
@@ -241,11 +243,6 @@ particles = list() # I know...this isn't really a sprite group
 # Sprite supergroups
 p_spr_supergroup = {"sprites": sprites, "p_lasers": p_lasers}
 e_spr_supergroup = {"sprites": sprites, "e_lasers": e_lasers}
-
-# Instantiate the player ==========================================================
-player = Player(WIN_RES, player_imgs, p_spr_supergroup, Laser, p_laser_img, laser_sfx)
-player_group.add(player)
-sprites.add(player)
 
 # Spawner Functions ===============================================================
 
@@ -303,8 +300,195 @@ def roll_spawn(score):
 # Play the soundtrack
 pygame.mixer.music.play(loops=-1)
 
+running = True
+menu = True
+gaming = False
+game_over = False
+
 while running:
-    if not paused:
+    
+    sprites.empty()
+    enemies.empty()
+    p_lasers.empty()
+    e_lasers.empty()
+    upgrades.empty()
+    particles[:] = []
+
+    # Instantiate the player ==========================================================
+    player = Player(WIN_RES, player_imgs, p_spr_supergroup, Laser, p_laser_img, laser_sfx)
+    player_group.add(player)
+    sprites.add(player)
+    spawn_timer = 0
+    score = 0
+
+    while menu:
+
+        # Lock the FPS
+        clock.tick(FPS)
+
+        # Increment the background and parallax's ypos
+        background_y += 2
+        backgroundp_y += 4
+
+        # Get input ===========================================================
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                menu = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_c:
+                    menu = False
+                    gaming = True
+                elif event.key == pygame.K_h:
+                    pass
+                    # TODO
+                elif event.key == pygame.K_x:
+                    running = False
+                    menu = False
+
+        # Update objects ======================================================
+        #cur_fps = round(clock.get_fps(), 2)
+        #pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
+        
+        # Draw objects
+        draw_background(window, background_img, background_rect, background_y)
+        draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
+        draw_text(window, f"STAR", 128, game_font, window_rect.centerx, window_rect.centery-256, WHITE)
+        draw_text(window, f"FIGHTER", 64, game_font, window_rect.centerx, window_rect.centery-128, WHITE)
+        draw_text(window, f"(c)2020 zyenapz", 16, game_font, window_rect.centerx, window_rect.centery-48, WHITE)
+        draw_text(window, f"[C] Play", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE)
+        #draw_text(window, f"[H] Scores", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE)
+        draw_text(window, f"[X] Exit", 32, game_font, window_rect.centerx, window_rect.centery+96, WHITE)
+        draw_text(window, f"Game by zyenapz", 16, game_font, window_rect.centerx, window_rect.bottom-64, WHITE)
+        draw_text(window, f"Music by YoItsRion", 16, game_font, window_rect.centerx, window_rect.bottom-48, WHITE)
+        draw_text(window, f"Font by codeman38", 16, game_font, window_rect.centerx, window_rect.bottom-32, WHITE)
+
+        # Update the window
+        pygame.display.flip()
+    
+    while gaming:
+        if not paused:
+
+            if spawn_timer == 0:
+                spawn_timer = pygame.time.get_ticks()
+                
+            # Lock the FPS
+            clock.tick(FPS)
+
+            # Increment the background and parallax's ypos
+            background_y += 1
+            backgroundp_y += 2
+
+            # Get input ===========================================================
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    gaming = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        paused = True
+
+            # Update objects ======================================================
+            now = pygame.time.get_ticks()
+            if (now - spawn_timer > spawn_delay - sd_subtractor(score) and
+                len(enemies) < max_enemy(score)):
+                spawn_timer = now
+                roll_spawn(score)
+
+            # Check if enemy is hit by lasers
+            hits = pygame.sprite.groupcollide(enemies, p_lasers, False, True)
+            for hit in hits:
+                hit.spdy = -6 # Knockback effect
+                hit.health -= 1
+                spawn_explosion(Explosion, explosion_data, hit.rect.centerx, hit.rect.bottom, sprites)
+                if hit.health <= 0:
+                    offset = shake(15, 5)
+                    u = Upgrade(window, upgrade_imgs, hit.rect.center, score)
+                    sprites.add(u)
+                    upgrades.add(u)
+                    spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(10,16))
+                    
+            # Check if the player collides with an enemy
+            hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
+            for hit in hits:
+                player.health -= 5
+                spawn_explosion(Explosion, explosion_data, hit.rect.centerx, hit.rect.bottom, sprites)
+                spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
+                offset = shake(20, 10)
+                spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(10,16))
+
+            # Check if player is hit by enemy lasers
+            hits = pygame.sprite.spritecollide(player, e_lasers, True, pygame.sprite.collide_circle)
+            for hit in hits:
+                player.health -= hit.damage
+                spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
+                offset = shake(20, 10)
+
+            # Check if player picks up an upgrade
+            hits = pygame.sprite.spritecollide(player, upgrades, True, pygame.sprite.collide_circle)
+            for hit in hits:
+                if hit.type == "gun":
+                    if player.cur_lvl < 2:
+                        player.cur_lvl += 1
+                        player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
+                        player.lvl = player.lvls[player.cur_lvl]
+                    else:
+                        player.health += 1
+                        if player.health >= 10:
+                            player.health = 10
+                    upgrade_sfx.play()
+                elif hit.type == "hp":
+                    player.health += 2
+                    if player.health >= 10:
+                        player.health = 10
+                    upgrade_sfx.play()
+                elif hit.type == "coin":
+                    score += 1
+                    coin_sfx.play()
+
+            # Check if player has no health
+            if player.health <= 0:
+                spawn_particles(player.rect.centerx, player.rect.centery, 50)
+                gaming = False
+                game_over = True
+                player.kill()
+
+            sprites.update()
+            
+            #cur_fps = round(clock.get_fps(), 2)
+            #pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
+
+            # Draw objects ========================================================
+            draw_background(window, background_img, background_rect, background_y)
+            draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
+            sprites.draw(window)
+            window.blit(score_img, (score_rect.x, score_rect.y))
+            draw_text(window, f"{str(score).zfill(3)}", 24, game_font, score_rect.x*8.5, score_rect.y+4, WHITE)
+            draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
+            window.blit(window, next(offset))
+            update_particles()
+
+            # Update the window
+            pygame.display.flip()
+        else:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    gaming = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        paused = False
+                    elif event.key == pygame.K_x:
+                        paused = False
+                        gaming = False
+                        menu = True
+
+            draw_text(window, f"PAUSED", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE)
+            draw_text(window, f"[ESC] Resume", 32, game_font, window_rect.centerx, window_rect.centery, WHITE)
+            draw_text(window, f"[X] Quit", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
+            pygame.display.flip()
+
+    while game_over:
         # Lock the FPS
         clock.tick(FPS)
 
@@ -316,136 +500,36 @@ while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                game_over = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    paused = True
+                if event.key == pygame.K_c:
+                    gaming = True
+                    game_over = False
+                elif event.key == pygame.K_x:
+                    game_over = False
+                    menu = True
 
         # Update objects ======================================================
-        now = pygame.time.get_ticks()
-        if (now - spawn_timer > spawn_delay - sd_subtractor(score) and
-            len(enemies) < max_enemy(score)):
-            spawn_timer = now
-            roll_spawn(score)
-
-        # Check if enemy is hit by lasers
-        hits = pygame.sprite.groupcollide(enemies, p_lasers, False, True)
-        for hit in hits:
-            hit.spdy = -6 # Knockback effect
-            hit.health -= 1
-            spawn_explosion(Explosion, explosion_data, hit.rect.centerx, hit.rect.bottom, sprites)
-            if hit.health <= 0:
-                offset = shake(15, 5)
-                u = Upgrade(window, upgrade_imgs, hit.rect.center, score)
-                sprites.add(u)
-                upgrades.add(u)
-                spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(6,12))
-                
-        # Check if the player collides with an enemy
-        hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            player.health -= 5
-            spawn_explosion(Explosion, explosion_data, hit.rect.centerx, hit.rect.bottom, sprites)
-            spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
-            offset = shake(20, 10)
-            spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(6,12))
-
-        # Check if player is hit by enemy lasers
-        hits = pygame.sprite.spritecollide(player, e_lasers, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            player.health -= hit.damage
-            spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
-            offset = shake(20, 10)
-
-        # Check if player picks up an upgrade
-        hits = pygame.sprite.spritecollide(player, upgrades, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            if hit.type == "gun":
-                player.cur_lvl += 1
-                player.cur_lvl = numpy.clip(player.cur_lvl, 0, 2)
-                player.lvl = player.lvls[player.cur_lvl]
-                upgrade_sfx.play()
-            elif hit.type == "hp":
-                player.health += 2
-                if player.health >= 10:
-                    player.health = 10
-                upgrade_sfx.play()
-            elif hit.type == "coin":
-                score += 1
-                coin_sfx.play()
-
-        # Check if player has no health
-        if player.health <= 0:
-            running = False
-            #player.kill()
 
         sprites.update()
-        cur_fps = round(clock.get_fps(), 2)
-        pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
+        
+        #cur_fps = round(clock.get_fps(), 2)
+        #pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
 
         # Draw objects ========================================================
         draw_background(window, background_img, background_rect, background_y)
         draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
         sprites.draw(window)
-        window.blit(score_img, (score_rect.x, score_rect.y))
-        draw_text(window, f"{str(score).zfill(3)}", 20, game_font, score_rect.x*8, score_rect.y+6, WHITE)
-        draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
-        window.blit(window, next(offset))
         update_particles()
-
+        window.blit(score_img, (10, 50))
+        draw_text(window, f"{str(score).zfill(3)}", 24, game_font, score_rect.x*8.5, score_rect.y+4, WHITE)
+        draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
+        draw_text(window, f"GAME OVER", 64, game_font, window_rect.centerx, window_rect.centery-64, WHITE)
+        draw_text(window, f"[C] Retry", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
+        draw_text(window, f"[X] Quit", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE)
+        window.blit(window, next(offset))
         # Update the window
         pygame.display.flip()
-    else:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    paused = False
-
-        draw_text(window, f"PAUSED", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE)
-        draw_text(window, f"ESC to Resume", 32, game_font, window_rect.centerx, window_rect.centery, WHITE)
-        draw_text(window, f"X to Exit", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
-        pygame.display.flip()
-
-##def game_over():
-##    # TODO
-##
-##    running = True
-##    while running:
-##        # Lock the FPS
-##        clock.tick(FPS)
-##
-##        # Increment the background and parallax's ypos
-##        background_y += 1
-##        backgroundp_y += 2
-##
-##        # Get input ===========================================================
-##        for event in pygame.event.get():
-##            if event.type == pygame.QUIT:
-##                running = False
-##            elif event.type == pygame.KEYDOWN:
-##                if event.key == pygame.K_RETURN:
-##                    game_loop()
-##
-##        # Update objects ======================================================
-##
-##        sprites.update()
-##        cur_fps = round(clock.get_fps(), 2)
-##        pygame.display.set_caption(f"Star Fighter (FPS: {cur_fps})")
-##
-##        # Draw objects ========================================================
-##        draw_background(window, background_img, background_rect, background_y)
-##        draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
-##        sprites.draw(window)
-##        window.blit(score_img, (10, 50))
-##        draw_text(window, f"{score}", 24, game_font, 60, 54, WHITE)
-##        draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
-##        draw_text(window, f"GAME OVER", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE)
-##        draw_text(window, f"RETURN to play again", 32, game_font, window_rect.centerx, window_rect.centery, WHITE)
-##        draw_text(window, f"X to exit", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
-##        window.blit(window, next(offset))
-##        # Update the window
-##        pygame.display.flip()
 
 # Quit pygame
 pygame.quit()

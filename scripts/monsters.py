@@ -1,42 +1,54 @@
 import pygame, random, numpy
 
 class Monster(pygame.sprite.Sprite):
-    def __init__(self, data):
-        super().__init__()
-        self.WIN_RES = data["WIN_RES"]
-        self.images = data["images"]
-        self.image = self.images[0]
-        self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(64, WIN_RES["w"]-64)
-        self.rect.y = random.randrange(0, 100)
-        self.spritegroups = data["spritegroups"]
-        self.sprites = self.spritegroups[0]
-        self.frame = 0
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        old_rectx = self.rect.x
-        old_recty = self.rect.y
-        if now - self.frame_timer > self.frame_delay:
-            self.frame_timer = now
-            self.frame += 1
-            if self.frame > 1:
-                self.frame = 0
-            self.image = self.images[self.frame]
-            self.rect = self.image.get_rect()
-            #pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-class Hellfighter(pygame.sprite.Sprite):
-    def __init__(self, win_res, images, sprite_supergroup, Bullet, bullet_img, player):
+    def __init__(self, win_res, images):
         super().__init__()
         self.win_res = win_res
         self.images = images
         self.image = self.images["spawning"][0]
         self.rect = self.image.get_rect()
+        # For animation
+        self.frame = 0
+        self.frame_timer = pygame.time.get_ticks()
+        self.frame_delay = 100
+        # For spawn animation
+        self.spawned = False
+        self.spawn_timer = pygame.time.get_ticks()
+        self.spawn_delay = 150
+        self.spawn_frame = 0
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.frame_timer > self.frame_delay:
+            old_rectx = self.rect.x
+            old_recty = self.rect.y
+            self.frame_timer = now
+            self.frame += 1
+            if self.frame > 1:
+                self.frame = 0
+            self.image = self.images["normal"][self.frame]
+            self.rect = self.image.get_rect()
+            self.rect.x = old_rectx
+            self.rect.y = old_recty
+
+    def spawn(self):
+        now = pygame.time.get_ticks()
+        if now - self.spawn_timer > self.spawn_delay:
+            old_rectx = self.rect.x
+            old_recty = self.rect.y
+            self.spawn_timer = now
+            self.spawn_frame += 1
+            if self.spawn_frame == 3:
+                self.spawned = True
+            self.image = self.images["spawning"][self.spawn_frame]
+            self.rect = self.image.get_rect()
+            self.rect.x = old_rectx
+            self.rect.y = old_recty
+
+class Hellfighter(Monster):
+    def __init__(self, win_res, images, sprite_supergroup, Bullet, bullet_img, player):
+        super().__init__(win_res, images)
+        self.win_res = win_res
         self.rect.x = random.randrange(64, self.win_res["w"]-64)
         self.rect.y = random.randrange(64, self.win_res["h"]/4)
         self.Bullet = Bullet
@@ -47,10 +59,6 @@ class Hellfighter(pygame.sprite.Sprite):
         self.sprite_supergroup = sprite_supergroup
         self.sprites = sprite_supergroup["sprites"]
         self.e_lasers = sprite_supergroup["e_lasers"]
-        # For animation
-        self.frame = 0
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
         self.shoot_delay = 1000
@@ -62,16 +70,13 @@ class Hellfighter(pygame.sprite.Sprite):
         self.chase_delay = random.randrange(250, 400)
         self.chase_timer = pygame.time.get_ticks()
         # The point at which the object will stop moving on the y-axis
-        self.max_disty = self.win_res["w"] * (random.randrange(2, 5) / 10)
-        # For spawn animation
-        self.spawned = False
-        self.spawn_timer = pygame.time.get_ticks()
-        self.spawn_delay = 150
-        self.spawn_frame = 0
+        self.max_disty = self.win_res["w"] * (random.randrange(2, 5) / 10)        
 
     def update(self):
         if not self.spawned:
             self.spawn()
+            if self.health <= 0:
+                self.kill()
         else:
             # Decelerate on the y-axis, for the knockback effect
             if self.spdy < 1:
@@ -115,60 +120,21 @@ class Hellfighter(pygame.sprite.Sprite):
             elif self.rect.centerx > self.player.rect.centerx:
                 self.spdx = -self.movspd
 
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.frame_timer > self.frame_delay:
-            old_rectx = self.rect.x
-            old_recty = self.rect.y
-            self.frame_timer = now
-            self.frame += 1
-            if self.frame > 1:
-                self.frame = 0
-            self.image = self.images["normal"][self.frame]
-            self.rect = self.image.get_rect()
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-    def spawn(self):
-        now = pygame.time.get_ticks()
-        if now - self.spawn_timer > self.spawn_delay:
-            old_rectx = self.rect.x
-            old_recty = self.rect.y
-            self.spawn_timer = now
-            self.spawn_frame += 1
-            if self.spawn_frame == 3:
-                self.spawned = True
-            self.image = self.images["spawning"][self.spawn_frame]
-            self.rect = self.image.get_rect()
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-class Raider(pygame.sprite.Sprite):
+class Raider(Monster):
     def __init__(self, win_res, images):
-        super().__init__()
-        self.win_res = win_res
-        self.images = images
-        self.image = self.images["spawning"][0]
-        self.rect = self.image.get_rect()
+        super().__init__(win_res, images)
         self.rect.x = random.randrange(64, self.win_res["w"]-64)
         self.rect.y = random.randrange(64, self.win_res["h"]/4)
         self.health = 4
         # For moving
         self.maxspd = 6
         self.spdy = 8
-        # For animation
-        self.frame = 0
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
-        # For spawning animation
-        self.spawned = False
-        self.spawn_timer = pygame.time.get_ticks()
-        self.spawn_delay = 150
-        self.spawn_frame = 0
 
     def update(self):
         if not self.spawned:
             self.spawn()
+            if self.health <= 0:
+                self.kill()
         else:
             # Slow down when knockbacked
             if self.spdy < self.maxspd * 0.8:
@@ -181,37 +147,9 @@ class Raider(pygame.sprite.Sprite):
             self.animate()
             self.rect.y += self.spdy
 
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.frame_timer > self.frame_delay:
-            old_rectx = self.rect.x
-            old_recty = self.rect.y
-            self.frame_timer = now
-            self.frame += 1
-            if self.frame > 1:
-                self.frame = 0
-            self.image = self.images["normal"][self.frame]
-            self.rect = self.image.get_rect()
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-    def spawn(self):
-        now = pygame.time.get_ticks()
-        if now - self.spawn_timer > self.spawn_delay:
-            old_rectx = self.rect.x
-            old_recty = self.rect.y
-            self.spawn_timer = now
-            self.spawn_frame += 1
-            if self.spawn_frame == 3:
-                self.spawned = True
-            self.image = self.images["spawning"][self.spawn_frame]
-            self.rect = self.image.get_rect()
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-class Fatty(pygame.sprite.Sprite):
+class Fatty(Monster):
     def __init__(self, win_res, images, sprite_supergroup, Bullet, bullet_img):
-        super().__init__()
+        super().__init__(win_res, images)
         self.win_res = win_res
         self.images = images
         self.image = self.images["spawning"][0]
@@ -230,21 +168,14 @@ class Fatty(pygame.sprite.Sprite):
         # For moving
         self.spdx = random.choice([-1,1])
         self.spdy = 0
-        # For animation
-        self.frame = 0
-        self.frame_timer = pygame.time.get_ticks()
-        self.frame_delay = 100
-        # For spawning animation
-        self.spawned = False
-        self.spawn_timer = pygame.time.get_ticks()
-        self.spawn_delay = 150
-        self.spawn_frame = 0
         # the point at which the object will stop moving on the y-axis
         self.max_disty = self.win_res["h"] * (random.randrange(2, 5) / 10)
 
     def update(self):
         if not self.spawned:
             self.spawn()
+            if self.health <= 0:
+                self.kill()
         else:
             # Slow down when knockbacked
             if self.spdy < 1:
@@ -280,34 +211,6 @@ class Fatty(pygame.sprite.Sprite):
             self.e_lasers.add(f1)
             self.e_lasers.add(f2)
             self.spdy -= 10 # Recoil effect
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.frame_timer > self.frame_delay:
-            old_rectx = self.rect.x
-            old_recty = self.rect.y
-            self.frame_timer = now
-            self.frame += 1
-            if self.frame > 1:
-                self.frame = 0
-            self.image = self.images["normal"][self.frame]
-            self.rect = self.image.get_rect()
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
-
-    def spawn(self):
-        now = pygame.time.get_ticks()
-        if now - self.spawn_timer > self.spawn_delay:
-            old_rectx = self.rect.x
-            old_recty = self.rect.y
-            self.spawn_timer = now
-            self.spawn_frame += 1
-            if self.spawn_frame == 3:
-                self.spawned = True
-            self.image = self.images["spawning"][self.spawn_frame]
-            self.rect = self.image.get_rect()
-            self.rect.x = old_rectx
-            self.rect.y = old_recty
 
 class Bomb(Monster):
     def __init__(self, data):

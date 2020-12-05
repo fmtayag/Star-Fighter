@@ -28,6 +28,9 @@ class Upgrade(pygame.sprite.Sprite):
         if score < 20:
             roll = numpy.random.choice(choices, p=[0, 0.80, 0.20])
             self.type = roll
+        elif score > 100:
+            roll = numpy.random.choice(choices, p=[0.05, 0.90, 0.05])
+            self.type = roll
         else:
             roll = numpy.random.choice(choices, p=[0.05, 0.80, 0.15])
             self.type = roll

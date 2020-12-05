@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):
         self.lvls = ["cadet", "captain", "admiral"]
         self.cur_lvl = 0
         self.lvl = self.lvls[self.cur_lvl]
-        self.image = self.images[self.lvl][self.orient][0]
+        self.image = self.images["spawning"][0]
         self.rect = self.image.get_rect()
         self.rect.centerx = self.win_res["w"]/2
         self.rect.bottom = self.win_res["h"]-64
@@ -34,43 +34,51 @@ class Player(pygame.sprite.Sprite):
         self.frame = 0
         # For collision detection
         self.radius = 16
+        # For spawn animation
+        self.spawned = False
+        self.spawn_timer = pygame.time.get_ticks()
+        self.spawn_delay = 150
+        self.spawn_frame = 0
 
     def update(self):
-        # Reset ship's orientation
-        self.orient = "normal"
-        self.spdy = 0
-        self.spdx = 0
+        if not self.spawned:
+            self.spawn()
+        else:
+            # Reset ship's orientation
+            self.orient = "normal"
+            self.spdy = 0
+            self.spdx = 0
 
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_w]:
-            self.spdy -= self.movspd
-        if pressed[pygame.K_s]:
-            self.spdy += self.movspd
-        if pressed[pygame.K_a]:
-            self.spdx -= self.movspd
-            self.orient = "left"
-        if pressed[pygame.K_d]:
-            self.spdx += self.movspd
-            self.orient = "right"
-        if pressed[pygame.K_SPACE]:
-            self.shoot()
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_w]:
+                self.spdy -= self.movspd
+            if pressed[pygame.K_s]:
+                self.spdy += self.movspd
+            if pressed[pygame.K_a]:
+                self.spdx -= self.movspd
+                self.orient = "left"
+            if pressed[pygame.K_d]:
+                self.spdx += self.movspd
+                self.orient = "right"
+            if pressed[pygame.K_SPACE]:
+                self.shoot()
 
-        # Check if object collides with window bounds
-        if self.rect.right > self.win_res["w"]:
-            self.rect.right = self.win_res["w"]
-        if self.rect.left < 0:
-            self.rect.left = 0
-        if self.rect.bottom > self.win_res["h"]:
-            self.rect.bottom = self.win_res["h"]
-        if self.rect.top < 0:
-            self.rect.top = 0
+            # Check if object collides with window bounds
+            if self.rect.right > self.win_res["w"]:
+                self.rect.right = self.win_res["w"]
+            if self.rect.left < 0:
+                self.rect.left = 0
+            if self.rect.bottom > self.win_res["h"]:
+                self.rect.bottom = self.win_res["h"]
+            if self.rect.top < 0:
+                self.rect.top = 0
 
-        # Animate the sprite
-        self.animate()
+            # Animate the sprite
+            self.animate()
 
-        # Move the object
-        self.rect.x += self.spdx
-        self.rect.y += self.spdy
+            # Move the object
+            self.rect.x += self.spdx
+            self.rect.y += self.spdy
 
     def shoot(self):
         now = pygame.time.get_ticks()
@@ -79,7 +87,7 @@ class Player(pygame.sprite.Sprite):
             self.bullet_sfx.play()
             if self.lvl == "cadet":
                 l = self.Bullet(self.win_res["h"], self.bullet_img, self.rect.centerx,
-                          self.rect.top-32, 0, -8)
+                          self.rect.top-32, 0, -12)
                 self.sprites.add(l)
                 self.p_lasers.add(l)
             elif self.lvl == "captain":
@@ -87,7 +95,7 @@ class Player(pygame.sprite.Sprite):
                 speed_x = [-1,1]
                 for i in range(2):
                     l = self.Bullet(self.win_res["h"], self.bullet_img, self.rect.centerx+offset_x[i],
-                              self.rect.top-32, speed_x[i], -8)
+                              self.rect.top-32, speed_x[i], -12)
                     self.sprites.add(l)
                     self.p_lasers.add(l)
             elif self.lvl == "admiral":
@@ -96,7 +104,7 @@ class Player(pygame.sprite.Sprite):
                 speed_x = [-1,0,1]
                 for i in range(3):
                     l = self.Bullet(self.win_res["h"], self.bullet_img, self.rect.centerx+offset_x[i],
-                              self.rect.top+offset_y[i], speed_x[i], -8)
+                              self.rect.top+offset_y[i], speed_x[i], -12)
                     self.sprites.add(l)
                     self.p_lasers.add(l)
 
@@ -112,5 +120,19 @@ class Player(pygame.sprite.Sprite):
             self.image = self.images[self.lvl][self.orient][self.frame]
             self.rect = self.image.get_rect()
             #pygame.draw.circle(self.image, WHITE, self.rect.center, self.radius)
+            self.rect.x = old_rectx
+            self.rect.y = old_recty
+
+    def spawn(self):
+        now = pygame.time.get_ticks()
+        if now - self.spawn_timer > self.spawn_delay:
+            old_rectx = self.rect.x
+            old_recty = self.rect.y
+            self.spawn_timer = now
+            self.spawn_frame += 1
+            if self.spawn_frame == 3:
+                self.spawned = True
+            self.image = self.images["spawning"][self.spawn_frame]
+            self.rect = self.image.get_rect()
             self.rect.x = old_rectx
             self.rect.y = old_recty
