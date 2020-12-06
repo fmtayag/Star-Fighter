@@ -27,13 +27,13 @@ class Upgrade(pygame.sprite.Sprite):
         choices = ["gun", "coin", "hp"]
         if score < 20:
             roll = random.choices(choices, [0, 0.80, 0.20], k=10)
-            self.type = roll[0]
+            self.type = random.choice(roll)
         elif score > 100:
             roll = random.choices(choices, [0.05, 0.90, 0.05], k=10)
-            self.type = roll[0]
+            self.type = random.choice(roll)
         else:
             roll = random.choices(choices, [0.05, 0.80, 0.15], k=10)
-            self.type = roll[0]
+            self.type = random.choice(roll)
 
     def animate(self):
         now = pygame.time.get_ticks()

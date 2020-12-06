@@ -28,6 +28,7 @@ except Exception as e:
 
 # Initialize pygame
 pygame.init()
+pygame.mouse.set_visible(False) # Hide the mouse
 
 # Program variables
 WIN_RES = {"w": 640, "h": 676}
@@ -302,11 +303,11 @@ def roll_spawn(score):
     monsters = ["raider","hellfighter", "fatty"]
     roll = None
     if player.cur_lvl < 1 and score < 80:
-        choices = random.choices(monsters, [0.25, 0.70, 0.05], k=1)
-        roll = choices[0]
+        choices = random.choices(monsters, [0.25, 0.70, 0.05], k=10)
+        roll = random.choice(choices)
     else:
-        choices = random.choices(monsters, [0.30,0.55,0.15], k=1)
-        roll = choices[0]
+        choices = random.choices(monsters, [0.30,0.55,0.15], k=10)
+        roll = random.choice(choices)
 
     if roll == "raider":
         spawn_raider()
@@ -359,7 +360,7 @@ while running:
                 running = False
                 menu = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_c:
+                if event.key == pygame.K_z:
                     menu = False
                     gaming = True
                 elif event.key == pygame.K_s:
@@ -374,7 +375,7 @@ while running:
         draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
         window.blit(logo_img, (window_rect.centerx-240, -64))
         draw_text(window, "powered by pygame", 16, game_font, window_rect.centerx, window_rect.centery-32, GRAY)
-        draw_text(window, "[C] Play", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE)
+        draw_text(window, "[Z] Play", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE)
         draw_text(window, "  [S] Scores", 32, game_font, window_rect.centerx, window_rect.centery+96, WHITE)
         draw_text(window, "[X] Exit", 32, game_font, window_rect.centerx, window_rect.centery+128, WHITE)
         draw_text(window, "(c) 2020 zyenapz.", 16, game_font, window_rect.centerx, window_rect.bottom-98, GRAY)
@@ -445,7 +446,7 @@ while running:
                     running = False
                     gaming = False
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                         paused = True
 
             # Update objects ======================================================
@@ -538,7 +539,7 @@ while running:
                     running = False
                     gaming = False
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                         paused = False
                     elif event.key == pygame.K_x:
                         paused = False
@@ -546,8 +547,8 @@ while running:
                         menu = True
 
             draw_text(window, f"PAUSED", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE)
-            draw_text(window, f"[ESC] Resume", 32, game_font, window_rect.centerx, window_rect.centery, WHITE)
-            draw_text(window, f"[X] Quit", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
+            draw_text(window, f"[ESC][P] Resume", 24, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
+            draw_text(window, f"   [X] Quit", 24, game_font, window_rect.centerx, window_rect.centery+66, WHITE)
             pygame.display.flip()
 
     while game_over:
