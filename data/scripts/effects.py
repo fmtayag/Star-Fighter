@@ -32,7 +32,7 @@ class Explosion(pygame.sprite.Sprite):
                 self.rect.center = center
 
 class Particle():
-    def __init__(self, window, win_res, x, y):
+    def __init__(self, window, win_res, x, y, colors):
         self.window = window
         self.win_res = win_res
         self.x = x
@@ -40,9 +40,7 @@ class Particle():
         self.spdx = random.choice([num for num in range(-8,8) if num not in [-1,0,1]])
         self.spdy = random.choice([num for num in range(-8,8) if num not in [-1,0,1]])
         self.size = random.choice([4,8])
-        self.color = random.choice([(255,252,64),
-                                    (255,213,65),
-                                    (249,163,27)])
+        self.color = random.choice(colors)
 
     def update(self):
         self.x += self.spdx

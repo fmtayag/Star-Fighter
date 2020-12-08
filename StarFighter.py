@@ -10,9 +10,9 @@
 #   - Downloaded from 1001fonts.com #
 #####################################
 
-# Import libraries
+# Import libraries =============================================================
 try:
-    import pygame, os, random, math, pickle
+    import pygame, os, random, math
     from itertools import repeat
     from data.scripts.bullets import Laser, Fireball
     from data.scripts.monsters import Hellfighter, Raider, Fatty
@@ -26,11 +26,11 @@ except Exception as e:
     print(e)
     exit()
 
-# Initialize pygame
+# Initialize pygame ============================================================
 pygame.init()
 pygame.mouse.set_visible(False) # Hide the mouse
 
-# Program variables
+# Program variables ============================================================
 WIN_RES = {"w": 640, "h": 676}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
@@ -50,8 +50,10 @@ GAME_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(GAME_DIR, "data")
 IMG_DIR = os.path.join(DATA_DIR, "img")
 SFX_DIR = os.path.join(DATA_DIR, "sfx")
-game_font = "data/font/prstartk.ttf"
-scores_path = os.path.join(DATA_DIR, "scores.dat")
+SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
+FONT_DIR = os.path.join(DATA_DIR, "font")
+game_font = os.path.join(FONT_DIR, "prstartk.ttf")
+scores_path = os.path.join(SCRIPTS_DIR, "scores.dat")
 # Game loop booleans
 running = True
 game_over = False
@@ -63,14 +65,15 @@ background_y = 0 # For the background's y coordinate
 backgroundp_y = 0 # For parallax's y coordinate
 offset = repeat((0, 0)) # For screen shake
 scale = 4 # For scaling images
+particle_colors = [(255,252,64),(255,213,65),(249,163,27)]
 
-# Initialize the window
+# Initialize the window ========================================================
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 window = pygame.display.set_mode((WIN_RES["w"], WIN_RES["h"]))
 window_rect = window.get_rect()
 pygame.display.set_caption(TITLE)
 
-# Images ==========================================================================
+# Images =======================================================================
 def load_png(file, directory, scale):
     try:
         path = os.path.join(directory, file)
@@ -223,7 +226,7 @@ score_rect = score_img.get_rect()
 score_rect.x = 10
 score_rect.y = hp_bar_rect.y + 30
 
-# Sounds ==========================================================================
+# Sounds =======================================================================
 
 def load_sound(filename, sfx_dir, volume):
     path = os.path.join(sfx_dir, filename)
@@ -243,7 +246,7 @@ explosions_sfx = [ load_sound("sfx_explosion1.wav", SFX_DIR, 0.5),
 pygame.mixer.music.load(os.path.join(SFX_DIR, "ost_fighter.ogg"))
 pygame.mixer.music.set_volume(0.3)
 
-# Sprite Groups ===================================================================
+# Sprite Groups ================================================================
 
 # Sprite groups
 sprites = pygame.sprite.Group()
@@ -258,7 +261,7 @@ particles = list()
 p_spr_supergroup = {"sprites": sprites, "p_lasers": p_lasers}
 e_spr_supergroup = {"sprites": sprites, "e_lasers": e_lasers}
 
-# Spawner Functions ===============================================================
+# Spawner Functions ============================================================
 
 explosion_data = { "surface": window,
                    "images": explosion_imgs,
@@ -284,14 +287,15 @@ def spawn_fatty():
     sprites.add(fatty)
     enemies.add(fatty)
 
-def spawn_particles(x, y, amnt):
+def spawn_particles(x, y, amnt, colors):
     for _ in range(amnt):
-        p = Particle(window, WIN_RES, random.randrange(x-10,x), random.randrange(y-10,y))
+        p = Particle(window, WIN_RES, random.randrange(x-10,x), random.randrange(y-10,y), colors)
         particles.append(p)
 
 def update_particles():
     for p in particles:
         p.update()
+
         if (p.x < -p.size or
             p.x > p.win_res["w"] + p.size or
             p.y < -p.size or
@@ -316,7 +320,7 @@ def roll_spawn(score):
     elif roll == "fatty":
         spawn_fatty()
 
-# Game loop =======================================================================
+# Game loop ====================================================================
 
 # Play the soundtrack
 pygame.mixer.music.play(loops=-1)
@@ -329,6 +333,8 @@ game_over = False
 
 while running:
 
+    # Initialize the game objects and variables ================================
+
     # Empty the sprites
     sprites.empty()
     enemies.empty()
@@ -337,7 +343,7 @@ while running:
     upgrades.empty()
     particles[:] = []
 
-    # Instantiate the player ==========================================================
+    # Instantiate the player
     player = Player(WIN_RES, player_imgs, p_spr_supergroup, Laser, p_laser_img, laser_sfx)
     player_group.add(player)
     sprites.add(player)
@@ -346,7 +352,7 @@ while running:
     name = str()
 
     while menu:
-        
+
         # Lock the FPS
         clock.tick(FPS)
 
@@ -354,7 +360,7 @@ while running:
         background_y += 2
         backgroundp_y += 4
 
-        # Get input ===========================================================
+        # Get input ============================================================
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -370,9 +376,13 @@ while running:
                     running = False
                     menu = False
 
-        # Draw objects
+        # Draw objects =========================================================
+
+        # Draw the background and the parallax
         draw_background(window, background_img, background_rect, background_y)
         draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
+
+        # Draw the title screen texts and images
         window.blit(logo_img, (window_rect.centerx-240, -64))
         draw_text(window, "powered by pygame", 16, game_font, window_rect.centerx, window_rect.centery-32, GRAY)
         draw_text(window, "[Z] Play", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE)
@@ -388,7 +398,7 @@ while running:
         pygame.display.flip()
 
     while in_scores:
-        
+
         # Lock the FPS
         clock.tick(FPS)
 
@@ -396,7 +406,7 @@ while running:
         background_y += 2
         backgroundp_y += 4
 
-        # Get input ===========================================================
+        # Get input ============================================================
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -406,7 +416,7 @@ while running:
                     menu = True
                     in_scores = False
 
-        # Draw objects ========================================================
+        # Draw objects =========================================================
         draw_background(window, background_img, background_rect, background_y)
         draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
         draw_text(window, "High Scores", 32, game_font, window_rect.centerx, window_rect.top+32, WHITE)
@@ -440,7 +450,7 @@ while running:
             background_y += 1
             backgroundp_y += 2
 
-            # Get input ===========================================================
+            # Get input ========================================================
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -449,7 +459,7 @@ while running:
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                         paused = True
 
-            # Update objects ======================================================
+            # Update objects ===================================================
 
             # Spawn an enemy
             now = pygame.time.get_ticks()
@@ -469,7 +479,7 @@ while running:
                     u = Upgrade(window, upgrade_imgs, hit.rect.center, score)
                     sprites.add(u)
                     upgrades.add(u)
-                    spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(10,16))
+                    spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(10,16), particle_colors)
 
             # Check if the player collides with an enemy
             hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
@@ -478,7 +488,7 @@ while running:
                 spawn_explosion(Explosion, explosion_data, hit.rect.centerx, hit.rect.bottom, sprites)
                 spawn_explosion(Explosion, explosion_data, player.rect.centerx, player.rect.bottom, sprites)
                 offset = shake(20, 10)
-                spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(10,16))
+                spawn_particles(hit.rect.centerx, hit.rect.centery, random.randrange(10,16), particle_colors)
 
             # Check if player is hit by enemy lasers
             hits = pygame.sprite.spritecollide(player, e_lasers, True, pygame.sprite.collide_circle)
@@ -512,24 +522,32 @@ while running:
 
             # Check if player has no health
             if player.health <= 0:
-                spawn_particles(player.rect.centerx, player.rect.centery, 50)
+                spawn_particles(player.rect.centerx, player.rect.centery, 50, particle_colors)
                 gaming = False
                 game_over = True
                 player.kill()
 
             sprites.update()
 
-            # Draw objects ========================================================
+            # Draw objects =====================================================
+
+            # Draw the background and the parallax
             draw_background(window, background_img, background_rect, background_y)
             draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
+
+            # Draw the sprites
             sprites.draw(window)
+            update_particles()
+
+            # Draw the HUD
             window.blit(score_img, (score_rect.x, score_rect.y))
             draw_text(window, f"{str(score).zfill(4)}", 24, game_font, score_rect.x*9.5, score_rect.y+4, WHITE)
             window.blit(upgrade_imgs["gun"][0], (score_rect.x, score_rect.y*1.8))
             draw_text(window, f"{player.cur_lvl+1}/3", 24, game_font, score_rect.x*8.5, score_rect.y*2, WHITE)
             draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
+
+            # Screen shake
             window.blit(window, next(offset))
-            update_particles()
 
             # Update the window
             pygame.display.flip()
@@ -546,9 +564,12 @@ while running:
                         gaming = False
                         menu = True
 
+            # Draw the pause texts
             draw_text(window, f"PAUSED", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE)
             draw_text(window, f"[ESC][P] Resume", 24, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
             draw_text(window, f"   [X] Quit", 24, game_font, window_rect.centerx, window_rect.centery+66, WHITE)
+
+            # Update the window
             pygame.display.flip()
 
     while game_over:
@@ -559,7 +580,7 @@ while running:
         background_y += 1
         backgroundp_y += 2
 
-        # Get input ===========================================================
+        # Get input ============================================================
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -582,26 +603,37 @@ while running:
                         else:
                             denied_sfx.play()
 
-        # Update objects ======================================================
+        # Update objects =======================================================
 
         sprites.update()
 
-        # Draw objects ========================================================
+        # Draw objects =========================================================
+
+        # Draw the background and the parallax
         draw_background(window, background_img, background_rect, background_y)
         draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
+
+        # Draw the sprites
         sprites.draw(window)
         update_particles()
+
+        # Draw the HUD
         window.blit(score_img, (10, 50))
         draw_text(window, f"{str(score).zfill(4)}", 24, game_font, score_rect.x*9.5, score_rect.y+4, WHITE)
         draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
         window.blit(upgrade_imgs["gun"][0], (score_rect.x, score_rect.y*1.8))
+
+        # Draw the Game Over texts
         draw_text(window, f"{player.cur_lvl+1}/3", 24, game_font, score_rect.x*8.5, score_rect.y*2, WHITE)
         draw_text(window, "GAME OVER", 64, game_font, window_rect.centerx, window_rect.centery-64, WHITE)
         draw_text(window, "Enter name", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE)
         draw_text(window, f"{name.upper()}", 32, game_font, window_rect.centerx, window_rect.centery+74, WHITE)
         if len(name) > 2:
             draw_text(window, "Press ENTER", 24, game_font, window_rect.centerx, window_rect.centery+132, WHITE)
+
+        # Screen shake
         window.blit(window, next(offset))
+
         # Update the window
         pygame.display.flip()
 
