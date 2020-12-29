@@ -70,7 +70,7 @@ class Hellfighter(Monster):
         self.chase_delay = random.randrange(250, 400)
         self.chase_timer = pygame.time.get_ticks()
         # The point at which the object will stop moving on the y-axis
-        self.max_disty = self.win_res["w"] * (random.randrange(2, 5) / 10)        
+        self.max_disty = self.win_res["w"] * (random.randrange(2, 5) / 10)
 
     def update(self):
         if not self.spawned:
@@ -215,3 +215,34 @@ class Fatty(Monster):
 class Bomb(Monster):
     def __init__(self, data):
         super().__init__(data)
+
+class Bouncy():
+    def __init__(self, window):
+        self.window = window
+        self.x = random.randrange(0, window.get_width())
+        self.y = random.randrange(0, window.get_height())
+        self.size = random.choice([16,32])
+        self.speedx = random.choice([-3,3])
+        self.speedy = random.choice([-3,3])
+        self.color = random.choice([
+            (249,163,27),
+            (250,106,10),
+            (223,62,35)
+        ])
+
+    def draw(self):
+
+        if self.x < 0:
+            self.speedx = abs(self.speedx)
+        elif self.x > self.window.get_width():
+            self.speedx = -self.speedx
+
+        if self.y < 0:
+            self.speedy = abs(self.speedy)
+        elif self.y > self.window.get_height():
+            self.speedy = -self.speedy
+
+        pygame.draw.rect(self.window, self.color, (self.x, self.y, self.size, self.size))
+
+        self.x += self.speedx
+        self.y += self.speedy

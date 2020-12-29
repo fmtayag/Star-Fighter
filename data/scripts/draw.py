@@ -8,12 +8,16 @@ def draw_background(surf, img, img_rect, ypos):
     if rel_y < surf_h:
         surf.blit(img, (0, rel_y))
 
-def draw_text(surf, text, size, font, x, y, color):
+def draw_text(surf, text, size, font, x, y, color, align="normal"):
     font = pygame.font.Font(font, size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect()
-    text_rect.centerx = x
-    text_rect.y = y
+    if align == "centered":
+        text_rect.centerx = x
+        text_rect.y = y
+    elif align == "normal":
+        text_rect.x = x
+        text_rect.y = y
     surf.blit(text_surface, (text_rect.x, text_rect.y))
 
 def draw_hp(surf, x, y, hp, color, img):

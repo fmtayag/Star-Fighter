@@ -1,0 +1,1 @@
+pyinstaller --onefile --icon=icon.ico --exclude-module=numpy game.py
