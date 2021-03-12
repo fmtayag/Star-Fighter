@@ -51,8 +51,6 @@ RED = (180,32,42)
 GOLD = (255,215,0)
 PURPLE = (219,84,180)
 # FPS and timing
-clock = pygame.time.Clock()
-FPS = 60
 spawn_delay = 2000
 # Directories
 GAME_DIR = os.path.dirname(__file__)
@@ -199,7 +197,6 @@ p_laser_img = load_img("laser_player.png", IMG_DIR, scale)
 e_laser_img = load_img("laser_enemy.png", IMG_DIR, scale)
 fireball_img = load_img("fireball.png", IMG_DIR, scale)
 
-logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
 dev_logo_img = load_img("dev_logo.png", IMG_DIR, 6, convert_alpha=True)
 
 background_img = load_img("background.png", IMG_DIR, scale)
@@ -325,6 +322,7 @@ played_once = False
 
 class TitleScene(Scene):
     def __init__(self):
+        # Background
         self.bg_img = load_img("background.png", IMG_DIR, scale)
         self.bg_rect = self.bg_img.get_rect()
         self.bg_y = 0
@@ -332,16 +330,21 @@ class TitleScene(Scene):
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
 
+        # Logo
+        self.logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
+
     def handle_events(self, events):
         pass
 
     def update(self, dt):
-        self.bg_y += 2
-        self.par_y += 4
+        self.bg_y += 100 * dt
+        self.par_y += 200 * dt
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
+        window.blit(self.logo_img, (window.get_width()/2-240, -64))
+        draw_text(window, "powered by pygame", 16, game_font, window.get_rect().centerx, window.get_rect().centery-32, GRAY, "centered")
 
 def main():
 
@@ -353,9 +356,14 @@ def main():
     pygame.display.set_icon(load_img("hellfighter1.png", IMG_DIR, 1)) # TODO - change the icon name
     pygame.mouse.set_visible(False)
 
-    # Loop variables
+    # Scene Manager
     manager = SceneManager(TitleScene())
+
+    # Loop variables
+    clock = pygame.time.Clock()
+    FPS = 60
     running = True
+    lf = 0 # Last frame. For calculating delta time (dt)
 
     # Temporary
     explosion_data = { "surface": window,
@@ -363,17 +371,22 @@ def main():
                    "explosions_sfx": explosions_sfx}
     
     while running:
+        # Lock FPS
         clock.tick(FPS)
+
+        # Calculate delta time
+        t = pygame.time.get_ticks()
+        dt = (t-lf) / 1000.0
+        lf = t
 
         if pygame.event.get(QUIT):
             running = False
 
         manager.scene.handle_events(pygame.event.get())
-        manager.scene.update(0)
+        manager.scene.update(dt)
         manager.scene.draw(window)
 
         pygame.display.flip()
-
 
 # Run main
 main()
