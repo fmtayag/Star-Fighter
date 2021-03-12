@@ -1,4 +1,6 @@
 # Materia Engine
+# Version: 1.0.0
+#   > Release date: March 12th 2021
 # A framework built on top of pygame to make development of games easier.
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
@@ -6,7 +8,9 @@
 #   > GitHub: github.com/zyenapz
 #   > Twitter: @zyenapz
 
-import pygame, os
+import pygame
+import os
+import pickle
 
 # SCENES & MANAGERS
 
@@ -57,6 +61,18 @@ def load_img(file, directory, scale, convert_alpha=False):
         s = pygame.Surface((32,32))
         s.fill('red')
         return s
+
+def read_savedata(path):
+    with open(path, 'rb') as f:
+        try:
+            data = pickle.load(f)
+            return data
+        except EOFError:
+            return list()
+
+def write_savedata(data, path):
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
 
 # UTILITIES
 

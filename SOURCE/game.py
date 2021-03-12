@@ -21,7 +21,13 @@ try:
     from data.scripts.difficulty import max_enemy, sd_subtractor
     from data.scripts.draw import draw_background, draw_text, draw_hp, shake
     from data.scripts.upgrade import Upgrade
-    from data.scripts.highscores import write_highscores, read_highscores, sort
+    from data.scripts.MateriaEngine import (
+            load_img, 
+            load_sound, 
+            sort,
+            read_savedata,
+            write_savedata
+        )
 except Exception as e:
     print(e)
     exit()
@@ -56,7 +62,7 @@ FONT_DIR = os.path.join(DATA_DIR, "font")
 game_font = os.path.join(FONT_DIR, "prstartk.ttf")
 scores_path = os.path.join(SCRIPTS_DIR, "scores.dat")
 # Other variables
-hi_scores = sort(read_highscores(scores_path))
+hi_scores = sort(read_savedata(scores_path))
 score = 0
 background_y = 0 # For the background's y coordinate
 backgroundp_y = 0 # For parallax's y coordinate
@@ -72,24 +78,8 @@ window_rect = window.get_rect()
 pygame.display.set_caption(TITLE)
 
 # Images =======================================================================
-def load_png(file, directory, scale, convert_alpha=False):
-    try:
-        path = os.path.join(directory, file)
-        if not convert_alpha:
-            img = pygame.image.load(path).convert_alpha()
-        else:
-            img = pygame.image.load(path).convert()
-            transColor = img.get_at((0,0))
-            img.set_colorkey(transColor)
-        img_w = img.get_width()
-        img_h = img.get_height()
-        img = pygame.transform.scale(img, (img_w*scale, img_h*scale))
-        return img
-    except Exception as e:
-        print(e)
-        exit()
 
-window_icon = load_png("hellfighter1.png", IMG_DIR, 1)
+window_icon = load_img("hellfighter1.png", IMG_DIR, 1)
 pygame.display.set_icon(window_icon)
 
 player_imgs = dict()
@@ -97,150 +87,144 @@ player_imgs = dict()
 # Load and store cadet player frames
 player_cadet = dict()
 player_cadet["left"] = [
-    load_png("player_cadet_l1.png", IMG_DIR, scale),
-    load_png("player_cadet_l2.png", IMG_DIR, scale)
+    load_img("player_cadet_l1.png", IMG_DIR, scale),
+    load_img("player_cadet_l2.png", IMG_DIR, scale)
 ]
 player_cadet["normal"] = [
-    load_png("player_cadet_n1.png", IMG_DIR, scale),
-    load_png("player_cadet_n2.png", IMG_DIR, scale)
+    load_img("player_cadet_n1.png", IMG_DIR, scale),
+    load_img("player_cadet_n2.png", IMG_DIR, scale)
 ]
 player_cadet["right"] = [
-    load_png("player_cadet_r1.png", IMG_DIR, scale),
-    load_png("player_cadet_r2.png", IMG_DIR, scale)
+    load_img("player_cadet_r1.png", IMG_DIR, scale),
+    load_img("player_cadet_r2.png", IMG_DIR, scale)
 ]
 player_imgs["cadet"] = player_cadet
 
 # Load and store captain player frames
 player_captain = dict()
 player_captain["left"] = [
-    load_png("player_captain_l1.png", IMG_DIR, scale),
-    load_png("player_captain_l2.png", IMG_DIR, scale)
+    load_img("player_captain_l1.png", IMG_DIR, scale),
+    load_img("player_captain_l2.png", IMG_DIR, scale)
 ]
 player_captain["normal"] = [
-    load_png("player_captain_n1.png", IMG_DIR, scale),
-    load_png("player_captain_n2.png", IMG_DIR, scale)
+    load_img("player_captain_n1.png", IMG_DIR, scale),
+    load_img("player_captain_n2.png", IMG_DIR, scale)
 ]
 player_captain["right"] = [
-    load_png("player_captain_r1.png", IMG_DIR, scale),
-    load_png("player_captain_r2.png", IMG_DIR, scale)
+    load_img("player_captain_r1.png", IMG_DIR, scale),
+    load_img("player_captain_r2.png", IMG_DIR, scale)
 ]
 player_imgs["captain"] = player_captain
 
 # Load and store admiral player frames
 player_admiral = dict()
 player_admiral["left"] = [
-    load_png("player_admiral_l1.png", IMG_DIR, scale),
-    load_png("player_admiral_l2.png", IMG_DIR, scale)
+    load_img("player_admiral_l1.png", IMG_DIR, scale),
+    load_img("player_admiral_l2.png", IMG_DIR, scale)
 ]
 player_admiral["normal"] = [
-    load_png("player_admiral_n1.png", IMG_DIR, scale),
-    load_png("player_admiral_n2.png", IMG_DIR, scale)
+    load_img("player_admiral_n1.png", IMG_DIR, scale),
+    load_img("player_admiral_n2.png", IMG_DIR, scale)
 ]
 player_admiral["right"] = [
-    load_png("player_admiral_r1.png", IMG_DIR, scale),
-    load_png("player_admiral_r2.png", IMG_DIR, scale)
+    load_img("player_admiral_r1.png", IMG_DIR, scale),
+    load_img("player_admiral_r2.png", IMG_DIR, scale)
 ]
 player_imgs["admiral"] = player_admiral
 
 # Load and store spawning player frames
 player_imgs["spawning"] = [
-    load_png("player_spawn1.png", IMG_DIR, scale),
-    load_png("player_spawn2.png", IMG_DIR, scale),
-    load_png("player_spawn3.png", IMG_DIR, scale),
-    load_png("player_spawn4.png", IMG_DIR, scale)
+    load_img("player_spawn1.png", IMG_DIR, scale),
+    load_img("player_spawn2.png", IMG_DIR, scale),
+    load_img("player_spawn3.png", IMG_DIR, scale),
+    load_img("player_spawn4.png", IMG_DIR, scale)
 ]
 
 # Load and store hellfighter images
 hfighter_imgs = dict()
 hfighter_imgs["normal"] = [
-    load_png("hellfighter1.png", IMG_DIR, scale),
-    load_png("hellfighter2.png", IMG_DIR, scale)
+    load_img("hellfighter1.png", IMG_DIR, scale),
+    load_img("hellfighter2.png", IMG_DIR, scale)
 ]
 hfighter_imgs["spawning"] = [
-    load_png("hf_spawn1.png", IMG_DIR, scale),
-    load_png("hf_spawn2.png", IMG_DIR, scale),
-    load_png("hf_spawn3.png", IMG_DIR, scale),
-    load_png("hf_spawn4.png", IMG_DIR, scale)
+    load_img("hf_spawn1.png", IMG_DIR, scale),
+    load_img("hf_spawn2.png", IMG_DIR, scale),
+    load_img("hf_spawn3.png", IMG_DIR, scale),
+    load_img("hf_spawn4.png", IMG_DIR, scale)
 ]
 
 # Load and store raider images
 raider_imgs = dict()
 raider_imgs["normal"] = [
-    load_png("raider1.png", IMG_DIR, scale),
-    load_png("raider2.png", IMG_DIR, scale)
+    load_img("raider1.png", IMG_DIR, scale),
+    load_img("raider2.png", IMG_DIR, scale)
 ]
 raider_imgs["spawning"] = [
-    load_png("raider_spawn1.png", IMG_DIR, scale),
-    load_png("raider_spawn2.png", IMG_DIR, scale),
-    load_png("raider_spawn3.png", IMG_DIR, scale),
-    load_png("raider_spawn4.png", IMG_DIR, scale),
+    load_img("raider_spawn1.png", IMG_DIR, scale),
+    load_img("raider_spawn2.png", IMG_DIR, scale),
+    load_img("raider_spawn3.png", IMG_DIR, scale),
+    load_img("raider_spawn4.png", IMG_DIR, scale),
 ]
 
 # Load and store fatty images
 fatty_imgs = dict()
 fatty_imgs["normal"] = [
-    load_png("fatty1.png", IMG_DIR, scale),
-    load_png("fatty2.png", IMG_DIR, scale)
+    load_img("fatty1.png", IMG_DIR, scale),
+    load_img("fatty2.png", IMG_DIR, scale)
 ]
 fatty_imgs["spawning"] = [
-    load_png("fatty_spawn1.png", IMG_DIR, scale),
-    load_png("fatty_spawn2.png", IMG_DIR, scale),
-    load_png("fatty_spawn3.png", IMG_DIR, scale),
-    load_png("fatty_spawn4.png", IMG_DIR, scale)
+    load_img("fatty_spawn1.png", IMG_DIR, scale),
+    load_img("fatty_spawn2.png", IMG_DIR, scale),
+    load_img("fatty_spawn3.png", IMG_DIR, scale),
+    load_img("fatty_spawn4.png", IMG_DIR, scale)
 ]
 
 # Load and store explosion images
 explosion_imgs = [
-    load_png("explosion1.png", IMG_DIR, scale),
-    load_png("explosion2.png", IMG_DIR, scale),
-    load_png("explosion3.png", IMG_DIR, scale),
-    load_png("explosion4.png", IMG_DIR, scale)
+    load_img("explosion1.png", IMG_DIR, scale),
+    load_img("explosion2.png", IMG_DIR, scale),
+    load_img("explosion3.png", IMG_DIR, scale),
+    load_img("explosion4.png", IMG_DIR, scale)
 ]
 
 # Load and store upgrade images
 upgrade_imgs = dict()
-upgrade_imgs["hp"] = [ load_png("upgrd_hp1.png", IMG_DIR, scale),
-                       load_png("upgrd_hp2.png", IMG_DIR, scale),
-                       load_png("upgrd_hp3.png", IMG_DIR, scale),
-                       load_png("upgrd_hp4.png", IMG_DIR, scale) ]
-upgrade_imgs["gun"] = [ load_png("upgrd_gun1.png", IMG_DIR, scale),
-                        load_png("upgrd_gun2.png", IMG_DIR, scale),
-                        load_png("upgrd_gun3.png", IMG_DIR, scale),
-                        load_png("upgrd_gun4.png", IMG_DIR, scale) ]
-upgrade_imgs["coin"] = [ load_png("upgrd_coin1.png", IMG_DIR, scale),
-                         load_png("upgrd_coin2.png", IMG_DIR, scale),
-                         load_png("upgrd_coin3.png", IMG_DIR, scale),
-                         load_png("upgrd_coin4.png", IMG_DIR, scale) ]
+upgrade_imgs["hp"] = [ load_img("upgrd_hp1.png", IMG_DIR, scale),
+                       load_img("upgrd_hp2.png", IMG_DIR, scale),
+                       load_img("upgrd_hp3.png", IMG_DIR, scale),
+                       load_img("upgrd_hp4.png", IMG_DIR, scale) ]
+upgrade_imgs["gun"] = [ load_img("upgrd_gun1.png", IMG_DIR, scale),
+                        load_img("upgrd_gun2.png", IMG_DIR, scale),
+                        load_img("upgrd_gun3.png", IMG_DIR, scale),
+                        load_img("upgrd_gun4.png", IMG_DIR, scale) ]
+upgrade_imgs["coin"] = [ load_img("upgrd_coin1.png", IMG_DIR, scale),
+                         load_img("upgrd_coin2.png", IMG_DIR, scale),
+                         load_img("upgrd_coin3.png", IMG_DIR, scale),
+                         load_img("upgrd_coin4.png", IMG_DIR, scale) ]
 
-p_laser_img = load_png("laser_player.png", IMG_DIR, scale)
-e_laser_img = load_png("laser_enemy.png", IMG_DIR, scale)
-fireball_img = load_png("fireball.png", IMG_DIR, scale)
+p_laser_img = load_img("laser_player.png", IMG_DIR, scale)
+e_laser_img = load_img("laser_enemy.png", IMG_DIR, scale)
+fireball_img = load_img("fireball.png", IMG_DIR, scale)
 
-logo_img = load_png("logo.png", IMG_DIR, 8, convert_alpha=True)
-dev_logo_img = load_png("dev_logo.png", IMG_DIR, 6, convert_alpha=True)
+logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
+dev_logo_img = load_img("dev_logo.png", IMG_DIR, 6, convert_alpha=True)
 
-background_img = load_png("background.png", IMG_DIR, scale)
+background_img = load_img("background.png", IMG_DIR, scale)
 background_rect = background_img.get_rect()
-backgroundp_img = load_png("background_parallax.png", IMG_DIR, scale)
+backgroundp_img = load_img("background_parallax.png", IMG_DIR, scale)
 backgroundp_rect = backgroundp_img.get_rect()
 
-hp_bar_img = load_png("hp_bar.png", IMG_DIR, scale)
+hp_bar_img = load_img("hp_bar.png", IMG_DIR, scale)
 hp_bar_rect = hp_bar_img.get_rect()
 hp_bar_rect.x = 20
 hp_bar_rect.y = 20
 
-score_img = load_png("score_icon.png", IMG_DIR, scale)
+score_img = load_img("score_icon.png", IMG_DIR, scale)
 score_rect = score_img.get_rect()
 score_rect.x = 10
 score_rect.y = hp_bar_rect.y + 30
 
 # Sounds =======================================================================
-
-def load_sound(filename, sfx_dir, volume):
-    path = os.path.join(sfx_dir, filename)
-    snd = pygame.mixer.Sound(path)
-    snd.set_volume(volume)
-    return snd
 
 laser_sfx = load_sound("sfx_lasershoot.wav", SFX_DIR, 0.5)
 upgrade_sfx = load_sound("sfx_powerup.wav", SFX_DIR, 0.5)
@@ -685,7 +669,7 @@ while running:
                         game_over = False
                         hi_scores.append([name, score])
                         hi_scores = sort(hi_scores)
-                        write_highscores(hi_scores, scores_path)
+                        write_savedata(hi_scores, scores_path)
                 else:
                     if chr(event.key) in 'abcdefghijklmnopqrstuvwxyz0123456789':
                         if len(name) < 5:
@@ -732,7 +716,7 @@ while running:
         pygame.display.flip()
 
 # Save high scores to file before exiting
-write_highscores(hi_scores, scores_path)
+write_savedata(hi_scores, scores_path)
 
 # Quit pygame
 pygame.quit()
