@@ -1,10 +1,14 @@
 # Materia Engine
 # A framework built on top of pygame to make development of games easier.
 # Author: zyenapz
+#   > Email: zyenapz@gmail.com
+#   > Website: zyenapz.github.io
+#   > GitHub: github.com/zyenapz
+#   > Twitter: @zyenapz
 
-import pygame
+import pygame, os
 
-# CLASSES === === ===
+# SCENES & MANAGERS
 
 class Scene():
     def __init__(self):
@@ -27,7 +31,7 @@ class SceneManager(object):
         self.scene = scene
         self.scene.manager = self
 
-# FUNCTIONS === === ===
+# ASSET LOADING / SAVING
 
 def load_sound(filename, sfx_dir, volume):
     path = os.path.join(sfx_dir, filename)
@@ -53,3 +57,16 @@ def load_img(file, directory, scale, convert_alpha=False):
         s = pygame.Surface((32,32))
         s.fill('red')
         return s
+
+# UTILITIES
+
+def sort(arr):
+    n = len(arr)
+
+    for i in range(n-1):
+        for j in range(0, n-i-1):
+            if arr[j] < arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+    return arr
+
