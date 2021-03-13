@@ -11,7 +11,7 @@
 #####################################
 
 # Import libraries =============================================================
-import pygame, os, random, math
+import pygame, os, random, math, time
 from pygame.locals import *
 from itertools import repeat
 from data.scripts.bullets import Laser, Fireball
@@ -308,14 +308,17 @@ def roll_spawn(score):
 
 class TitleMenu:
     def __init__(self):
+        # Surface
         self.surface = pygame.Surface((WIN_RES["w"], 350))
         self.surf_rect = self.surface.get_rect()
+        
+        # Text settings
         self.font_size = 38
         self.spacing = self.font_size / 2
 
         # Menu
-        self.menu = ("PLAY", "SCORES", "OPTIONS", "CREDITS", "EXIT")
-        self.act_m = [1,0,0,0,0] # Active menu
+        self.options = ("PLAY", "SCORES", "OPTIONS", "CREDITS", "EXIT")
+        self.act_opt = [1,0,0,0,0] # Active option
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
 
         # Selector
@@ -331,24 +334,32 @@ class TitleMenu:
         self.surface.fill("black")
         self.surface.set_colorkey("black")
         self.surface.blit(self.selector, (0,self.sel_y-3))
-        draw_text(self.surface, self.menu[0], self.font_size, game_font, self.surf_rect.centerx, self.font_size + self.spacing, self.colors[self.act_m[0]], "centered")
-        draw_text(self.surface, self.menu[1], self.font_size, game_font, self.surf_rect.centerx, self.font_size*2 + self.spacing*2, self.colors[self.act_m[1]], "centered")
-        draw_text(self.surface, self.menu[2], self.font_size, game_font, self.surf_rect.centerx, self.font_size*3  + self.spacing*3, self.colors[self.act_m[2]], "centered")
-        draw_text(self.surface, self.menu[3], self.font_size, game_font, self.surf_rect.centerx, self.font_size*4  + self.spacing*4, self.colors[self.act_m[3]], "centered")
-        draw_text(self.surface, self.menu[4], self.font_size, game_font, self.surf_rect.centerx, self.font_size*5  + self.spacing*5, self.colors[self.act_m[4]], "centered")
+        draw_text(self.surface, self.options[0], self.font_size, game_font, self.surf_rect.centerx, self.font_size + self.spacing, self.colors[self.act_opt[0]], "centered")
+        draw_text(self.surface, self.options[1], self.font_size, game_font, self.surf_rect.centerx, self.font_size*2 + self.spacing*2, self.colors[self.act_opt[1]], "centered")
+        draw_text(self.surface, self.options[2], self.font_size, game_font, self.surf_rect.centerx, self.font_size*3  + self.spacing*3, self.colors[self.act_opt[2]], "centered")
+        draw_text(self.surface, self.options[3], self.font_size, game_font, self.surf_rect.centerx, self.font_size*4  + self.spacing*4, self.colors[self.act_opt[3]], "centered")
+        draw_text(self.surface, self.options[4], self.font_size, game_font, self.surf_rect.centerx, self.font_size*5  + self.spacing*5, self.colors[self.act_opt[4]], "centered")
         window.blit(self.surface, (0,window.get_height()/2 - 80))
 
     def select_up(self):
         if  self.sel_i > 0:
-            self.act_m[self.sel_i] = 0
+            self.act_opt[self.sel_i] = 0
             self.sel_i -= 1
-            self.act_m[self.sel_i] = 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = len(self.options) - 1
+            self.act_opt[self.sel_i] = 1
 
     def select_down(self):
-        if self.sel_i < len(self.menu) - 1:
-            self.act_m[self.sel_i] = 0
+        if self.sel_i < len(self.options) - 1:
+            self.act_opt[self.sel_i] = 0
             self.sel_i += 1
-            self.act_m[self.sel_i] = 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = 0
+            self.act_opt[self.sel_i] = 1
 
 class TitleScene(Scene):
     def __init__(self):
@@ -360,10 +371,13 @@ class TitleScene(Scene):
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
 
-        # Logo
+        # Images
         self.logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
 
-        # Menu
+        # Sounds
+        self.select_sfx = load_sound("sfx_select.wav", SFX_DIR, 0.5)
+
+        # Menu object
         self.title_menu = TitleMenu()
 
     def handle_events(self, events):
@@ -371,8 +385,10 @@ class TitleScene(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     self.title_menu.select_up()
+                    self.select_sfx.play()
                 if event.key == pygame.K_s:
                     self.title_menu.select_down()
+                    self.select_sfx.play()
 
     def update(self, dt):
         self.bg_y += 100 * dt
@@ -404,7 +420,8 @@ def main():
     clock = pygame.time.Clock()
     FPS = 60
     running = True
-    lf = 0 # Last frame. For calculating delta time (dt)
+    prev_time = time.time()
+    dt = 0
 
     # Temporary
     explosion_data = { "surface": window,
@@ -417,9 +434,9 @@ def main():
         pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps())})")
 
         # Calculate delta time
-        t = pygame.time.get_ticks()
-        dt = (t-lf) / 1000.0
-        lf = t
+        now = time.time()
+        dt = now - prev_time
+        prev_time = now
 
         if pygame.event.get(QUIT):
             running = False
