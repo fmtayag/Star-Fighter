@@ -57,7 +57,7 @@ def load_img(file, directory, scale, convert_alpha=False):
         img = pygame.transform.scale(img, (img_w*scale, img_h*scale))
         return img
     except Exception as e:
-        print(f"Error for {file}: {e} Loading default texture instead.")
+        print(f"Encountered ERROR loading {file}: {e} Loading default texture instead.")
         s = pygame.Surface((32,32))
         s.fill('red')
         return s

@@ -39,7 +39,7 @@ except Exception as e:
 pygame.init()
 
 # Program variables ============================================================
-WIN_RES = {"w": 640, "h": 676}
+WIN_RES = {"w": 640, "h": 780}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
 VERSION = "1.0"
@@ -59,7 +59,7 @@ IMG_DIR = os.path.join(DATA_DIR, "img")
 SFX_DIR = os.path.join(DATA_DIR, "sfx")
 SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
 FONT_DIR = os.path.join(DATA_DIR, "font")
-game_font = os.path.join(FONT_DIR, "prstartk.ttf")
+game_font = os.path.join(FONT_DIR, "pixelart.ttf")
 scores_path = os.path.join(SCRIPTS_DIR, "scores.dat")
 # Other variables
 hi_scores = sort(read_savedata(scores_path))
@@ -311,14 +311,52 @@ def roll_spawn(score):
 
 # Game loop ====================================================================
 
-running = True
-in_devlogo_screen = True
-menu = False
-gaming = False
-in_scores = False
-game_over = False
-paused = False
-played_once = False
+class TitleMenu:
+    def __init__(self):
+        self.surface = pygame.Surface((WIN_RES["w"], 350))
+        self.surf_rect = self.surface.get_rect()
+        self.font_size = 38
+        self.spacing = self.font_size / 2
+
+        # Menu
+        self.menu = ("PLAY", "SCORES", "OPTIONS", "CREDITS", "EXIT")
+        self.act_m = [1,0,0,0,0] # Active menu
+        self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
+
+        # Selector
+        self.selector = pygame.Surface((WIN_RES["w"], self.font_size))
+        self.selector.fill("white")
+        self.sel_y = self.font_size + self.spacing
+        self.sel_m = 0 # multiplier
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s and self.sel_m < len(self.menu) - 1:
+                    self.act_m[self.sel_m] = 0
+                    self.sel_m += 1
+                    self.act_m[self.sel_m] = 1
+                if event.key == pygame.K_w and self.sel_m > 0:
+                    self.act_m[self.sel_m] = 0
+                    self.sel_m -= 1
+                    self.act_m[self.sel_m] = 1
+                if event.key == pygame.K_RETURN:
+                    if self.sel_m == len(self.menu) - 1:
+                        quit() # TODO - this isn't proper way of exiting the game.
+
+    def update(self):
+        self.sel_y = self.font_size*(self.sel_m+1) + self.spacing*(self.sel_m+1)
+
+    def draw(self, window):
+        self.surface.fill("black")
+        self.surface.set_colorkey("black")
+        self.surface.blit(self.selector, (0,self.sel_y))
+        draw_text(self.surface, self.menu[0], self.font_size, game_font, self.surf_rect.centerx, self.font_size + self.spacing, self.colors[self.act_m[0]], "centered")
+        draw_text(self.surface, self.menu[1], self.font_size, game_font, self.surf_rect.centerx, self.font_size*2 + self.spacing*2, self.colors[self.act_m[1]], "centered")
+        draw_text(self.surface, self.menu[2], self.font_size, game_font, self.surf_rect.centerx, self.font_size*3  + self.spacing*3, self.colors[self.act_m[2]], "centered")
+        draw_text(self.surface, self.menu[3], self.font_size, game_font, self.surf_rect.centerx, self.font_size*4  + self.spacing*4, self.colors[self.act_m[3]], "centered")
+        draw_text(self.surface, self.menu[4], self.font_size, game_font, self.surf_rect.centerx, self.font_size*5  + self.spacing*5, self.colors[self.act_m[4]], "centered")
+        window.blit(self.surface, (0,window.get_height()/2 - 80))
 
 class TitleScene(Scene):
     def __init__(self):
@@ -333,18 +371,24 @@ class TitleScene(Scene):
         # Logo
         self.logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
 
+        # Menu
+        self.title_menu = TitleMenu()
+
     def handle_events(self, events):
-        pass
+        self.title_menu.handle_events(events)
 
     def update(self, dt):
         self.bg_y += 100 * dt
         self.par_y += 200 * dt
+        self.title_menu.update()
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
-        window.blit(self.logo_img, (window.get_width()/2-240, -64))
-        draw_text(window, "powered by pygame", 16, game_font, window.get_rect().centerx, window.get_rect().centery-32, GRAY, "centered")
+        window.blit(self.logo_img, (window.get_width()/2-240, -128))
+
+        # Draw menu
+        self.title_menu.draw(window)
 
 def main():
 
@@ -373,6 +417,7 @@ def main():
     while running:
         # Lock FPS
         clock.tick(FPS)
+        pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps())})")
 
         # Calculate delta time
         t = pygame.time.get_ticks()
