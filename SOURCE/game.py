@@ -19,8 +19,8 @@ from data.scripts.monsters import Hellfighter, Raider, Fatty, Bouncy
 from data.scripts.player import Player
 from data.scripts.effects import Explosion, Particle
 from data.scripts.difficulty import max_enemy, sd_subtractor
-from data.scripts.draw import draw_background, draw_text, draw_hp, shake
 from data.scripts.upgrade import Upgrade
+from data.scripts.settings import *
 from data.scripts.MateriaEngine import (
     load_img, 
     load_sound, 
@@ -28,17 +28,16 @@ from data.scripts.MateriaEngine import (
     read_savedata,
     write_savedata,
     Scene,
-    SceneManager
+    SceneManager,
+    draw_background, 
+    draw_text,
+    shake
 )
 
 # Initialize pygame ============================================================
 pygame.init()
 
 # Program variables ============================================================
-WIN_RES = {"w": 640, "h": 780}
-TITLE = "Star Fighter"
-AUTHOR = "zyenapz"
-VERSION = "1.0"
 # Colors
 BLACK = (0,0,0)
 WHITE = (235,235,235)

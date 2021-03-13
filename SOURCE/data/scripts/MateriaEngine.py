@@ -57,7 +57,7 @@ def load_img(file, directory, scale, convert_alpha=False):
         img = pygame.transform.scale(img, (img_w*scale, img_h*scale))
         return img
     except Exception as e:
-        print(f"Encountered ERROR loading {file}: {e} Loading default texture instead.")
+        print(f"ERROR loading {file}: {e}. Loading default texture instead.")
         s = pygame.Surface((32,32))
         s.fill('red')
         return s
@@ -85,4 +85,39 @@ def sort(arr):
                 arr[j], arr[j+1] = arr[j+1], arr[j]
 
     return arr
+
+# DRAWING
+
+def draw_background(surf, img, img_rect, ypos):
+    # DISCLAIMER: Code from Paget Teaches
+    surf_h = surf.get_height()
+    rel_y = ypos % img_rect.height
+    surf.blit(img, (0, rel_y - img_rect.height))
+
+    if rel_y < surf_h:
+        surf.blit(img, (0, rel_y))
+
+def draw_text(surf, text, size, font, x, y, color, align="normal"):
+    font = pygame.font.Font(font, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    if align == "centered":
+        text_rect.centerx = x
+        text_rect.y = y
+    elif align == "normal":
+        text_rect.x = x
+        text_rect.y = y
+    surf.blit(text_surface, (text_rect.x, text_rect.y))
+
+def shake(intensity, n):
+    # DISCLAIMER: Code from Sloth from StackOverflow
+    shake = -1
+    for _ in range(n):
+        for x in range(0, intensity, 5):
+            yield (x*shake, 0)
+        for x in range(intensity, 0, 5):
+            yield (x*shake, 0)
+        shake *= -1
+    while True:
+        yield (0, 0)
 
