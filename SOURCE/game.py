@@ -322,10 +322,10 @@ class TitleMenu:
         self.selector = pygame.Surface((WIN_RES["w"], self.font_size + 4))
         self.selector.fill("white")
         self.sel_y = self.font_size + self.spacing
-        self.sel_m = 0 # multiplier
+        self.sel_i = 0 # index
 
     def update(self):
-        self.sel_y = self.font_size*(self.sel_m+1) + self.spacing*(self.sel_m+1)
+        self.sel_y = self.font_size*(self.sel_i+1) + self.spacing*(self.sel_i+1)
 
     def draw(self, window):
         self.surface.fill("black")
@@ -339,16 +339,16 @@ class TitleMenu:
         window.blit(self.surface, (0,window.get_height()/2 - 80))
 
     def select_up(self):
-        if  self.sel_m > 0:
-            self.act_m[self.sel_m] = 0
-            self.sel_m -= 1
-            self.act_m[self.sel_m] = 1
+        if  self.sel_i > 0:
+            self.act_m[self.sel_i] = 0
+            self.sel_i -= 1
+            self.act_m[self.sel_i] = 1
 
     def select_down(self):
-        if self.sel_m < len(self.menu) - 1:
-            self.act_m[self.sel_m] = 0
-            self.sel_m += 1
-            self.act_m[self.sel_m] = 1
+        if self.sel_i < len(self.menu) - 1:
+            self.act_m[self.sel_i] = 0
+            self.sel_i += 1
+            self.act_m[self.sel_i] = 1
 
 class TitleScene(Scene):
     def __init__(self):
