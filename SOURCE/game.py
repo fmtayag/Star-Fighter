@@ -11,29 +11,25 @@
 #####################################
 
 # Import libraries =============================================================
-try:
-    import pygame, os, random, math
-    from pygame.locals import *
-    from itertools import repeat
-    from data.scripts.bullets import Laser, Fireball
-    from data.scripts.monsters import Hellfighter, Raider, Fatty, Bouncy
-    from data.scripts.player import Player
-    from data.scripts.effects import Explosion, Particle
-    from data.scripts.difficulty import max_enemy, sd_subtractor
-    from data.scripts.draw import draw_background, draw_text, draw_hp, shake
-    from data.scripts.upgrade import Upgrade
-    from data.scripts.MateriaEngine import (
-            load_img, 
-            load_sound, 
-            sort,
-            read_savedata,
-            write_savedata,
-            Scene,
-            SceneManager
-        )
-except Exception as e:
-    print(e)
-    exit()
+import pygame, os, random, math
+from pygame.locals import *
+from itertools import repeat
+from data.scripts.bullets import Laser, Fireball
+from data.scripts.monsters import Hellfighter, Raider, Fatty, Bouncy
+from data.scripts.player import Player
+from data.scripts.effects import Explosion, Particle
+from data.scripts.difficulty import max_enemy, sd_subtractor
+from data.scripts.draw import draw_background, draw_text, draw_hp, shake
+from data.scripts.upgrade import Upgrade
+from data.scripts.MateriaEngine import (
+    load_img, 
+    load_sound, 
+    sort,
+    read_savedata,
+    write_savedata,
+    Scene,
+    SceneManager
+)
 
 # Initialize pygame ============================================================
 pygame.init()
@@ -59,7 +55,7 @@ IMG_DIR = os.path.join(DATA_DIR, "img")
 SFX_DIR = os.path.join(DATA_DIR, "sfx")
 SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
 FONT_DIR = os.path.join(DATA_DIR, "font")
-game_font = os.path.join(FONT_DIR, "pixelart.ttf")
+game_font = os.path.join(FONT_DIR, "04B_03__.TTF")
 scores_path = os.path.join(SCRIPTS_DIR, "scores.dat")
 # Other variables
 hi_scores = sort(read_savedata(scores_path))
@@ -324,25 +320,10 @@ class TitleMenu:
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
 
         # Selector
-        self.selector = pygame.Surface((WIN_RES["w"], self.font_size))
+        self.selector = pygame.Surface((WIN_RES["w"], self.font_size + 4))
         self.selector.fill("white")
         self.sel_y = self.font_size + self.spacing
         self.sel_m = 0 # multiplier
-
-    def handle_events(self, events):
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s and self.sel_m < len(self.menu) - 1:
-                    self.act_m[self.sel_m] = 0
-                    self.sel_m += 1
-                    self.act_m[self.sel_m] = 1
-                if event.key == pygame.K_w and self.sel_m > 0:
-                    self.act_m[self.sel_m] = 0
-                    self.sel_m -= 1
-                    self.act_m[self.sel_m] = 1
-                if event.key == pygame.K_RETURN:
-                    if self.sel_m == len(self.menu) - 1:
-                        quit() # TODO - this isn't proper way of exiting the game.
 
     def update(self):
         self.sel_y = self.font_size*(self.sel_m+1) + self.spacing*(self.sel_m+1)
@@ -350,13 +331,25 @@ class TitleMenu:
     def draw(self, window):
         self.surface.fill("black")
         self.surface.set_colorkey("black")
-        self.surface.blit(self.selector, (0,self.sel_y))
+        self.surface.blit(self.selector, (0,self.sel_y-3))
         draw_text(self.surface, self.menu[0], self.font_size, game_font, self.surf_rect.centerx, self.font_size + self.spacing, self.colors[self.act_m[0]], "centered")
         draw_text(self.surface, self.menu[1], self.font_size, game_font, self.surf_rect.centerx, self.font_size*2 + self.spacing*2, self.colors[self.act_m[1]], "centered")
         draw_text(self.surface, self.menu[2], self.font_size, game_font, self.surf_rect.centerx, self.font_size*3  + self.spacing*3, self.colors[self.act_m[2]], "centered")
         draw_text(self.surface, self.menu[3], self.font_size, game_font, self.surf_rect.centerx, self.font_size*4  + self.spacing*4, self.colors[self.act_m[3]], "centered")
         draw_text(self.surface, self.menu[4], self.font_size, game_font, self.surf_rect.centerx, self.font_size*5  + self.spacing*5, self.colors[self.act_m[4]], "centered")
         window.blit(self.surface, (0,window.get_height()/2 - 80))
+
+    def select_up(self):
+        if  self.sel_m > 0:
+            self.act_m[self.sel_m] = 0
+            self.sel_m -= 1
+            self.act_m[self.sel_m] = 1
+
+    def select_down(self):
+        if self.sel_m < len(self.menu) - 1:
+            self.act_m[self.sel_m] = 0
+            self.sel_m += 1
+            self.act_m[self.sel_m] = 1
 
 class TitleScene(Scene):
     def __init__(self):
@@ -375,7 +368,12 @@ class TitleScene(Scene):
         self.title_menu = TitleMenu()
 
     def handle_events(self, events):
-        self.title_menu.handle_events(events)
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    self.title_menu.select_up()
+                if event.key == pygame.K_s:
+                    self.title_menu.select_down()
 
     def update(self, dt):
         self.bg_y += 100 * dt
