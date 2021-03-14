@@ -62,9 +62,9 @@
             window.fill(BLACK)
             draw_bouncies(bouncies)
             window.blit(dev_logo_img, ( (WIN_RES["w"] / 2) - (dev_logo_img.get_width() / 2) * 2.8, WIN_RES["h"] * 0.3) )
-            draw_text(window, "a game by", 32, game_font, WIN_RES["w"] / 2.3, WIN_RES["h"] * 0.4, WHITE)
-            draw_text(window, "zyenapz", 32, game_font, WIN_RES["w"] / 2.3, WIN_RES["h"] * 0.45, WHITE)
-            draw_text(window, "(c) 2020 zyenapz. All rights reserved.", 14, game_font, WIN_RES["w"] / 2, WIN_RES["h"] * 0.97, WHITE, "centered")
+            draw_text(window, "a game by", 32, GAME_FONT, WIN_RES["w"] / 2.3, WIN_RES["h"] * 0.4, WHITE)
+            draw_text(window, "zyenapz", 32, GAME_FONT, WIN_RES["w"] / 2.3, WIN_RES["h"] * 0.45, WHITE)
+            draw_text(window, "(c) 2020 zyenapz. All rights reserved.", 14, GAME_FONT, WIN_RES["w"] / 2, WIN_RES["h"] * 0.97, WHITE, "centered")
                 
         # Update the window
         pygame.display.flip()
@@ -115,14 +115,14 @@
         # Draw the title screen texts and images
         window.blit(logo_img, (window_rect.centerx-240, -64))
         if has_faded:
-            draw_text(window, "powered by pygame", 16, game_font, window_rect.centerx, window_rect.centery-32, GRAY, "centered")
-            draw_text(window, "[Z] Play", 32, game_font, window_rect.centerx, window_rect.centery+64, WHITE, "centered")
-            draw_text(window, "  [S] Scores", 32, game_font, window_rect.centerx, window_rect.centery+96, WHITE, "centered")
-            draw_text(window, "[X] Exit", 32, game_font, window_rect.centerx, window_rect.centery+128, WHITE, "centered")
-            draw_text(window, "(c) 2020 zyenapz.", 16, game_font, window_rect.centerx, window_rect.bottom-98, GRAY, "centered")
-            draw_text(window, "All rights reserved.", 16, game_font, window_rect.centerx, window_rect.bottom-82, GRAY, "centered")
-            draw_text(window, "Game & Art by zyenapz", 16, game_font, window_rect.centerx, window_rect.bottom-66, GRAY, "centered")
-            draw_text(window, "Music by YoItsRion", 24, game_font, window_rect.centerx, window_rect.bottom-45, GRAY, "centered")
+            draw_text(window, "powered by pygame", 16, GAME_FONT, window_rect.centerx, window_rect.centery-32, GRAY, "centered")
+            draw_text(window, "[Z] Play", 32, GAME_FONT, window_rect.centerx, window_rect.centery+64, WHITE, "centered")
+            draw_text(window, "  [S] Scores", 32, GAME_FONT, window_rect.centerx, window_rect.centery+96, WHITE, "centered")
+            draw_text(window, "[X] Exit", 32, GAME_FONT, window_rect.centerx, window_rect.centery+128, WHITE, "centered")
+            draw_text(window, "(c) 2020 zyenapz.", 16, GAME_FONT, window_rect.centerx, window_rect.bottom-98, GRAY, "centered")
+            draw_text(window, "All rights reserved.", 16, GAME_FONT, window_rect.centerx, window_rect.bottom-82, GRAY, "centered")
+            draw_text(window, "Game & Art by zyenapz", 16, GAME_FONT, window_rect.centerx, window_rect.bottom-66, GRAY, "centered")
+            draw_text(window, "Music by YoItsRion", 24, GAME_FONT, window_rect.centerx, window_rect.bottom-45, GRAY, "centered")
 
         # Update the window
         pygame.display.flip()
@@ -149,8 +149,8 @@
         # Draw objects =========================================================
         draw_background(window, background_img, background_rect, background_y)
         draw_background(window, backgroundp_img, backgroundp_rect, backgroundp_y)
-        draw_text(window, "High Scores", 32, game_font, window_rect.centerx, window_rect.top+32, WHITE, "centered")
-        draw_text(window, "[X] Back", 32, game_font, window_rect.centerx, window_rect.bottom-64, WHITE, "centered")
+        draw_text(window, "High Scores", 32, GAME_FONT, window_rect.centerx, window_rect.top+32, WHITE, "centered")
+        draw_text(window, "[X] Back", 32, GAME_FONT, window_rect.centerx, window_rect.bottom-64, WHITE, "centered")
 
         # Draw highscores
         if hi_scores != []:
@@ -159,16 +159,16 @@
                 score = str(hi_scores[i][1]).zfill(4)
                 if i == 0:
                     if hi_scores[i][1] > LEGEND_SCORE:
-                        draw_text(window, f"{name} L{score}", 40, game_font, window_rect.centerx, 156, PURPLE, "centered")
+                        draw_text(window, f"{name} L{score}", 40, GAME_FONT, window_rect.centerx, 156, PURPLE, "centered")
                     else:
-                        draw_text(window, f"{name} {score}", 40, game_font, window_rect.centerx, 156, GOLD, "centered")
+                        draw_text(window, f"{name} {score}", 40, GAME_FONT, window_rect.centerx, 156, GOLD, "centered")
                 else:
                     if hi_scores[i][1] > LEGEND_SCORE:
-                        draw_text(window, f"{name:<6} L{score}", 40, game_font, window_rect.centerx, 156+(40*(i+1)), PURPLE, "centered")
+                        draw_text(window, f"{name:<6} L{score}", 40, GAME_FONT, window_rect.centerx, 156+(40*(i+1)), PURPLE, "centered")
                     else:
-                        draw_text(window, f"{name} {score}", 40, game_font, window_rect.centerx, 156+(40*(i+1)), WHITE, "centered")
+                        draw_text(window, f"{name} {score}", 40, GAME_FONT, window_rect.centerx, 156+(40*(i+1)), WHITE, "centered")
         else:
-            draw_text(window, f"No scores yet", 32, game_font, window_rect.centerx, window_rect.centery, WHITE, "centered")
+            draw_text(window, f"No scores yet", 32, GAME_FONT, window_rect.centerx, window_rect.centery, WHITE, "centered")
 
         # Update the window
         pygame.display.flip()
@@ -278,11 +278,11 @@
             # Draw the HUD
             window.blit(score_img, (score_rect.x, score_rect.y))
             if score > LEGEND_SCORE:
-                draw_text(window, f"LEGEND", 24, game_font, score_rect.x*12, score_rect.y+4, GOLD, "centered")
+                draw_text(window, f"LEGEND", 24, GAME_FONT, score_rect.x*12, score_rect.y+4, GOLD, "centered")
             else:
-                draw_text(window, f"{str(score).zfill(4)}", 24, game_font, score_rect.x*9.5, score_rect.y+4, WHITE, "centered")
+                draw_text(window, f"{str(score).zfill(4)}", 24, GAME_FONT, score_rect.x*9.5, score_rect.y+4, WHITE, "centered")
             window.blit(upgrade_imgs["gun"][0], (score_rect.x, score_rect.y*1.8))
-            draw_text(window, f"{player.cur_lvl+1}/3", 24, game_font, score_rect.x*8.5, score_rect.y*2, WHITE, "centered")
+            draw_text(window, f"{player.cur_lvl+1}/3", 24, GAME_FONT, score_rect.x*8.5, score_rect.y*2, WHITE, "centered")
             draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
 
             # Screen shake
@@ -304,9 +304,9 @@
                         menu = True
 
             # Draw the pause texts
-            draw_text(window, f"PAUSED", 32, game_font, window_rect.centerx, window_rect.centery-32, WHITE, "centered")
-            draw_text(window, f"[ESC][P] Resume", 24, game_font, window_rect.centerx, window_rect.centery+32, WHITE, "centered")
-            draw_text(window, f"   [X] Quit", 24, game_font, window_rect.centerx, window_rect.centery+66, WHITE, "centered")
+            draw_text(window, f"PAUSED", 32, GAME_FONT, window_rect.centerx, window_rect.centery-32, WHITE, "centered")
+            draw_text(window, f"[ESC][P] Resume", 24, GAME_FONT, window_rect.centerx, window_rect.centery+32, WHITE, "centered")
+            draw_text(window, f"   [X] Quit", 24, GAME_FONT, window_rect.centerx, window_rect.centery+66, WHITE, "centered")
 
             # Update the window
             pygame.display.flip()
@@ -359,19 +359,19 @@
         # Draw the HUD
         window.blit(score_img, (10, 50))
         if score > LEGEND_SCORE:
-            draw_text(window, f"LEGEND {score}", 24, game_font, score_rect.x*18, score_rect.y+4, GOLD, "centered")
+            draw_text(window, f"LEGEND {score}", 24, GAME_FONT, score_rect.x*18, score_rect.y+4, GOLD, "centered")
         else:
-            draw_text(window, f"{str(score).zfill(4)}", 24, game_font, score_rect.x*9.5, score_rect.y+4, WHITE, "centered")
+            draw_text(window, f"{str(score).zfill(4)}", 24, GAME_FONT, score_rect.x*9.5, score_rect.y+4, WHITE, "centered")
         draw_hp(window, 10, 10, player.health, RED, hp_bar_img)
         window.blit(upgrade_imgs["gun"][0], (score_rect.x, score_rect.y*1.8))
 
         # Draw the Game Over texts
-        draw_text(window, f"{player.cur_lvl+1}/3", 24, game_font, score_rect.x*8.5, score_rect.y*2, WHITE, "centered")
-        draw_text(window, "GAME OVER", 64, game_font, window_rect.centerx, window_rect.centery-64, WHITE, "centered")
-        draw_text(window, "Enter name", 32, game_font, window_rect.centerx, window_rect.centery+32, WHITE, "centered")
-        draw_text(window, f"{name.upper()}", 32, game_font, window_rect.centerx, window_rect.centery+74, WHITE, "centered")
+        draw_text(window, f"{player.cur_lvl+1}/3", 24, GAME_FONT, score_rect.x*8.5, score_rect.y*2, WHITE, "centered")
+        draw_text(window, "GAME OVER", 64, GAME_FONT, window_rect.centerx, window_rect.centery-64, WHITE, "centered")
+        draw_text(window, "Enter name", 32, GAME_FONT, window_rect.centerx, window_rect.centery+32, WHITE, "centered")
+        draw_text(window, f"{name.upper()}", 32, GAME_FONT, window_rect.centerx, window_rect.centery+74, WHITE, "centered")
         if len(name) > 2:
-            draw_text(window, "Press ENTER", 24, game_font, window_rect.centerx, window_rect.centery+132, WHITE, "centered")
+            draw_text(window, "Press ENTER", 24, GAME_FONT, window_rect.centerx, window_rect.centery+132, WHITE, "centered")
 
         # Screen shake
         window.blit(window, next(offset))

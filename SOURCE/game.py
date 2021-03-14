@@ -222,6 +222,7 @@ explosions_sfx = [ load_sound("sfx_explosion1.wav", SFX_DIR, 0.5),
 
 pygame.mixer.music.load(os.path.join(SFX_DIR, "ost_fighter.ogg"))
 pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play()
 
 # Sprite Groups ================================================================
 
@@ -309,6 +310,7 @@ def roll_spawn(score):
 class TitleMenu:
     def __init__(self):
         # Surface
+        # Warning - options may go beyond the surface and will be not rendered
         self.surface = pygame.Surface((WIN_RES["w"], 350))
         self.surf_rect = self.surface.get_rect()
         
@@ -318,7 +320,8 @@ class TitleMenu:
 
         # Menu
         self.options = ("PLAY", "SCORES", "OPTIONS", "CREDITS", "EXIT")
-        self.act_opt = [1,0,0,0,0] # Active option
+        self.act_opt = [0 for i in range(len(self.options))] # Active options
+        self.act_opt[0] = 1
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
 
         # Selector
@@ -334,11 +337,8 @@ class TitleMenu:
         self.surface.fill("black")
         self.surface.set_colorkey("black")
         self.surface.blit(self.selector, (0,self.sel_y-3))
-        draw_text(self.surface, self.options[0], self.font_size, game_font, self.surf_rect.centerx, self.font_size + self.spacing, self.colors[self.act_opt[0]], "centered")
-        draw_text(self.surface, self.options[1], self.font_size, game_font, self.surf_rect.centerx, self.font_size*2 + self.spacing*2, self.colors[self.act_opt[1]], "centered")
-        draw_text(self.surface, self.options[2], self.font_size, game_font, self.surf_rect.centerx, self.font_size*3  + self.spacing*3, self.colors[self.act_opt[2]], "centered")
-        draw_text(self.surface, self.options[3], self.font_size, game_font, self.surf_rect.centerx, self.font_size*4  + self.spacing*4, self.colors[self.act_opt[3]], "centered")
-        draw_text(self.surface, self.options[4], self.font_size, game_font, self.surf_rect.centerx, self.font_size*5  + self.spacing*5, self.colors[self.act_opt[4]], "centered")
+        for i in range(len(self.options)):
+            draw_text(self.surface, self.options[i], self.font_size, game_font, self.surf_rect.centerx, self.font_size*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
         window.blit(self.surface, (0,window.get_height()/2 - 80))
 
     def select_up(self):
@@ -360,6 +360,9 @@ class TitleMenu:
             self.act_opt[self.sel_i] = 0
             self.sel_i = 0
             self.act_opt[self.sel_i] = 1
+
+    def get_selected(self):
+        return self.options[self.sel_i]
 
 class TitleScene(Scene):
     def __init__(self):
@@ -383,12 +386,23 @@ class TitleScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.title_menu.select_up()
                     self.select_sfx.play()
-                if event.key == pygame.K_s:
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     self.title_menu.select_down()
                     self.select_sfx.play()
+                elif event.key == pygame.K_RETURN:
+                    if self.title_menu.get_selected() == "PLAY":
+                        print("TODO - PLAY")
+                    elif self.title_menu.get_selected() == "SCORES":
+                        self.manager.go_to(ScoresScene())
+                    elif self.title_menu.get_selected() == "OPTIONS":
+                        print("TODO - OPTIONS")
+                    elif self.title_menu.get_selected() == "CREDITS":
+                        print("TODO - CREDITS")
+                    elif self.title_menu.get_selected() == "EXIT":
+                        print("TODO - EXIT")
 
     def update(self, dt):
         self.bg_y += 100 * dt
@@ -402,6 +416,120 @@ class TitleScene(Scene):
 
         # Draw menu
         self.title_menu.draw(window)
+
+class ScoresTable():
+    def __init__(self):
+        # Text settings
+        self.font_size = 38
+        self.spacing = self.font_size / 2
+
+        # Table
+        self.table_surf = pygame.Surface((WIN_RES["w"], WIN_RES["h"] / 2))
+        self.table_rect = self.table_surf.get_rect()
+        #self.table_surf.fill('red')
+        
+        # Scores - TODO: Just an example
+        self.scores = [
+            ["MAN", 1000],
+            ["WMN", 2100],
+            ["LOL", 102],
+            ["XMS", 106],
+            ["EBL", 107]
+        ]
+
+    def update(self):
+        pass
+
+    def draw(self, window):
+        self.table_surf.fill("black")
+        self.table_surf.set_colorkey("black")
+
+        for i in range(len(self.scores)):
+            draw_text(self.table_surf, f"{self.scores[i][0]}", self.font_size, game_font, self.table_rect.centerx * 0.5, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+            draw_text(self.table_surf, f"{self.scores[i][1]}", self.font_size, game_font, self.table_rect.centerx * 1.25, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+
+        # TODO - this is jsut a placeholder
+        draw_text(window, "PAGE 1 OF X", 38, game_font, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
+
+        window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 256))
+
+class ScoresControlPanel():
+    def __init__(self):
+        # Control Panel Surface
+        self.control_panel = pygame.Surface((WIN_RES["w"], 64))
+        self.cp_rect = self.control_panel.get_rect()
+
+        # Back Control Panel Surface
+        self.back_panel = pygame.Surface((WIN_RES["w"], 64))
+        self.bp_rect = self.back_panel.get_rect()
+
+        # Selector
+        self.selector = pygame.Surface((self.cp_rect.width*0.5, self.cp_rect.height))
+        self.selector.fill('white')
+        self.sel_i = 0 # index
+        self.panels = ("CONTROL", "BACK")
+        self.active_panel = self.panels[0]
+
+        # Options
+        self.options = ("PREV", "NEXT")
+        self.act_opt = [0 for i in range(len(self.options))] # Active options
+        self.act_opt[0] = 1
+        self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
+
+    def update(self):
+        pass
+
+    def draw(self, window):
+        pass
+
+class ScoresScene(Scene):
+    def __init__(self):
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, scale)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, scale)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
+
+        # Scores table
+        self.scores_table = ScoresTable()
+
+        # Sounds
+        self.select_sfx = load_sound("sfx_select.wav", SFX_DIR, 0.5)
+
+        # Control panel
+        self.control_panel = ScoresControlPanel()
+    
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    pass
+                elif event.key == pygame.K_d:
+                    pass
+                elif event.key == pygame.K_w:
+                    pass
+                elif event.key == pygame.K_s:
+                    pass
+
+                elif event.key == pygame.K_RETURN:
+                    if self.control_panel.get_ap() == "BACK":
+                        self.manager.go_to(TitleScene())
+                    elif self.control_panel.get_ap() == "CONTROL":
+                        pass
+    
+    def update(self, dt):
+        self.bg_y += 100 * dt
+        self.par_y += 200 * dt
+
+    def draw(self, window):
+        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
+        draw_background(window, self.par_img, self.par_rect, self.par_y)
+
+        draw_text(window, "SCORES", 84, game_font, window.get_rect().centerx, 64, "WHITE", "centered")
+        self.scores_table.draw(window)
+        self.control_panel.draw(window)
 
 def main():
 
@@ -449,9 +577,6 @@ def main():
 
 # Run main
 main()
-
-# Save high scores to file before exiting
-write_savedata(hi_scores, scores_path)
 
 # Quit pygame
 pygame.quit()
