@@ -236,7 +236,7 @@ class TitleMenu:
         self.surf_rect = self.surface.get_rect()
         
         # Text settings
-        self.font_size = 38
+        self.font_size = 34
         self.spacing = self.font_size / 2
 
         # Menu
@@ -341,7 +341,7 @@ class TitleScene(Scene):
 class ScoresTable():
     def __init__(self):
         # Text settings
-        self.font_size = 38
+        self.font_size = 34
         self.spacing = self.font_size / 2
 
         # Table
@@ -366,16 +366,20 @@ class ScoresTable():
         self.table_surf.set_colorkey("black")
 
         for i in range(len(self.scores)):
-            draw_text(self.table_surf, f"{self.scores[i][0]}", self.font_size, game_font, self.table_rect.centerx * 0.5, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
-            draw_text(self.table_surf, f"{self.scores[i][1]}", self.font_size, game_font, self.table_rect.centerx * 1.25, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+            draw_text(self.table_surf, f"{i+1}.", self.font_size, game_font, self.table_rect.centerx * 0.5 + len(str(i)), self.font_size*(i+1) + self.spacing*(i+1), "YELLOW")
+            draw_text(self.table_surf, f"{self.scores[i][0]}", self.font_size, game_font, self.table_rect.centerx * 0.8, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+            draw_text(self.table_surf, f"{self.scores[i][1]}", self.font_size, game_font, self.table_rect.centerx * 1.3, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
 
         # TODO - this is just a placeholder
-        draw_text(window, "PAGE 1 OF X", 38, game_font, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
+        draw_text(window, "PAGE 1 OF X", self.font_size, game_font, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
 
         window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 256))
 
 class ScoresControlPanel():
     def __init__(self):
+        # Text settings
+        self.font_size = 34
+
         # Panels
         self.sub_panels = ("DIRECTION", "BACK")
         self.active_panel = self.sub_panels[0]
@@ -420,12 +424,12 @@ class ScoresControlPanel():
             self.back_panel.blit(self.selector, (self.back_panel.get_rect().width/4,0))
 
         # Direction panel
-        draw_text(self.direction_panel, "PREV", 38, game_font, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
-        draw_text(self.direction_panel, "NEXT", 38, game_font, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
+        draw_text(self.direction_panel, "PREV", self.font_size, game_font, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
+        draw_text(self.direction_panel, "NEXT", self.font_size, game_font, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
         window.blit(self.direction_panel, (0,window.get_rect().height*0.7))
 
         # Back panel
-        draw_text(self.back_panel, "BACK", 38, game_font, self.dp_rect.centerx, self.dp_rect.centery*0.5, self.colors[self.bp_active], "centered")
+        draw_text(self.back_panel, "BACK", self.font_size, game_font, self.dp_rect.centerx, self.dp_rect.centery*0.5, self.colors[self.bp_active], "centered")
         window.blit(self.back_panel, (0,window.get_rect().height*0.8))
 
     def move_left(self):
@@ -434,8 +438,6 @@ class ScoresControlPanel():
                 self.dp_act_opt[self.sel_i] = 0
                 self.sel_i -= 1
                 self.dp_act_opt[self.sel_i] = 1
-            else:
-                self.move_right()
 
         elif self.active_panel == self.sub_panels[1]:
             self.active_panel = self.sub_panels[0]
@@ -448,8 +450,6 @@ class ScoresControlPanel():
                 self.dp_act_opt[self.sel_i] = 0
                 self.sel_i += 1
                 self.dp_act_opt[self.sel_i] = 1
-            else:
-                self.move_left()
 
         elif self.active_panel == self.sub_panels[1]:
             self.active_panel = self.sub_panels[0]
@@ -518,7 +518,7 @@ class ScoresScene(Scene):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
 
-        draw_text(window, "SCORES", 84, game_font, window.get_rect().centerx, 64, "WHITE", "centered")
+        draw_text(window, "HALL OF FAME", 64, game_font, window.get_rect().centerx, 64, "WHITE", "centered")
         self.scores_table.draw(window)
         self.control_panel.draw(window)
 
