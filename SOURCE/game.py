@@ -420,8 +420,8 @@ class ScoresControlPanel():
             self.back_panel.blit(self.selector, (self.back_panel.get_rect().width/4,0))
 
         # Direction panel
-        draw_text(self.direction_panel, "PREV", 38, game_font, self.dp_rect.centerx*0.6, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
-        draw_text(self.direction_panel, "NEXT", 38, game_font, self.dp_rect.centerx*1.4, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
+        draw_text(self.direction_panel, "PREV", 38, game_font, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
+        draw_text(self.direction_panel, "NEXT", 38, game_font, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
         window.blit(self.direction_panel, (0,window.get_rect().height*0.7))
 
         # Back panel
