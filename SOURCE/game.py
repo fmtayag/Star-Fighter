@@ -226,85 +226,6 @@ pygame.mixer.music.play()
 
 # Sprite Groups ================================================================
 
-# Sprite groups
-sprites = pygame.sprite.Group()
-enemies = pygame.sprite.Group()
-p_lasers = pygame.sprite.Group()
-e_lasers = pygame.sprite.Group()
-upgrades = pygame.sprite.Group()
-player_group = pygame.sprite.Group()
-particles = list()
-bouncies = list() # Bouncies
-
-
-# Sprite supergroups
-p_spr_supergroup = {"sprites": sprites, "p_lasers": p_lasers}
-e_spr_supergroup = {"sprites": sprites, "e_lasers": e_lasers}
-
-# Spawner Functions ============================================================
-
-def spawn_explosion(Expl, data, xpos, ypos, sprites):
-    data["coords"] = (xpos, ypos)
-    e = Expl(data)
-    sprites.add(e)
-
-def spawn_hfighter():
-    hfighter = Hellfighter(WIN_RES, hfighter_imgs, e_spr_supergroup, Laser, e_laser_img, player)
-    enemies.add(hfighter)
-    sprites.add(hfighter)
-
-def spawn_raider():
-    raider = Raider(WIN_RES, raider_imgs)
-    enemies.add(raider)
-    sprites.add(raider)
-
-def spawn_fatty():
-    fatty = Fatty(WIN_RES, fatty_imgs, e_spr_supergroup, Fireball, fireball_img)
-    sprites.add(fatty)
-    enemies.add(fatty)
-
-def spawn_particles(x, y, amnt, colors):
-    for _ in range(amnt):
-        p = Particle(window, WIN_RES, random.randrange(x-10,x), random.randrange(y-10,y), colors)
-        particles.append(p)
-
-def spawn_bouncies(window, bouncies):
-    for _ in range(5):
-        b = Bouncy(window)
-        bouncies.append(b)
-
-def draw_bouncies(bouncies):
-    for b in bouncies:
-        b.draw()
-
-def update_particles():
-    for p in particles:
-        p.update()
-
-        if (p.x < -p.size or
-            p.x > p.win_res["w"] + p.size or
-            p.y < -p.size or
-            p.y > p.win_res["h"] + p.size):
-                particles.remove(p)
-                del p
-
-def roll_spawn(score):
-    monsters = ["raider","hellfighter", "fatty"]
-    roll = None
-    if player.cur_lvl < 1 and score < 80:
-        choices = random.choices(monsters, [0.25, 0.70, 0.05], k=10)
-        roll = random.choice(choices)
-    else:
-        choices = random.choices(monsters, [0.30,0.55,0.15], k=10)
-        roll = random.choice(choices)
-
-    if roll == "raider":
-        spawn_raider()
-    elif roll == "hellfighter":
-        spawn_hfighter()
-    elif roll == "fatty":
-        spawn_fatty()
-
 # Game loop ====================================================================
 
 class TitleMenu:
@@ -448,39 +369,109 @@ class ScoresTable():
             draw_text(self.table_surf, f"{self.scores[i][0]}", self.font_size, game_font, self.table_rect.centerx * 0.5, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
             draw_text(self.table_surf, f"{self.scores[i][1]}", self.font_size, game_font, self.table_rect.centerx * 1.25, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
 
-        # TODO - this is jsut a placeholder
+        # TODO - this is just a placeholder
         draw_text(window, "PAGE 1 OF X", 38, game_font, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
 
         window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 256))
 
 class ScoresControlPanel():
     def __init__(self):
-        # Control Panel Surface
-        self.control_panel = pygame.Surface((WIN_RES["w"], 64))
-        self.cp_rect = self.control_panel.get_rect()
+        # Panels
+        self.sub_panels = ("DIRECTION", "BACK")
+        self.active_panel = self.sub_panels[0]
+        self.colors = {0: "white", 1: "black"} # Colors for active/inactive options
 
-        # Back Control Panel Surface
+        # Direction Sub-panel
+        self.direction_panel = pygame.Surface((WIN_RES["w"], 64))
+        self.dp_rect = self.direction_panel.get_rect()
+
+        # Direction Sub-panel Options
+        self.dp_options = ("PREV", "NEXT")
+        self.dp_act_opt = [0 for i in range(len(self.dp_options))] # Active options
+        self.dp_act_opt[0] = 1
+
+        # Back Sub-panel
         self.back_panel = pygame.Surface((WIN_RES["w"], 64))
         self.bp_rect = self.back_panel.get_rect()
 
-        # Selector
-        self.selector = pygame.Surface((self.cp_rect.width*0.5, self.cp_rect.height))
-        self.selector.fill('white')
-        self.sel_i = 0 # index
-        self.panels = ("CONTROL", "BACK")
-        self.active_panel = self.panels[0]
+        # Back Sub-panel Option
+        self.bp_options = ("BACK")
+        self.bp_active = 0
 
-        # Options
-        self.options = ("PREV", "NEXT")
-        self.act_opt = [0 for i in range(len(self.options))] # Active options
-        self.act_opt[0] = 1
-        self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
+        # Selector
+        self.selector = pygame.Surface((self.dp_rect.width*0.5, self.dp_rect.height))
+        self.selector.fill("WHITE")
+        self.sel_i = 0 # index
 
     def update(self):
         pass
 
     def draw(self, window):
-        pass
+        # Set colorkeys
+        self.direction_panel.fill("BLACK")
+        self.direction_panel.set_colorkey("BLACK")
+        self.back_panel.fill("BLACK")
+        self.back_panel.set_colorkey("BLACK")
+
+        # Selector
+        if self.active_panel == self.sub_panels[0]:
+            self.direction_panel.blit(self.selector, (self.dp_rect.centerx*self.sel_i,0))
+        elif self.active_panel == self.sub_panels[1]:
+            self.back_panel.blit(self.selector, (self.back_panel.get_rect().width/4,0))
+
+        # Direction panel
+        draw_text(self.direction_panel, "PREV", 38, game_font, self.dp_rect.centerx*0.6, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
+        draw_text(self.direction_panel, "NEXT", 38, game_font, self.dp_rect.centerx*1.4, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
+        window.blit(self.direction_panel, (0,window.get_rect().height*0.7))
+
+        # Back panel
+        draw_text(self.back_panel, "BACK", 38, game_font, self.dp_rect.centerx, self.dp_rect.centery*0.5, self.colors[self.bp_active], "centered")
+        window.blit(self.back_panel, (0,window.get_rect().height*0.8))
+
+    def move_left(self):
+        if self.active_panel == self.sub_panels[0]:
+            if self.sel_i > 0:
+                self.dp_act_opt[self.sel_i] = 0
+                self.sel_i -= 1
+                self.dp_act_opt[self.sel_i] = 1
+            else:
+                self.move_right()
+
+        elif self.active_panel == self.sub_panels[1]:
+            self.active_panel = self.sub_panels[0]
+            self.sel_i = 0
+            self.move_up()
+
+    def move_right(self):
+        if self.active_panel == self.sub_panels[0]:
+            if self.sel_i < len(self.dp_options)-1:
+                self.dp_act_opt[self.sel_i] = 0
+                self.sel_i += 1
+                self.dp_act_opt[self.sel_i] = 1
+            else:
+                self.move_left()
+
+        elif self.active_panel == self.sub_panels[1]:
+            self.active_panel = self.sub_panels[0]
+            self.sel_i = len(self.dp_options)-1
+            self.move_up()
+
+    def move_up(self):
+        self.active_panel = self.sub_panels[0]
+        self.bp_active = 0
+
+        self.dp_act_opt = [0 for i in range(len(self.dp_options))] # Active options
+        self.dp_act_opt[self.sel_i] = 1
+
+    def move_down(self):
+        self.active_panel = self.sub_panels[1]
+        self.bp_active = 1
+
+        self.dp_act_opt = [0 for i in range(len(self.dp_options))] # Active options
+        self.dp_act_opt[0] = 0
+
+    def get_active_panel(self):
+        return self.active_panel
 
 class ScoresScene(Scene):
     def __init__(self):
@@ -505,19 +496,19 @@ class ScoresScene(Scene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    pass
+                    self.control_panel.move_left()
                 elif event.key == pygame.K_d:
-                    pass
+                    self.control_panel.move_right()
                 elif event.key == pygame.K_w:
-                    pass
+                    self.control_panel.move_up()
                 elif event.key == pygame.K_s:
-                    pass
+                    self.control_panel.move_down()
 
                 elif event.key == pygame.K_RETURN:
-                    if self.control_panel.get_ap() == "BACK":
-                        self.manager.go_to(TitleScene())
-                    elif self.control_panel.get_ap() == "CONTROL":
+                    if self.control_panel.get_active_panel() == "DIRECTION":
                         pass
+                    elif self.control_panel.get_active_panel() == "BACK":
+                        self.manager.go_to(TitleScene())
     
     def update(self, dt):
         self.bg_y += 100 * dt
@@ -542,7 +533,7 @@ def main():
     pygame.mouse.set_visible(False)
 
     # Scene Manager
-    manager = SceneManager(TitleScene())
+    manager = SceneManager(ScoresScene())
 
     # Loop variables
     clock = pygame.time.Clock()
