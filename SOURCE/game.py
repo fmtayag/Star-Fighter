@@ -287,6 +287,9 @@ class TitleMenu:
 
 class TitleScene(Scene):
     def __init__(self):
+        # Text settings
+        self.font_size = 34
+
         # Background
         self.bg_img = load_img("background.png", IMG_DIR, scale)
         self.bg_rect = self.bg_img.get_rect()
@@ -337,6 +340,7 @@ class TitleScene(Scene):
 
         # Draw menu
         self.title_menu.draw(window)
+        draw_text(window, "Actually...there's no copyright", int(self.font_size/2), game_font, window.get_rect().centerx, window.get_rect().bottom-(self.font_size/2)*2, "WHITE", "centered")
 
 class ScoresTable():
     def __init__(self):
