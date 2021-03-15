@@ -31,7 +31,8 @@ from data.scripts.MateriaEngine import (
     SceneManager,
     draw_background, 
     draw_text,
-    shake
+    shake,
+    slice_list
 )
 
 # Initialize pygame ============================================================
@@ -236,7 +237,7 @@ class TitleMenu:
         self.surf_rect = self.surface.get_rect()
         
         # Text settings
-        self.font_size = 34
+        self.font_size = 32
         self.spacing = self.font_size / 2
 
         # Menu
@@ -288,7 +289,7 @@ class TitleMenu:
 class TitleScene(Scene):
     def __init__(self):
         # Text settings
-        self.font_size = 34
+        self.font_size = 32
 
         # Background
         self.bg_img = load_img("background.png", IMG_DIR, scale)
@@ -345,7 +346,7 @@ class TitleScene(Scene):
 class ScoresTable():
     def __init__(self):
         # Text settings
-        self.font_size = 34
+        self.font_size = 32
         self.spacing = self.font_size / 2
 
         # Table
@@ -359,8 +360,24 @@ class ScoresTable():
             ["WMN", 2100],
             ["LOL", 102],
             ["XMS", 106],
-            ["EBL", 107]
+            ["EBL", 107],
+            ["LOL", 102],
+            ["XMS", 106],
+            ["EBL", 107],
+            ["LOL", 102],
+            ["XMS", 106],
+            ["EBL", 107],
+            ["LOL", 102],
+            ["XMS", 106],
+            ["LOL", 102],
+            ["XMS", 106],
+            ["EBL", 107],
+            ["LOL", 102],
+            ["XMS", 106]
         ]
+        self.splice_n = 5
+        self.scores = slice_list(self.scores, self.splice_n)
+        self.cur_tbl = 0
 
     def update(self):
         pass
@@ -369,20 +386,28 @@ class ScoresTable():
         self.table_surf.fill("black")
         self.table_surf.set_colorkey("black")
 
-        for i in range(len(self.scores)):
-            draw_text(self.table_surf, f"{i+1}.", self.font_size, game_font, self.table_rect.centerx * 0.5 + len(str(i)), self.font_size*(i+1) + self.spacing*(i+1), "YELLOW")
-            draw_text(self.table_surf, f"{self.scores[i][0]}", self.font_size, game_font, self.table_rect.centerx * 0.8, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
-            draw_text(self.table_surf, f"{self.scores[i][1]}", self.font_size, game_font, self.table_rect.centerx * 1.3, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+        for i in range(len(self.scores[self.cur_tbl])):
+            draw_text(self.table_surf, f"{(i+1)+(self.cur_tbl*self.splice_n)}.", self.font_size, game_font, self.table_rect.centerx * 0.5 + len(str(i)), self.font_size*(i+1) + self.spacing*(i+1), "YELLOW")
+            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][0]}", self.font_size, game_font, self.table_rect.centerx * 0.8, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][1]}", self.font_size, game_font, self.table_rect.centerx * 1.3, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
 
         # TODO - this is just a placeholder
-        draw_text(window, "PAGE 1 OF X", self.font_size, game_font, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
+        draw_text(window, f"PAGE {self.cur_tbl+1} OF {len(self.scores)}", self.font_size, game_font, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
 
         window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 256))
+
+    def next_table(self):
+        if self.cur_tbl < len(self.scores) - 1:
+            self.cur_tbl += 1
+        
+    def prev_table(self):
+        if self.cur_tbl > 0:
+            self.cur_tbl -= 1
 
 class ScoresControlPanel():
     def __init__(self):
         # Text settings
-        self.font_size = 34
+        self.font_size = 32
 
         # Panels
         self.sub_panels = ("DIRECTION", "BACK")
@@ -428,8 +453,8 @@ class ScoresControlPanel():
             self.back_panel.blit(self.selector, (self.back_panel.get_rect().width/4,0))
 
         # Direction panel
-        draw_text(self.direction_panel, "PREV", self.font_size, game_font, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
-        draw_text(self.direction_panel, "NEXT", self.font_size, game_font, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
+        draw_text(self.direction_panel, self.dp_options[0], self.font_size, game_font, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
+        draw_text(self.direction_panel, self.dp_options[1], self.font_size, game_font, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
         window.blit(self.direction_panel, (0,window.get_rect().height*0.7))
 
         # Back panel
@@ -477,6 +502,10 @@ class ScoresControlPanel():
     def get_active_panel(self):
         return self.active_panel
 
+    def get_dp_selected_option(self):
+        if self.active_panel == self.sub_panels[0]:
+            return self.dp_options[self.sel_i]
+
 class ScoresScene(Scene):
     def __init__(self):
         # Background
@@ -487,11 +516,11 @@ class ScoresScene(Scene):
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
 
-        # Scores table
-        self.scores_table = ScoresTable()
-
         # Sounds
         self.select_sfx = load_sound("sfx_select.wav", SFX_DIR, 0.5)
+
+        # Scores table
+        self.scores_table = ScoresTable()
 
         # Control panel
         self.control_panel = ScoresControlPanel()
@@ -510,7 +539,10 @@ class ScoresScene(Scene):
 
                 elif event.key == pygame.K_RETURN:
                     if self.control_panel.get_active_panel() == "DIRECTION":
-                        pass
+                        if self.control_panel.get_dp_selected_option() == "PREV":
+                            self.scores_table.prev_table()
+                        elif self.control_panel.get_dp_selected_option() == "NEXT":
+                            self.scores_table.next_table()
                     elif self.control_panel.get_active_panel() == "BACK":
                         self.manager.go_to(TitleScene())
     

@@ -86,6 +86,9 @@ def sort(arr):
 
     return arr
 
+def slice_list(inlist, n):
+    return [inlist[i:i+n] for i in range(0, len(inlist), n)]
+
 # DRAWING
 
 def draw_background(surf, img, img_rect, ypos):
