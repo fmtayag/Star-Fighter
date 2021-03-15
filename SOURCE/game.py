@@ -311,13 +311,13 @@ class TitleScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                if event.key == pygame.K_UP:
                     self.title_menu.select_up()
                     self.select_sfx.play()
-                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN:
                     self.title_menu.select_down()
                     self.select_sfx.play()
-                elif event.key == pygame.K_RETURN:
+                elif event.key == pygame.K_z:
                     if self.title_menu.get_selected() == "PLAY":
                         print("TODO - PLAY")
                     elif self.title_menu.get_selected() == "SCORES":
@@ -528,16 +528,16 @@ class ScoresScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_LEFT:
                     self.control_panel.move_left()
-                elif event.key == pygame.K_d:
+                elif event.key == pygame.K_RIGHT:
                     self.control_panel.move_right()
-                elif event.key == pygame.K_w:
+                elif event.key == pygame.K_UP:
                     self.control_panel.move_up()
-                elif event.key == pygame.K_s:
+                elif event.key == pygame.K_DOWN:
                     self.control_panel.move_down()
 
-                elif event.key == pygame.K_RETURN:
+                elif event.key == pygame.K_z:
                     if self.control_panel.get_active_panel() == "DIRECTION":
                         if self.control_panel.get_dp_selected_option() == "PREV":
                             self.scores_table.prev_table()
