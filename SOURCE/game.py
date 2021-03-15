@@ -2,6 +2,7 @@
 # Version: 2.0.0
 #   > Release date: March 30th 2021
 # A space shoot 'em up (shmup) made in the style of old arcade games.
+# Written in: Python, pygame 2.0.0
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
 #   > Website: zyenapz.github.io
