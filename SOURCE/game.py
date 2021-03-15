@@ -230,7 +230,7 @@ pygame.mixer.music.play()
 # Game loop ====================================================================
 
 class TitleMenu:
-    def __init__(self):
+    def __init__(self, init_selected):
         # Surface
         # Warning - options may go beyond the surface and will be not rendered
         self.surface = pygame.Surface((WIN_RES["w"], 350))
@@ -243,14 +243,14 @@ class TitleMenu:
         # Menu
         self.options = ("PLAY", "SCORES", "OPTIONS", "CREDITS", "EXIT")
         self.act_opt = [0 for i in range(len(self.options))] # Active options
-        self.act_opt[0] = 1
+        self.act_opt[init_selected] = 1
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
 
         # Selector
         self.selector = pygame.Surface((WIN_RES["w"], self.font_size + 4))
         self.selector.fill("white")
         self.sel_y = self.font_size + self.spacing
-        self.sel_i = 0 # index
+        self.sel_i = init_selected # index
 
     def update(self):
         self.sel_y = self.font_size*(self.sel_i+1) + self.spacing*(self.sel_i+1)
@@ -287,7 +287,7 @@ class TitleMenu:
         return self.options[self.sel_i]
 
 class TitleScene(Scene):
-    def __init__(self):
+    def __init__(self, init_selected):
         # Text settings
         self.font_size = 32
 
@@ -306,7 +306,7 @@ class TitleScene(Scene):
         self.select_sfx = load_sound("sfx_select.wav", SFX_DIR, 0.5)
 
         # Menu object
-        self.title_menu = TitleMenu()
+        self.title_menu = TitleMenu(init_selected)
 
     def handle_events(self, events):
         for event in events:
@@ -354,7 +354,7 @@ class ScoresTable():
         self.table_rect = self.table_surf.get_rect()
         #self.table_surf.fill('red')
         
-        # Scores - TODO: Just an example
+        # Scores - TODO: Just an example. No sorting yet.
         self.scores = [
             ["MAN", 1000],
             ["WMN", 2100],
@@ -544,7 +544,9 @@ class ScoresScene(Scene):
                         elif self.control_panel.get_dp_selected_option() == "NEXT":
                             self.scores_table.next_table()
                     elif self.control_panel.get_active_panel() == "BACK":
-                        self.manager.go_to(TitleScene())
+                        self.manager.go_to(TitleScene(1))
+                elif event.key == pygame.K_x:
+                    self.manager.go_to(TitleScene(1))
     
     def update(self, dt):
         self.bg_y += 100 * dt
@@ -569,7 +571,7 @@ def main():
     pygame.mouse.set_visible(False)
 
     # Scene Manager
-    manager = SceneManager(ScoresScene())
+    manager = SceneManager(TitleScene(0))
 
     # Loop variables
     clock = pygame.time.Clock()
@@ -586,7 +588,7 @@ def main():
     while running:
         # Lock FPS
         clock.tick(FPS)
-        pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps())})")
+        pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps(),2)})")
 
         # Calculate delta time
         now = time.time()
