@@ -17,7 +17,7 @@ WIN_RES = {"w": 320, "h": 480}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
 VERSION = "2.0"
-SCALE = 1
+SCALE = 2
 FONT_SIZE = 16
 
 # Directories

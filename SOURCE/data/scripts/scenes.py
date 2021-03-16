@@ -420,7 +420,7 @@ class GameScene(Scene):
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
-        self.sprites.update(dt)
+        self.sprites.update(dt, self.sprites)
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
