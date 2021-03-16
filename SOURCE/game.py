@@ -14,7 +14,7 @@ import pygame, os, random, math, time
 from pygame.locals import *
 from itertools import repeat
 from data.scripts.settings import *
-from data.scripts.scenes import TitleScene
+from data.scripts.scenes import *
 from data.scripts.MateriaEngine import (
     load_img, 
     load_sound, 
@@ -39,14 +39,17 @@ def main():
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
-    window = pygame.display.set_mode((WIN_RES["w"], WIN_RES["h"]))
+    window = pygame.display.set_mode((int(WIN_RES["w"]), int(WIN_RES["h"])))
     window_rect = window.get_rect()
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("hellfighter1.png", IMG_DIR, 1)) # TODO - change the icon name
     pygame.mouse.set_visible(False)
 
+    # Render target
+    render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
+
     # Scene Manager
-    manager = SceneManager(TitleScene(0))
+    manager = SceneManager(TitleScene())
 
     # Loop variables
     clock = pygame.time.Clock()
@@ -70,7 +73,11 @@ def main():
 
         manager.scene.handle_events(pygame.event.get())
         manager.scene.update(dt)
-        manager.scene.draw(window)
+        #manager.scene.draw(window)
+
+        # TODO - render target for multiple resolutions
+        manager.scene.draw(render_target)
+        window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
         pygame.display.flip()
 

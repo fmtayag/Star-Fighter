@@ -1,4 +1,5 @@
 import pygame, sys
+from data.scripts.sprites import Player
 from data.scripts.settings import *
 from data.scripts.MateriaEngine import (
     load_img, 
@@ -23,9 +24,7 @@ class TitleMenu:
         self.surface = pygame.Surface((WIN_RES["w"], 350))
         self.surf_rect = self.surface.get_rect()
         
-        # Text settings
-        self.font_size = 32
-        self.spacing = self.font_size / 2
+        self.spacing = FONT_SIZE / 2
 
         # Menu
         self.options = ("PLAY", "SCORES", "OPTIONS", "CREDITS", "EXIT")
@@ -34,21 +33,21 @@ class TitleMenu:
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
 
         # Selector
-        self.selector = pygame.Surface((WIN_RES["w"], self.font_size + 4))
+        self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
         self.selector.fill("white")
-        self.sel_y = self.font_size + self.spacing
+        self.sel_y = FONT_SIZE + self.spacing
         self.sel_i = init_selected # index
 
     def update(self):
-        self.sel_y = self.font_size*(self.sel_i+1) + self.spacing*(self.sel_i+1)
+        self.sel_y = FONT_SIZE*(self.sel_i+1) + self.spacing*(self.sel_i+1)
 
     def draw(self, window):
         self.surface.fill("black")
         self.surface.set_colorkey("black")
         self.surface.blit(self.selector, (0,self.sel_y-3))
         for i in range(len(self.options)):
-            draw_text(self.surface, self.options[i], self.font_size, GAME_FONT, self.surf_rect.centerx, self.font_size*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
-        window.blit(self.surface, (0,window.get_height()/2 - 80))
+            draw_text(self.surface, self.options[i], FONT_SIZE, GAME_FONT, self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
+        window.blit(self.surface, (0,window.get_height()/2 - 32))
 
     def select_up(self):
         if  self.sel_i > 0:
@@ -74,10 +73,7 @@ class TitleMenu:
         return self.options[self.sel_i]
 
 class TitleScene(Scene):
-    def __init__(self, init_selected):
-        # Text settings
-        self.font_size = 32
-
+    def __init__(self, init_selected=0):
         # Background
         self.bg_img = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.bg_img.get_rect()
@@ -87,7 +83,9 @@ class TitleScene(Scene):
         self.par_y = 0
 
         # Images
-        self.logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
+        self.logo_img = load_img("logo.png", IMG_DIR, 4, convert_alpha=True)
+        self.logo_rect = self.logo_img.get_rect()
+        self.logo_hw = self.logo_rect.width / 2
 
         # Menu object
         self.title_menu = TitleMenu(init_selected)
@@ -119,26 +117,23 @@ class TitleScene(Scene):
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
-        window.blit(self.logo_img, (window.get_width()/2-240, -128))
+        window.blit(self.logo_img, (WIN_RES["w"]/2 - self.logo_hw, -32))
 
         # Draw menu
         self.title_menu.draw(window)
-        draw_text(window, "Actually...there's no copyright", int(self.font_size/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-(self.font_size/2)*2, "WHITE", "centered")
+        draw_text(window, "Copydown", FONT_SIZE, GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-(FONT_SIZE/2)*2, "WHITE", "centered")
 
 # SCORES SCENE ===============================
 
 class ScoresControlPanel():
     def __init__(self):
-        # Text settings
-        self.font_size = 32
-
         # Panels
         self.sub_panels = ("DIRECTION", "BACK")
         self.active_panel = self.sub_panels[0]
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive options
 
         # Direction Sub-panel
-        self.direction_panel = pygame.Surface((WIN_RES["w"], 64))
+        self.direction_panel = pygame.Surface((WIN_RES["w"], FONT_SIZE*2))
         self.dp_rect = self.direction_panel.get_rect()
 
         # Direction Sub-panel Options
@@ -147,7 +142,7 @@ class ScoresControlPanel():
         self.dp_act_opt[0] = 1
 
         # Back Sub-panel
-        self.back_panel = pygame.Surface((WIN_RES["w"], 64))
+        self.back_panel = pygame.Surface((WIN_RES["w"], FONT_SIZE*2))
         self.bp_rect = self.back_panel.get_rect()
 
         # Back Sub-panel Option
@@ -176,12 +171,12 @@ class ScoresControlPanel():
             self.back_panel.blit(self.selector, (self.back_panel.get_rect().width/4,0))
 
         # Direction panel
-        draw_text(self.direction_panel, self.dp_options[0], self.font_size, GAME_FONT, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
-        draw_text(self.direction_panel, self.dp_options[1], self.font_size, GAME_FONT, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
+        draw_text(self.direction_panel, self.dp_options[0], FONT_SIZE, GAME_FONT, self.dp_rect.centerx*0.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[0]], "centered")
+        draw_text(self.direction_panel, self.dp_options[1], FONT_SIZE, GAME_FONT, self.dp_rect.centerx*1.5, self.dp_rect.centery*0.5, self.colors[self.dp_act_opt[1]], "centered")
         window.blit(self.direction_panel, (0,window.get_rect().height*0.7))
 
         # Back panel
-        draw_text(self.back_panel, "BACK", self.font_size, GAME_FONT, self.dp_rect.centerx, self.dp_rect.centery*0.5, self.colors[self.bp_active], "centered")
+        draw_text(self.back_panel, "BACK", FONT_SIZE, GAME_FONT, self.dp_rect.centerx, self.dp_rect.centery*0.5, self.colors[self.bp_active], "centered")
         window.blit(self.back_panel, (0,window.get_rect().height*0.8))
 
     def move_left(self):
@@ -231,9 +226,7 @@ class ScoresControlPanel():
 
 class ScoresTable():
     def __init__(self):
-        # Text settings
-        self.font_size = 32
-        self.spacing = self.font_size / 2
+        self.spacing = FONT_SIZE / 2
 
         # Table
         self.table_surf = pygame.Surface((WIN_RES["w"], WIN_RES["h"] / 2))
@@ -273,14 +266,14 @@ class ScoresTable():
         self.table_surf.set_colorkey("black")
 
         for i in range(len(self.scores[self.cur_tbl])):
-            draw_text(self.table_surf, f"{(i+1)+(self.cur_tbl*self.splice_n)}.", self.font_size, GAME_FONT, self.table_rect.centerx * 0.5 + len(str(i)), self.font_size*(i+1) + self.spacing*(i+1), "YELLOW")
-            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][0]}", self.font_size, GAME_FONT, self.table_rect.centerx * 0.8, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
-            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][1]}", self.font_size, GAME_FONT, self.table_rect.centerx * 1.3, self.font_size*(i+1) + self.spacing*(i+1), "WHITE")
+            draw_text(self.table_surf, f"{(i+1)+(self.cur_tbl*self.splice_n)}.", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.5 + len(str(i)), FONT_SIZE*(i+1) + self.spacing*(i+1), "YELLOW")
+            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][0]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.8, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
+            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][1]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 1.3, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
 
         # TODO - this is just a placeholder
-        draw_text(window, f"PAGE {self.cur_tbl+1} OF {len(self.scores)}", self.font_size, GAME_FONT, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
+        draw_text(window, f"PAGE {self.cur_tbl+1} OF {len(self.scores)}", FONT_SIZE, GAME_FONT, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
 
-        window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 256))
+        window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 128))
 
     def next_table(self):
         if self.cur_tbl < len(self.scores) - 1:
@@ -337,18 +330,11 @@ class ScoresScene(Scene):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
 
-        draw_text(window, "HALL OF FAME", 64, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
+        draw_text(window, "HALL OF FAME", FONT_SIZE*2, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
         self.scores_table.draw(window)
         self.control_panel.draw(window)
 
 # OPTIONS SCENE ==============================
-
-class BackControlPanel():
-    def __init__(self):
-        pass
-
-    def update(self):
-        pass
 
 class OptionsScene(Scene):
     def __init__(self):
@@ -374,8 +360,8 @@ class OptionsScene(Scene):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
 
-        draw_text(window, "OPTIONS", 64, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
-        draw_text(window, "DEV: Not yet done.", 32, GAME_FONT, window.get_rect().centerx, 300, "WHITE", "centered")
+        draw_text(window, "OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
 
 # CREDITS SCENE ==============================
 
@@ -403,8 +389,8 @@ class CreditsScene(Scene):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
 
-        draw_text(window, "CREDITS", 64, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
-        draw_text(window, "DEV: Not yet done.", 32, GAME_FONT, window.get_rect().centerx, 300, "WHITE", "centered")
+        draw_text(window, "CREDITS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
 
 # GAME SCENE =================================
 
@@ -417,6 +403,13 @@ class GameScene(Scene):
         self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
+
+        # Sprites
+        self.player = Player()
+
+        # Sprite groups
+        self.sprites = pygame.sprite.Group()
+        self.sprites.add(self.player)
     
     def handle_events(self, events):
         for event in events:
@@ -427,7 +420,9 @@ class GameScene(Scene):
     def update(self, dt):
         self.bg_y += 100 * dt
         self.par_y += 200 * dt
+        self.sprites.update(dt)
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
+        self.sprites.draw(window)

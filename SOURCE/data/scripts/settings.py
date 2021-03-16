@@ -9,11 +9,12 @@ GOLD = (255,215,0)
 PURPLE = (219,84,180)
 
 # Window Resolution and Metadata
-WIN_RES = {"w": 640, "h": 780}
+WIN_RES = {"w": 320, "h": 480}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
 VERSION = "2.0"
 SCALE = 4
+FONT_SIZE = 16
 
 # Directories
 GAME_DIR = os.path.dirname("..") # What the fuck?
