@@ -110,8 +110,8 @@ class TitleScene(Scene):
                         sys.exit()
 
     def update(self, dt):
-        self.bg_y += 100 * dt
-        self.par_y += 200 * dt
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
         self.title_menu.update()
 
     def draw(self, window):
@@ -323,8 +323,8 @@ class ScoresScene(Scene):
                     self.manager.go_to(TitleScene(1))
     
     def update(self, dt):
-        self.bg_y += 100 * dt
-        self.par_y += 200 * dt
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
@@ -353,8 +353,8 @@ class OptionsScene(Scene):
                     self.manager.go_to(TitleScene(2))
     
     def update(self, dt):
-        self.bg_y += 100 * dt
-        self.par_y += 200 * dt
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
@@ -382,8 +382,8 @@ class CreditsScene(Scene):
                     self.manager.go_to(TitleScene(3))
     
     def update(self, dt):
-        self.bg_y += 100 * dt
-        self.par_y += 200 * dt
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
@@ -418,8 +418,8 @@ class GameScene(Scene):
                     self.manager.go_to(TitleScene(0))
     
     def update(self, dt):
-        self.bg_y += 100 * dt
-        self.par_y += 200 * dt
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
         self.sprites.update(dt)
 
     def draw(self, window):

@@ -39,7 +39,8 @@ def main():
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
-    window = pygame.display.set_mode((int(WIN_RES["w"]), int(WIN_RES["h"])))
+    window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
+    #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h))
     window_rect = window.get_rect()
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("hellfighter1.png", IMG_DIR, 1)) # TODO - change the icon name
@@ -73,10 +74,23 @@ def main():
 
         manager.scene.handle_events(pygame.event.get())
         manager.scene.update(dt)
-        #manager.scene.draw(window)
+        manager.scene.draw(render_target)
 
         # TODO - render target for multiple resolutions
-        manager.scene.draw(render_target)
+
+        xscale = window.get_rect().width / WIN_RES["w"]
+        yscale = window.get_rect().height / WIN_RES["h"]
+        if xscale < 1 and yscale < 1:
+            scale = max(xscale, yscale)
+        elif xscale > 1 and yscale > 1:
+            scale = min(xscale, yscale)
+        else:
+            scale = 1.0
+        #print(xscale, yscale)
+        targetx = int(WIN_RES["w"] * xscale)
+        targety = int(WIN_RES["h"] * yscale)
+
+        #window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
         window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
         pygame.display.flip()

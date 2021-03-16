@@ -1,5 +1,9 @@
 import os
 
+# Background and Parallax
+BG_SPD = 50
+PAR_SPD = 25
+
 # Colors
 BLACK = (0,0,0)
 WHITE = (235,235,235)
@@ -13,7 +17,7 @@ WIN_RES = {"w": 320, "h": 480}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
 VERSION = "2.0"
-SCALE = 4
+SCALE = 1
 FONT_SIZE = 16
 
 # Directories
