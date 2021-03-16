@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 from data.scripts.settings import *
 from data.scripts.MateriaEngine import (
     load_img, 
@@ -89,9 +89,6 @@ class TitleScene(Scene):
         # Images
         self.logo_img = load_img("logo.png", IMG_DIR, 8, convert_alpha=True)
 
-        # Sounds
-        self.select_sfx = load_sound("sfx_select.wav", SFX_DIR, 0.5)
-
         # Menu object
         self.title_menu = TitleMenu(init_selected)
 
@@ -100,21 +97,19 @@ class TitleScene(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.title_menu.select_up()
-                    self.select_sfx.play()
                 elif event.key == pygame.K_DOWN:
                     self.title_menu.select_down()
-                    self.select_sfx.play()
                 elif event.key == pygame.K_z:
                     if self.title_menu.get_selected() == "PLAY":
-                        print("TODO - PLAY")
+                        self.manager.go_to(GameScene())
                     elif self.title_menu.get_selected() == "SCORES":
                         self.manager.go_to(ScoresScene())
                     elif self.title_menu.get_selected() == "OPTIONS":
-                        print("TODO - OPTIONS")
+                        self.manager.go_to(OptionsScene())
                     elif self.title_menu.get_selected() == "CREDITS":
-                        print("TODO - CREDITS")
+                        self.manager.go_to(CreditsScene())
                     elif self.title_menu.get_selected() == "EXIT":
-                        print("TODO - EXIT")
+                        sys.exit()
 
     def update(self, dt):
         self.bg_y += 100 * dt
@@ -305,9 +300,6 @@ class ScoresScene(Scene):
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
 
-        # Sounds
-        self.select_sfx = load_sound("sfx_select.wav", SFX_DIR, 0.5)
-
         # Scores table
         self.scores_table = ScoresTable()
 
@@ -348,3 +340,94 @@ class ScoresScene(Scene):
         draw_text(window, "HALL OF FAME", 64, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
         self.scores_table.draw(window)
         self.control_panel.draw(window)
+
+# OPTIONS SCENE ==============================
+
+class BackControlPanel():
+    def __init__(self):
+        pass
+
+    def update(self):
+        pass
+
+class OptionsScene(Scene):
+    def __init__(self):
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
+    
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.manager.go_to(TitleScene(2))
+    
+    def update(self, dt):
+        self.bg_y += 100 * dt
+        self.par_y += 200 * dt
+
+    def draw(self, window):
+        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
+        draw_background(window, self.par_img, self.par_rect, self.par_y)
+
+        draw_text(window, "OPTIONS", 64, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
+        draw_text(window, "DEV: Not yet done.", 32, GAME_FONT, window.get_rect().centerx, 300, "WHITE", "centered")
+
+# CREDITS SCENE ==============================
+
+class CreditsScene(Scene):
+    def __init__(self):
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
+    
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.manager.go_to(TitleScene(3))
+    
+    def update(self, dt):
+        self.bg_y += 100 * dt
+        self.par_y += 200 * dt
+
+    def draw(self, window):
+        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
+        draw_background(window, self.par_img, self.par_rect, self.par_y)
+
+        draw_text(window, "CREDITS", 64, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
+        draw_text(window, "DEV: Not yet done.", 32, GAME_FONT, window.get_rect().centerx, 300, "WHITE", "centered")
+
+# GAME SCENE =================================
+
+class GameScene(Scene):
+    def __init__(self):
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
+    
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.manager.go_to(TitleScene(0))
+    
+    def update(self, dt):
+        self.bg_y += 100 * dt
+        self.par_y += 200 * dt
+
+    def draw(self, window):
+        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
+        draw_background(window, self.par_img, self.par_rect, self.par_y)

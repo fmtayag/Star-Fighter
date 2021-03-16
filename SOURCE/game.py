@@ -8,15 +8,13 @@
 #   > Website: zyenapz.github.io
 #   > GitHub: github.com/zyenapz
 #   > Twitter: @zyenapz
-# Contributors
-#   > Rion (music. Soundcloud: yoitsrion)
 
 # Import libraries =============================================================
 import pygame, os, random, math, time
 from pygame.locals import *
 from itertools import repeat
 from data.scripts.settings import *
-from data.scripts.scenes import TitleScene, ScoresScene
+from data.scripts.scenes import TitleScene
 from data.scripts.MateriaEngine import (
     load_img, 
     load_sound, 
