@@ -74,7 +74,7 @@ def main():
 
         manager.scene.handle_events(pygame.event.get())
         manager.scene.update(dt)
-        manager.scene.draw(render_target)
+        manager.scene.draw(render_target)   
 
         # TODO - render target for multiple resolutions
 

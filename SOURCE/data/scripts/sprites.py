@@ -1,5 +1,6 @@
 import pygame
 import pygame.math as pygmath
+import math
 from data.scripts.settings import *
 
 # Player =====================================
@@ -15,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = self.position.y
         self.velocity = pygmath.Vector2(0,0)
         self.speed = 225
-        self.gun_level = 1
+        self.gun_level = 3
         
         # Managers
         self.attack_manager = PlayerAttackManager(self)
@@ -56,7 +57,7 @@ class PlayerAttackManager:
         self.player = player
         self.shoot_delay = 125
         self.shoot_timer = pygame.time.get_ticks()
-        self.bullet_increase_delay = 100
+        self.bullet_increase_delay = 50
         self.bullet_increase_timer = 0
         self.bullet_increase_tick = 25
         self.weak_bullet_delay = 250
@@ -93,10 +94,10 @@ class PlayerAttackManager:
         now = pygame.time.get_ticks()
         if now - self.weak_bullet_timer > self.weak_bullet_delay:
             self.weak_bullet_timer = now
-            sprites.add(PlayerWeakBullet(pygmath.Vector2(self.player.rect.centerx-16, self.player.rect.top+16), pygmath.Vector2(-16, self.player.speed)))
+            sprites.add(PlayerWeakBullet(pygmath.Vector2(self.player.rect.centerx-16, self.player.rect.top-8), pygmath.Vector2(-16, self.player.speed)))
             sprites.add(PlayerWeakBullet(pygmath.Vector2(self.player.rect.centerx-16, self.player.rect.top), pygmath.Vector2(-16, self.player.speed)))
             sprites.add(PlayerWeakBullet(pygmath.Vector2(self.player.rect.centerx+16, self.player.rect.top), pygmath.Vector2(32, self.player.speed)))
-            sprites.add(PlayerWeakBullet(pygmath.Vector2(self.player.rect.centerx+16, self.player.rect.top+16), pygmath.Vector2(32, self.player.speed)))
+            sprites.add(PlayerWeakBullet(pygmath.Vector2(self.player.rect.centerx+16, self.player.rect.top-8), pygmath.Vector2(32, self.player.speed)))
         
 class PlayerStrongBullet(pygame.sprite.Sprite):
     def __init__(self, position, pspeed):
@@ -140,16 +141,47 @@ class PlayerWeakBullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-# Enemies ====================================
+# Fighter ====================================
 
 class EnemyFighter(pygame.sprite.Sprite):
-    def __init__(self, position):
+    def __init__(self, position, dest, speed):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("RED")
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
+        self.dest = dest
+        self.velocity = pygmath.Vector2(0,0)
+        self.speed = speed
+        self.pos = position
 
-    def update(self):
-        pass
+        self.dist = 0
+        self.dx = 0
+        self.dy = 0
+        self.travelling = False
+
+    def update(self, dt, sprites):
+        self.travel(dt)
+
+    def travel(self, dt):
+        if not self.travelling:
+            pos_x = self.rect.x
+            pos_y = self.rect.y 
+            dest_x = self.dest.x
+            dest_y = self.dest.y
+            radians = math.atan2(dest_y-pos_y, dest_x-pos_x)
+            self.dist = math.hypot(dest_x-pos_x, dest_y-pos_y) / (self.speed/100)
+            self.dist = int(self.dist)
+            self.dx = math.cos(radians) * (self.speed/100)
+            self.dy = math.sin(radians) * (self.speed/100)
+            self.travelling = True
+
+        if self.dist:
+            self.dist -= 1
+            self.pos.x += self.dx
+            self.pos.y += self.dy
+            print(self.dx)
+
+        self.rect.x = self.pos.x
+        self.rect.y = self.pos.y

@@ -1,5 +1,6 @@
 import pygame, sys
 from data.scripts.sprites import Player
+from data.scripts.SpawnManager import SpawnManager
 from data.scripts.settings import *
 from data.scripts.MateriaEngine import (
     load_img, 
@@ -410,6 +411,9 @@ class GameScene(Scene):
         # Sprite groups
         self.sprites = pygame.sprite.Group()
         self.sprites.add(self.player)
+
+        # Spawn Manager
+        self.spawn_manager = SpawnManager()
     
     def handle_events(self, events):
         for event in events:
@@ -420,9 +424,40 @@ class GameScene(Scene):
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+        self.spawn_manager.update(self.sprites)
         self.sprites.update(dt, self.sprites)
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
         self.sprites.draw(window)
+        pygame.draw.rect(
+            window, 
+            "white",
+            (WIN_RES["w"]/2,WIN_RES["h"]*0.3, 32, 32),
+            2
+        )
+        pygame.draw.rect(
+            window, 
+            "white",
+            (WIN_RES["w"]/4,WIN_RES["h"]*0.5, 32, 32),
+            2
+        )
+        pygame.draw.rect(
+            window, 
+            "white",
+            (WIN_RES["w"]/3,WIN_RES["h"]*0.7, 32, 32),
+            2
+        )
+        pygame.draw.rect(
+            window, 
+            "white",
+            (WIN_RES["w"]/6,WIN_RES["h"]*0.35, 32, 32),
+            2
+        )
+        pygame.draw.rect(
+            window, 
+            "white",
+            (WIN_RES["w"]/4.5,WIN_RES["h"]*0.54, 32, 32),
+            2
+        )

@@ -92,7 +92,7 @@ def slice_list(inlist, n):
 # DRAWING
 
 def draw_background(surf, img, img_rect, ypos):
-    # DISCLAIMER: Code from Paget Teaches
+    # Code from Paget Teaches
     surf_h = surf.get_height()
     rel_y = ypos % img_rect.height
     surf.blit(img, (0, rel_y - img_rect.height))
@@ -113,7 +113,7 @@ def draw_text(surf, text, size, font, x, y, color, align="normal"):
     surf.blit(text_surface, (text_rect.x, text_rect.y))
 
 def shake(intensity, n):
-    # DISCLAIMER: Code from Sloth from StackOverflow
+    # Code from Sloth from StackOverflow
     shake = -1
     for _ in range(n):
         for x in range(0, intensity, 5):
