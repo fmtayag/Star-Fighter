@@ -1,5 +1,8 @@
 import os
 
+# Loop
+FPS = 60
+
 # Background and Parallax
 BG_SPD = 25
 PAR_SPD = 50

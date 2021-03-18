@@ -27,12 +27,6 @@ from data.scripts.MateriaEngine import (
 
 pygame.init()
 
-# Sounds =======================================================================
-
-pygame.mixer.music.load(os.path.join(SFX_DIR, "ost_fighter.ogg"))
-pygame.mixer.music.set_volume(0.3)
-pygame.mixer.music.play()
-
 # Game loop ====================================================================
 
 def main():
@@ -54,11 +48,10 @@ def main():
 
     # Loop variables
     clock = pygame.time.Clock()
-    FPS = 60
     running = True
     prev_time = time.time()
     dt = 0
-    
+
     while running:
         # Lock FPS
         clock.tick(FPS)
