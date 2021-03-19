@@ -20,7 +20,7 @@ from data.scripts.MUDA import (
 # Player =====================================
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, images, bullet_image):
+    def __init__(self, images, bullet_image, bullet_sg):
         super().__init__()
         self.images = images
         self.image = self.images["N"]
@@ -34,6 +34,7 @@ class Player(pygame.sprite.Sprite):
         
         # For shooting
         self.bullet_image = bullet_image
+        self.bullet_sg = bullet_sg
         self.shoot_delay = 125
         self.shoot_timer = pygame.time.get_ticks()
         self.bullet_increase_delay = 50
@@ -98,11 +99,17 @@ class Player(pygame.sprite.Sprite):
                 self.bullet_increase_timer = 0
 
     def attack1(self, sprites):
-        sprites.add(PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.speed)))
+        b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.speed))
+        sprites.add(b)
+        self.bullet_sg.add(b)
 
     def attack2(self, sprites):
-        sprites.add(PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.speed)))
-        sprites.add(PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.speed)))
+        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.speed))
+        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.speed))
+        sprites.add(b1)
+        sprites.add(b2)
+        self.bullet_sg.add(b1)
+        self.bullet_sg.add(b2)
 
     def attack3(self, sprites):
         self.attack1(sprites)

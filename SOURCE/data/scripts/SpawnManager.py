@@ -6,7 +6,8 @@ from data.scripts.settings import *
 from data.scripts.sprites import *
 
 class SpawnManager:
-    def __init__(self):
+    def __init__(self, enemies_sg):
+        self.enemies_sg = enemies_sg
         self.spawn_delay = 1000
         self.spawn_timer = pygame.time.get_ticks()
 
