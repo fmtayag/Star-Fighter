@@ -31,3 +31,6 @@ IMG_DIR = os.path.join(DATA_DIR, "img")
 SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
 SFX_DIR = os.path.join(DATA_DIR, "sfx")
 GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
+
+# Game variables
+PLAYER_DAMAGE = 1

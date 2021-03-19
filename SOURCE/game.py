@@ -15,7 +15,7 @@ from pygame.locals import *
 from itertools import repeat
 from data.scripts.settings import *
 from data.scripts.scenes import *
-from data.scripts.MateriaEngine import (
+from data.scripts.MUDA import (
     load_img, 
     load_sound, 
     read_savedata,
@@ -33,11 +33,11 @@ def main():
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
-    window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
-    #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h))
+    #window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
+    window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h))
     window_rect = window.get_rect()
     pygame.display.set_caption(TITLE)
-    pygame.display.set_icon(load_img("hellfighter1.png", IMG_DIR, 1)) # TODO - change the icon name
+    pygame.display.set_icon(load_img("player.png", IMG_DIR, 1)) # TODO - change the icon name
     pygame.mouse.set_visible(False)
 
     # Render target
@@ -83,8 +83,9 @@ def main():
         targetx = int(WIN_RES["w"] * xscale)
         targety = int(WIN_RES["h"] * yscale)
 
-        #window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
-        window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
+        window.fill((15,15,30))
+        window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
+        #window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
         pygame.display.flip()
 

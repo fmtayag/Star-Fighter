@@ -1,48 +1,17 @@
 import pygame
 import pygame.math as pygmath
+Vec2 = pygame.math.Vector2
 import random as rand
 from data.scripts.settings import *
-from data.scripts.sprites import EnemyFighter
+from data.scripts.sprites import *
 
 class SpawnManager:
     def __init__(self):
-        pass
+        self.spawn_delay = 1000
+        self.spawn_timer = pygame.time.get_ticks()
 
     def update(self, sprites):
-        keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_q]:
-            sprites.add(
-                EnemyFighter(
-                    Vec2(32,WIN_RES["h"]/2),
-                    Vec2(WIN_RES["w"]/2,WIN_RES["h"]*0.3),
-                    500
-                )
-            )
-            sprites.add(
-                EnemyFighter(
-                    Vec2(32,WIN_RES["h"]/2),
-                    Vec2(WIN_RES["w"]/4,WIN_RES["h"]*0.5),
-                    310
-                )
-            )
-            sprites.add(
-                EnemyFighter(
-                    Vec2(32,WIN_RES["h"]/2),
-                    Vec2(WIN_RES["w"]/3,WIN_RES["h"]*0.7),
-                    350
-                )
-            )
-            sprites.add(
-                EnemyFighter(
-                    Vec2(32,WIN_RES["h"]/2),
-                    Vec2(WIN_RES["w"]/6,WIN_RES["h"]*0.35),
-                    100
-                )
-            )
-            sprites.add(
-                EnemyFighter(
-                    Vec2(32,WIN_RES["h"]/2),
-                    Vec2(WIN_RES["w"]/4.5,WIN_RES["h"]*0.54),
-                    125
-                )
-            )
+        now = pygame.time.get_ticks()
+        if now - self.spawn_timer > self.spawn_delay:
+            self.spawn_timer = now
+            pass

@@ -1,8 +1,8 @@
 import pygame, sys
-from data.scripts.sprites import Player
+from data.scripts.sprites import Player, PlayerBullet
 from data.scripts.SpawnManager import SpawnManager
 from data.scripts.settings import *
-from data.scripts.MateriaEngine import (
+from data.scripts.MUDA import (
     load_img, 
     load_sound, 
     sort,
@@ -405,11 +405,21 @@ class GameScene(Scene):
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
 
+        # Images
+        PLAYER_IMGS = {
+            "L": load_img("player1.png", IMG_DIR, SCALE).convert_alpha(),
+            "N": load_img("player2.png", IMG_DIR, SCALE).convert_alpha(),
+            "R": load_img("player3.png", IMG_DIR, SCALE).convert_alpha()
+        }
+        BULLET_IMG = load_img("player_bullet.png", IMG_DIR, SCALE).convert_alpha()
+
         # Sprites
-        self.player = Player()
+        self.player = Player(PLAYER_IMGS, BULLET_IMG)
 
         # Sprite groups
         self.sprites = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
         self.sprites.add(self.player)
 
         # Spawn Manager
@@ -424,6 +434,7 @@ class GameScene(Scene):
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+
         self.spawn_manager.update(self.sprites)
         self.sprites.update(dt, self.sprites)
 
@@ -431,33 +442,3 @@ class GameScene(Scene):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
         self.sprites.draw(window)
-        pygame.draw.rect(
-            window, 
-            "white",
-            (WIN_RES["w"]/2,WIN_RES["h"]*0.3, 32, 32),
-            2
-        )
-        pygame.draw.rect(
-            window, 
-            "white",
-            (WIN_RES["w"]/4,WIN_RES["h"]*0.5, 32, 32),
-            2
-        )
-        pygame.draw.rect(
-            window, 
-            "white",
-            (WIN_RES["w"]/3,WIN_RES["h"]*0.7, 32, 32),
-            2
-        )
-        pygame.draw.rect(
-            window, 
-            "white",
-            (WIN_RES["w"]/6,WIN_RES["h"]*0.35, 32, 32),
-            2
-        )
-        pygame.draw.rect(
-            window, 
-            "white",
-            (WIN_RES["w"]/4.5,WIN_RES["h"]*0.54, 32, 32),
-            2
-        )
