@@ -10,7 +10,7 @@ class SpawnManager:
         self.spawn_delay = 1000
         self.spawn_timer = pygame.time.get_ticks()
 
-    def update(self, sprites):
+    def update(self):
         now = pygame.time.get_ticks()
         if now - self.spawn_timer > self.spawn_delay:
             self.spawn_timer = now
@@ -19,4 +19,4 @@ class SpawnManager:
                 Vec2(100,0)
             )
             hostiles_g.add(h)
-            sprites.add(h)
+            all_sprites_g.add(h)

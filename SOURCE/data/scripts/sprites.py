@@ -44,13 +44,13 @@ class Player(pygame.sprite.Sprite):
         self.weak_bullet_timer = pygame.time.get_ticks()
         self.weak_bullet_tick = 10
 
-    def update(self, dt, sprites):
+    def update(self, dt):
         self.image = self.images["N"]
         self.velocity *= 0
 
         keyspressed = pygame.key.get_pressed()
         self.move(keyspressed)
-        self.shoot(sprites, keyspressed)
+        self.shoot(keyspressed)
 
         self.position += self.velocity * dt 
         self.rect.x = self.position.x
@@ -83,37 +83,37 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
             self.position.y = self.rect.y
     
-    def shoot(self, sprites, keyspressed):
+    def shoot(self,  keyspressed):
         now = pygame.time.get_ticks()
         if now - self.shoot_timer > self.shoot_delay:
             self.shoot_timer = now
             if keyspressed[pygame.K_z]:
                 if self.bullet_increase_timer >= self.bullet_increase_delay * 2 and self.gun_level == 3:
-                    self.attack3(sprites)
+                    self.attack3()
                 elif self.bullet_increase_timer >= self.bullet_increase_delay and self.gun_level >= 2:
-                    self.attack2(sprites)
+                    self.attack2()
                 else:
-                    self.attack1(sprites)
+                    self.attack1()
                 self.bullet_increase_timer += self.bullet_increase_tick
             else:
                 self.bullet_increase_timer = 0
 
-    def attack1(self, sprites):
+    def attack1(self):
         b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.speed))
-        sprites.add(b)
-        friendlies_g.add(b)
+        all_sprites_g.add(b)
+        p_bullets_g.add(b)
 
-    def attack2(self, sprites):
+    def attack2(self):
         b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.speed))
         b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.speed))
-        sprites.add(b1)
-        sprites.add(b2)
-        friendlies_g.add(b1)
-        friendlies_g.add(b2)
+        all_sprites_g.add(b1)
+        all_sprites_g.add(b2)
+        p_bullets_g.add(b1)
+        p_bullets_g.add(b2)
 
-    def attack3(self, sprites):
-        self.attack1(sprites)
-        self.attack2(sprites)
+    def attack3(self):
+        self.attack1()
+        self.attack2()
     
 class PlayerBullet(pygame.sprite.Sprite):
     def __init__(self, image, position, velocity):
@@ -126,7 +126,7 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.velocity = Vec2(velocity.x, velocity.y*3)
         self.damage = PLAYER_DAMAGE
 
-    def update(self, dt, sprites):
+    def update(self, dt):
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
@@ -147,23 +147,23 @@ class Hellfighter(pygame.sprite.Sprite):
         self.velocity = velocity
 
         # For shooting
-        self.shoot_delay = 500
+        self.shoot_delay = 250
         self.shoot_timer = pygame.time.get_ticks()
     
-    def update(self, dt, sprites):
+    def update(self, dt):
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
 
-        self.shoot(sprites)
+        self.shoot()
 
-    def shoot(self, sprites):
+    def shoot(self):
         now = pygame.time.get_ticks()
         if now - self.shoot_timer > self.shoot_delay:
             self.shoot_timer = now
             b = HFBullet(Vec2(self.rect.centerx, self.rect.bottom), Vec2(0, 100))
-            sprites.add(b)
-            hostiles_g.add(b)
+            all_sprites_g.add(b)
+            e_bullets_g.add(b)
 
 class HFBullet(pygame.sprite.Sprite):
     def __init__(self, position, velocity):
@@ -175,9 +175,9 @@ class HFBullet(pygame.sprite.Sprite):
         self.rect.top = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity.x, velocity.y*3)
-        self.damage = PLAYER_DAMAGE
+        self.damage = 1
 
-    def update(self, dt, sprites):
+    def update(self, dt):
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y

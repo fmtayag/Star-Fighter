@@ -413,12 +413,15 @@ class GameScene(Scene):
         }
         BULLET_IMG = load_img("player_bullet.png", IMG_DIR, SCALE).convert_alpha()
 
-        # All sprites group
-        self.sprites = pygame.sprite.Group()
+        # Clear the sprite groups
+        all_sprites_g.empty()
+        hostiles_g.empty()
+        p_bullets_g.empty()
+        e_bullets_g.empty()
 
         # Instantiate the player
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
-        self.sprites.add(self.player)
+        all_sprites_g.add(self.player)
 
         # Spawn Manager
         self.spawn_manager = SpawnManager()
@@ -433,13 +436,13 @@ class GameScene(Scene):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
         
-        hits = pygame.sprite.groupcollide(friendlies_g, hostiles_g, True, True)
+        hits = pygame.sprite.groupcollide(p_bullets_g, hostiles_g, True, True)
         #print(hits)
 
-        self.spawn_manager.update(self.sprites)
-        self.sprites.update(dt, self.sprites)
+        self.spawn_manager.update()
+        all_sprites_g.update(dt)
 
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
-        self.sprites.draw(window)
+        all_sprites_g.draw(window)

@@ -36,5 +36,7 @@ GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
 PLAYER_DAMAGE = 1
 
 # Sprite groups
+all_sprites_g = pygame.sprite.Group()
 hostiles_g = pygame.sprite.Group()
-friendlies_g = pygame.sprite.Group()
+p_bullets_g = pygame.sprite.Group()
+e_bullets_g = pygame.sprite.Group()
