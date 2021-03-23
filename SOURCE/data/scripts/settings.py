@@ -1,4 +1,4 @@
-import os
+import os, pygame
 
 # Loop
 FPS = 60
@@ -34,3 +34,7 @@ GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
 
 # Game variables
 PLAYER_DAMAGE = 1
+
+# Sprite groups
+hostiles_g = pygame.sprite.Group()
+friendlies_g = pygame.sprite.Group()

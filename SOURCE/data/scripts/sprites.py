@@ -2,6 +2,7 @@ import pygame
 import pygame.math
 Vec2 = pygame.math.Vector2
 import math
+import random
 from data.scripts.settings import *
 from data.scripts.MUDA import (
     load_img, 
@@ -20,7 +21,7 @@ from data.scripts.MUDA import (
 # Player =====================================
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, images, bullet_image, bullet_sg):
+    def __init__(self, images, bullet_image):
         super().__init__()
         self.images = images
         self.image = self.images["N"]
@@ -30,11 +31,10 @@ class Player(pygame.sprite.Sprite):
         self.position = Vec2(self.rect.x,self.rect.y)
         self.velocity = Vec2(0,0)
         self.speed = 225
-        self.gun_level = 3
+        self.gun_level = 1
         
         # For shooting
         self.bullet_image = bullet_image
-        self.bullet_sg = bullet_sg
         self.shoot_delay = 125
         self.shoot_timer = pygame.time.get_ticks()
         self.bullet_increase_delay = 50
@@ -101,15 +101,15 @@ class Player(pygame.sprite.Sprite):
     def attack1(self, sprites):
         b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.speed))
         sprites.add(b)
-        self.bullet_sg.add(b)
+        friendlies_g.add(b)
 
     def attack2(self, sprites):
         b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.speed))
         b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.speed))
         sprites.add(b1)
         sprites.add(b2)
-        self.bullet_sg.add(b1)
-        self.bullet_sg.add(b2)
+        friendlies_g.add(b1)
+        friendlies_g.add(b2)
 
     def attack3(self, sprites):
         self.attack1(sprites)
@@ -132,4 +132,55 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.rect.bottom = self.position.y
 
         if self.rect.bottom < 0:
+            self.kill()
+
+# Hellfighter =====================================
+
+class Hellfighter(pygame.sprite.Sprite):
+    def __init__(self, position, velocity):
+        super().__init__()
+        self.image = pygame.Surface((32,32))
+        self.image.fill("RED")
+        self.rect = self.image.get_rect()
+        self.rect.center = position
+        self.position = position
+        self.velocity = velocity
+
+        # For shooting
+        self.shoot_delay = 500
+        self.shoot_timer = pygame.time.get_ticks()
+    
+    def update(self, dt, sprites):
+        self.position += self.velocity * dt 
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
+
+        self.shoot(sprites)
+
+    def shoot(self, sprites):
+        now = pygame.time.get_ticks()
+        if now - self.shoot_timer > self.shoot_delay:
+            self.shoot_timer = now
+            b = HFBullet(Vec2(self.rect.centerx, self.rect.bottom), Vec2(0, 100))
+            sprites.add(b)
+            hostiles_g.add(b)
+
+class HFBullet(pygame.sprite.Sprite):
+    def __init__(self, position, velocity):
+        super().__init__()
+        self.image = pygame.Surface((8,8))
+        self.image.fill("ORANGE")
+        self.rect = self.image.get_rect()
+        self.rect.centerx = position.x
+        self.rect.top = position.y
+        self.position = Vec2(self.rect.centerx, self.rect.bottom)
+        self.velocity = Vec2(velocity.x, velocity.y*3)
+        self.damage = PLAYER_DAMAGE
+
+    def update(self, dt, sprites):
+        self.position += self.velocity * dt 
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
+
+        if self.rect.top > WIN_RES["h"]:
             self.kill()

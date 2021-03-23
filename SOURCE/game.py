@@ -37,7 +37,7 @@ def main():
     #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h))
     window_rect = window.get_rect()
     pygame.display.set_caption(TITLE)
-    pygame.display.set_icon(load_img("player.png", IMG_DIR, 1)) # TODO - change the icon name
+    pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)
 
     # Render target
