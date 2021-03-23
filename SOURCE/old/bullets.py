@@ -34,7 +34,7 @@ class Fireball(pygame.sprite.Sprite):
         # Dissolve variables
         self.dissolve_delay = 500
         self.dissolve_timer = pygame.time.get_ticks()
-        self.scaler = 1
+        self.SCALEr = 1
         self.damage = 4
 
     def update(self):
@@ -61,10 +61,10 @@ class Fireball(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.dissolve_timer > self.dissolve_delay:
             self.dissolve_timer = now
-            x_scale = self.image.get_width() - self.scaler
-            y_scale = self.image.get_height() - self.scaler
-            self.image = pygame.transform.scale(self.image, (x_scale,y_scale))
-            self.scaler += 1
+            x_SCALE = self.image.get_width() - self.SCALEr
+            y_SCALE = self.image.get_height() - self.SCALEr
+            self.image = pygame.transform.SCALE(self.image, (x_SCALE,y_SCALE))
+            self.SCALEr += 1
             self.movspd -= 1
             self.damage -= 1
             if self.damage <= 1:

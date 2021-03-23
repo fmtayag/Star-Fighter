@@ -1,4 +1,6 @@
-# Materia Engine
+# The Mostly Unexceptional Development Assemblage (MUDA)
+# Version: 1.0.0
+#   > Release date: March 12th 2021
 # A framework built on top of pygame to make development of games easier.
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
@@ -6,7 +8,9 @@
 #   > GitHub: github.com/zyenapz
 #   > Twitter: @zyenapz
 
-import pygame, os
+import pygame
+import os
+import pickle
 
 # SCENES & MANAGERS
 
@@ -17,7 +21,7 @@ class Scene():
     def handle_events(self, events):
         raise NotImplementedError
     
-    def update(self):
+    def update(self, dt):
         raise NotImplementedError
 
     def draw(self, window):
@@ -53,10 +57,22 @@ def load_img(file, directory, scale, convert_alpha=False):
         img = pygame.transform.scale(img, (img_w*scale, img_h*scale))
         return img
     except Exception as e:
-        print(f"Error for {file}: {e} Loading default texture instead.")
+        print(f"ERROR loading {file}: {e}. Loading default texture instead.")
         s = pygame.Surface((32,32))
         s.fill('red')
         return s
+
+def read_savedata(path):
+    with open(path, 'rb') as f:
+        try:
+            data = pickle.load(f)
+            return data
+        except EOFError:
+            return list()
+
+def write_savedata(data, path):
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
 
 # UTILITIES
 
@@ -69,4 +85,42 @@ def sort(arr):
                 arr[j], arr[j+1] = arr[j+1], arr[j]
 
     return arr
+
+def slice_list(inlist, n):
+    return [inlist[i:i+n] for i in range(0, len(inlist), n)]
+
+# DRAWING
+
+def draw_background(surf, img, img_rect, ypos):
+    # Code from Paget Teaches
+    surf_h = surf.get_height()
+    rel_y = ypos % img_rect.height
+    surf.blit(img, (0, rel_y - img_rect.height))
+
+    if rel_y < surf_h:
+        surf.blit(img, (0, rel_y))
+
+def draw_text(surf, text, size, font, x, y, color, align="normal"):
+    font = pygame.font.Font(font, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    if align == "centered":
+        text_rect.centerx = x
+        text_rect.y = y
+    elif align == "normal":
+        text_rect.x = x
+        text_rect.y = y
+    surf.blit(text_surface, (text_rect.x, text_rect.y))
+
+def shake(intensity, n):
+    # Code from Sloth from StackOverflow
+    shake = -1
+    for _ in range(n):
+        for x in range(0, intensity, 5):
+            yield (x*shake, 0)
+        for x in range(intensity, 0, 5):
+            yield (x*shake, 0)
+        shake *= -1
+    while True:
+        yield (0, 0)
 
