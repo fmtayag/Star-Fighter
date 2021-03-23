@@ -147,13 +147,16 @@ class Hellfighter(pygame.sprite.Sprite):
         self.velocity = velocity
 
         # For shooting
-        self.shoot_delay = 250
+        self.shoot_delay = 500
         self.shoot_timer = pygame.time.get_ticks()
     
     def update(self, dt):
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
+
+        if self.rect.left < -64 or self.rect.right > WIN_RES["h"] + 64:
+            self.kill()
 
         self.shoot()
 

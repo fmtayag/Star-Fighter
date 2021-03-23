@@ -431,6 +431,8 @@ class GameScene(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(0))
+
+        self.spawn_manager.handle_events(events)
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
