@@ -439,7 +439,6 @@ class GameScene(Scene):
         self.par_y += PAR_SPD * dt
         
         hits = pygame.sprite.groupcollide(p_bullets_g, hostiles_g, True, True)
-        #print(hits)
 
         self.spawn_manager.update()
         all_sprites_g.update(dt)
@@ -447,5 +446,4 @@ class GameScene(Scene):
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
-        pygame.draw.rect(window, "blue", (100,100,10,10), 2)
         all_sprites_g.draw(window)

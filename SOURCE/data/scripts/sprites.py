@@ -166,14 +166,15 @@ class Helleye(pygame.sprite.Sprite):
         self.player = player
     
         # For shooting
-        self.shoot_delay = 1000
+        self.shoot_delay = 600
         self.shoot_timer = pygame.time.get_ticks()
 
         # For the 'following' state
         self.distance = 0
     
     def update(self, dt):
-        self.follow_player(self.player)
+        self.follow_player()
+        self.shoot()
         self.position += self.velocity * dt 
         self.rect.x = self.position.x
         self.rect.y = self.position.y
@@ -181,11 +182,12 @@ class Helleye(pygame.sprite.Sprite):
         if self.rect.left < -64 or self.rect.right > WIN_RES["h"] + 64:
             self.kill()
 
-    def follow_player(self, player):
-        radians = math.atan2(self.rect.y-player.rect.y, self.rect.x-player.rect.x)
-        hypot = math.hypot(self.rect.x-player.rect.x, self.rect.y-player.rect.y)
+    def follow_player(self):
+        # Calculate delta-x
+        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
         dx = math.cos(radians)
-        self.shoot()
+
+        # Add delta-x to velocity
         self.velocity.x = -(dx * 100)
 
     def shoot(self):
@@ -193,23 +195,24 @@ class Helleye(pygame.sprite.Sprite):
         if now - self.shoot_timer > self.shoot_delay:
             self.shoot_timer = now
 
-            # Get x direction. Note: Current x speed uses the square number series 16, 25, 36
-            x = self.rect.centerx - self.player.rect.centerx
-            x_offset = (x > 0) - (x < 0)
-            radians = math.atan2(self.rect.centery - self.player.rect.centery, self.rect.centerx - self.player.rect.centerx)
-            dir_x = -(int(math.cos(radians) * 10))
+            patterns = [
+                (0,-1),
+                (1,-1),
+                (1,0),
+                (1,1),
+                (0,1),
+                (-1,1),
+                (-1,0),
+                (-1,-1)
+            ]
 
-            # Get y direction
-            speed_y = 50
-            if self.player.rect.bottom < self.rect.top:
-                speed_y = -50
-            
-            b1 = HEBullet(Vec2(self.rect.centerx-8*x_offset, self.rect.centery+4), Vec2(16*dir_x, speed_y))
-            b2 = HEBullet(Vec2(self.rect.centerx, self.rect.centery-4), Vec2(25*dir_x, speed_y))
-            all_sprites_g.add(b1)
-            all_sprites_g.add(b2)
-            e_bullets_g.add(b1)
-            e_bullets_g.add(b2)
+            for i in range(len(patterns)):
+                b = HEBullet(
+                    Vec2(self.rect.center),
+                    Vec2(patterns[i])
+                )
+                e_bullets_g.add(b)
+                all_sprites_g.add(b)
 
 class HEBullet(pygame.sprite.Sprite):
     def __init__(self, position, velocity):
@@ -220,7 +223,7 @@ class HEBullet(pygame.sprite.Sprite):
         self.rect.centerx = position.x
         self.rect.centery = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
-        self.velocity = Vec2(velocity.x, velocity.y*3)
+        self.velocity = Vec2(velocity*100)
         self.damage = 1
 
     def update(self, dt):

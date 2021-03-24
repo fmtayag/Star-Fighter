@@ -25,7 +25,7 @@ class SpawnManager:
         while True:
             h = Helleye(
                 Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-                Vec2(random.choice([-100,100]),0),
+                Vec2(0,0),
                 self.player
             )
             has_overlap = pygame.sprite.spritecollide(h, hostiles_g, False, collided=pygame.sprite.collide_rect_ratio(4))
