@@ -1,7 +1,7 @@
 # The Mostly Unexceptional Development Assemblage (MUDA)
 # Version: 1.0.0
 #   > Release date: March 12th 2021
-# A framework built on top of pygame to make development of games easier.
+# Just a collection of boilerplate code to make development of games easier.
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
 #   > Website: zyenapz.github.io
