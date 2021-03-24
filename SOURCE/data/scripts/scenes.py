@@ -424,7 +424,7 @@ class GameScene(Scene):
         all_sprites_g.add(self.player)
 
         # Spawn Manager
-        self.spawn_manager = SpawnManager()
+        self.spawn_manager = SpawnManager(self.player)
     
     def handle_events(self, events):
         for event in events:
@@ -447,4 +447,5 @@ class GameScene(Scene):
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
+        pygame.draw.rect(window, "blue", (100,100,10,10), 2)
         all_sprites_g.draw(window)

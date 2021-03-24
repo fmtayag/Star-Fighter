@@ -1,4 +1,6 @@
-""" while running:
+# This code doesn't run. It's just the old game loop that I'm refactoring right now (3/24/2021)
+
+while running:
 
     # Initialize the game objects and variables ================================
 
@@ -11,7 +13,6 @@
     particles[:] = []
     bouncies[:] = []
     
-
     # Instantiate the player
     player = Player(WIN_RES, player_imgs, p_spr_supergroup, Laser, p_laser_img, laser_sfx)
     player_group.add(player)
@@ -378,5 +379,3 @@
 
         # Update the window
         pygame.display.flip()
-
- """
