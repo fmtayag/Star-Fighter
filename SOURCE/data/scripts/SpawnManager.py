@@ -16,27 +16,27 @@ class SpawnManager:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
                     self.spawn_hellfighter()
+                elif event.key == pygame.K_2:
+                    self.spawn_netherdrone()
 
     def update(self):
         pass
+
+    def spawn_netherdrone(self):
+        e = Netherdrone(
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(0,0),
+            self.player
+        )
+        hostiles_g.add(e)
+        all_sprites_g.add(e)
             
     def spawn_hellfighter(self):
-        tries = 0
-        while True:
-            h = Helleye(
-                Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-                Vec2(0,0),
-                self.player
-            )
-            has_overlap = pygame.sprite.spritecollide(h, hostiles_g, False, collided=pygame.sprite.collide_rect_ratio(4))
-            if not has_overlap:
-                hostiles_g.add(h)
-                all_sprites_g.add(h)
-                break
-            else:
-                if tries < 10:
-                    tries += 1
-                    continue
-                else:
-                    break
+        e = Helleye(
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(0,0),
+            self.player
+        )
+        hostiles_g.add(e)
+        all_sprites_g.add(e)
 

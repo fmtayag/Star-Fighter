@@ -71,7 +71,7 @@ class TitleMenu:
             self.act_opt[self.sel_i] = 1
 
     def get_selected(self):
-        return self.options[self.sel_i]
+        return self.sel_i
 
 class TitleScene(Scene):
     def __init__(self, init_selected=0):
@@ -99,15 +99,15 @@ class TitleScene(Scene):
                 elif event.key == pygame.K_DOWN:
                     self.title_menu.select_down()
                 elif event.key == pygame.K_z:
-                    if self.title_menu.get_selected() == "PLAY":
+                    if self.title_menu.get_selected() == 0:
                         self.manager.go_to(GameScene())
-                    elif self.title_menu.get_selected() == "SCORES":
+                    elif self.title_menu.get_selected() == 1:
                         self.manager.go_to(ScoresScene())
-                    elif self.title_menu.get_selected() == "OPTIONS":
+                    elif self.title_menu.get_selected() == 2:
                         self.manager.go_to(OptionsScene())
-                    elif self.title_menu.get_selected() == "CREDITS":
+                    elif self.title_menu.get_selected() == 3:
                         self.manager.go_to(CreditsScene())
-                    elif self.title_menu.get_selected() == "EXIT":
+                    elif self.title_menu.get_selected() == 4:
                         sys.exit()
 
     def update(self, dt):

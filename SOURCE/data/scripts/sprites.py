@@ -148,8 +148,49 @@ class Netherdrone(pygame.sprite.Sprite):
         self.velocity = velocity
         self.player = player
 
+        # For shooting
+        self.shoot_delay = 500
+        self.shoot_timer = pygame.time.get_ticks()
+        self.accuracy = 0.2
+        self.bullet_speed = 300
+
     def update(self, dt):
-        pass
+        self.follow_player()
+        self.shoot()
+        self.position += self.velocity * dt 
+        self.rect.x = self.position.x
+        self.rect.y = self.position.y
+
+    def follow_player(self):
+        # Calculate delta-x
+        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.velocity.x = -(dx * 200)
+
+    def shoot(self):
+        # Calculate radians
+        radians = math.atan2(self.rect.centery - self.player.rect.centery, self.rect.centerx - self.player.rect.centerx)
+
+        # Calculate x-component
+        x_com = math.cos(radians)
+        print(x_com)
+
+        if x_com > -self.accuracy and x_com < self.accuracy:
+            now = pygame.time.get_ticks()
+            if now - self.shoot_timer > self.shoot_delay:
+                self.shoot_timer = now
+
+                # Calculate vertical direction
+                dir_y = -(math.copysign(1, math.sin(radians)))
+
+                b = HEBullet(
+                    Vec2(self.rect.center),
+                    Vec2(0,self.bullet_speed*dir_y)
+                )
+                e_bullets_g.add(b)
+                all_sprites_g.add(b)
 
 # Helleye =====================================
 
@@ -166,11 +207,8 @@ class Helleye(pygame.sprite.Sprite):
         self.player = player
     
         # For shooting
-        self.shoot_delay = 600
+        self.shoot_delay = 700
         self.shoot_timer = pygame.time.get_ticks()
-
-        # For the 'following' state
-        self.distance = 0
     
     def update(self, dt):
         self.follow_player()
@@ -178,9 +216,6 @@ class Helleye(pygame.sprite.Sprite):
         self.position += self.velocity * dt 
         self.rect.x = self.position.x
         self.rect.y = self.position.y
-
-        if self.rect.left < -64 or self.rect.right > WIN_RES["h"] + 64:
-            self.kill()
 
     def follow_player(self):
         # Calculate delta-x
@@ -196,20 +231,20 @@ class Helleye(pygame.sprite.Sprite):
             self.shoot_timer = now
 
             patterns = [
-                (0,-1),
-                (1,-1),
-                (1,0),
-                (1,1),
-                (0,1),
-                (-1,1),
-                (-1,0),
-                (-1,-1)
+                Vec2(0,-1),
+                Vec2(1,-1),
+                Vec2(1,0),
+                Vec2(1,1),
+                Vec2(0,1),
+                Vec2(-1,1),
+                Vec2(-1,0),
+                Vec2(-1,-1)
             ]
 
             for i in range(len(patterns)):
                 b = HEBullet(
                     Vec2(self.rect.center),
-                    Vec2(patterns[i])
+                    Vec2(patterns[i]*100)
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)
@@ -223,7 +258,7 @@ class HEBullet(pygame.sprite.Sprite):
         self.rect.centerx = position.x
         self.rect.centery = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
-        self.velocity = Vec2(velocity*100)
+        self.velocity = Vec2(velocity)
         self.damage = 1
 
     def update(self, dt):
