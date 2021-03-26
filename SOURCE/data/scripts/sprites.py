@@ -134,7 +134,27 @@ class PlayerBullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-# Netherdrone =====================================
+# Enemies ====================================
+
+class EnemyBullet(pygame.sprite.Sprite):
+    def __init__(self, position, velocity):
+        super().__init__()
+        self.image = pygame.Surface((8,8))
+        self.image.fill("ORANGE")
+        self.rect = self.image.get_rect()
+        self.rect.centerx = position.x
+        self.rect.centery = position.y
+        self.position = Vec2(self.rect.centerx, self.rect.bottom)
+        self.velocity = Vec2(velocity)
+        self.damage = 1
+
+    def update(self, dt):
+        self.position += self.velocity * dt 
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
+
+        if self.rect.top > WIN_RES["h"] or self.rect.bottom < 0:
+            self.kill()
 
 class Netherdrone(pygame.sprite.Sprite):
     def __init__(self, position, velocity, player):
@@ -175,7 +195,6 @@ class Netherdrone(pygame.sprite.Sprite):
 
         # Calculate x-component
         x_com = math.cos(radians)
-        print(x_com)
 
         if x_com > -self.accuracy and x_com < self.accuracy:
             now = pygame.time.get_ticks()
@@ -185,14 +204,12 @@ class Netherdrone(pygame.sprite.Sprite):
                 # Calculate vertical direction
                 dir_y = -(math.copysign(1, math.sin(radians)))
 
-                b = HEBullet(
+                b = EnemyBullet(
                     Vec2(self.rect.center),
                     Vec2(0,self.bullet_speed*dir_y)
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)
-
-# Helleye =====================================
 
 class Helleye(pygame.sprite.Sprite):
     def __init__(self, position, velocity, player):
@@ -242,29 +259,44 @@ class Helleye(pygame.sprite.Sprite):
             ]
 
             for i in range(len(patterns)):
-                b = HEBullet(
+                b = EnemyBullet(
                     Vec2(self.rect.center),
                     Vec2(patterns[i]*100)
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)
 
-class HEBullet(pygame.sprite.Sprite):
-    def __init__(self, position, velocity):
+class Solturret(pygame.sprite.Sprite): 
+    def __init__(self, position, velocity, player):
         super().__init__()
-        self.image = pygame.Surface((8,8))
+        self.image = pygame.Surface((32,32))
         self.image.fill("ORANGE")
         self.rect = self.image.get_rect()
-        self.rect.centerx = position.x
-        self.rect.centery = position.y
-        self.position = Vec2(self.rect.centerx, self.rect.bottom)
-        self.velocity = Vec2(velocity)
-        self.damage = 1
+        self.rect.x = position.x
+        self.rect.y = position.y
+        self.position = position
+        self.velocity = velocity
+        self.player = player
+
+        # For shooting
+        self.shoot_delay = 500
+        self.shoot_timer = pygame.time.get_ticks()
+        self.BULLET_SPEED = 300
 
     def update(self, dt):
-        self.position += self.velocity * dt 
-        self.rect.centerx = self.position.x
-        self.rect.bottom = self.position.y
+        self.shoot()
 
-        if self.rect.top > WIN_RES["h"] or self.rect.bottom < 0:
-            self.kill()
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.shoot_timer > self.shoot_delay:
+            self.shoot_timer = now
+
+            # Calculate radians, delta x, and delta y
+            radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
+            dx = -(math.cos(radians) * self.BULLET_SPEED)
+            dy = -(math.sin(radians) * self.BULLET_SPEED)
+
+            # Create bullet
+            b = EnemyBullet(Vec2(self.rect.center), Vec2(dx, dy))
+            all_sprites_g.add(b)
+            e_bullets_g.add(b)

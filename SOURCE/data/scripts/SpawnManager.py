@@ -18,6 +18,8 @@ class SpawnManager:
                     self.spawn_hellfighter()
                 elif event.key == pygame.K_2:
                     self.spawn_netherdrone()
+                elif event.key == pygame.K_3:
+                    self.spawn_solturret()
 
     def update(self):
         pass
@@ -33,6 +35,15 @@ class SpawnManager:
             
     def spawn_hellfighter(self):
         e = Helleye(
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(0,0),
+            self.player
+        )
+        hostiles_g.add(e)
+        all_sprites_g.add(e)
+
+    def spawn_solturret(self):
+        e = Solturret(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
             Vec2(0,0),
             self.player
