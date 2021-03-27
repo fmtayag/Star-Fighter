@@ -15,7 +15,8 @@ from data.scripts.MUDA import (
     draw_background, 
     draw_text,
     shake,
-    slice_list
+    slice_list,
+    clamp
 )
 
 # Player =====================================
@@ -156,7 +157,38 @@ class EnemyBullet(pygame.sprite.Sprite):
         if self.rect.top > WIN_RES["h"] or self.rect.bottom < 0:
             self.kill()
 
-class Netherdrone(pygame.sprite.Sprite):
+class FattyBullet(pygame.sprite.Sprite):
+    def __init__(self, position, velocity):
+        super().__init__()
+        self.image = pygame.Surface((16,16))
+        self.image.fill("ORANGE")
+        self.rect = self.image.get_rect()
+        self.rect.centerx = position.x
+        self.rect.centery = position.y
+        self.position = Vec2(self.rect.centerx, self.rect.bottom)
+        self.velocity = Vec2(velocity)
+        self.damage = 1
+        self.decelerate_speed = random.randrange(3,5)
+
+    def update(self, dt):
+        # Decelerate
+        if self.velocity.y > 0:
+            self.velocity.y -= self.decelerate_speed
+        else:
+            self.explode()
+
+        self.position += self.velocity * dt 
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
+
+        if self.rect.top > WIN_RES["h"] or self.rect.bottom < 0:
+            self.kill()
+
+    def explode(self):
+        # TODO - produce a ripple
+        self.kill()
+
+class Hellfighter(pygame.sprite.Sprite):
     def __init__(self, position, velocity, player):
         super().__init__() 
         self.image = pygame.Surface((32,32))
@@ -167,12 +199,13 @@ class Netherdrone(pygame.sprite.Sprite):
         self.position = position
         self.velocity = velocity
         self.player = player
+        self.speed = 200
 
         # For shooting
-        self.shoot_delay = 500
+        self.shoot_delay = 400
         self.shoot_timer = pygame.time.get_ticks()
-        self.accuracy = 0.2
-        self.bullet_speed = 300
+        self.accuracy = 0.2 # The lower the value, the more accurate it is.
+        self.bullet_speed = 400
 
     def update(self, dt):
         self.follow_player()
@@ -187,7 +220,7 @@ class Netherdrone(pygame.sprite.Sprite):
         dx = math.cos(radians)
 
         # Add delta-x to velocity
-        self.velocity.x = -(dx * 200)
+        self.velocity.x = -(dx * self.speed)
 
     def shoot(self):
         # Calculate radians
@@ -196,6 +229,7 @@ class Netherdrone(pygame.sprite.Sprite):
         # Calculate x-component
         x_com = math.cos(radians)
 
+        # Only shoot if in range
         if x_com > -self.accuracy and x_com < self.accuracy:
             now = pygame.time.get_ticks()
             if now - self.shoot_timer > self.shoot_delay:
@@ -206,10 +240,76 @@ class Netherdrone(pygame.sprite.Sprite):
 
                 b = EnemyBullet(
                     Vec2(self.rect.center),
-                    Vec2(0,self.bullet_speed*dir_y)
+                    Vec2(-x_com*(self.bullet_speed/2),self.bullet_speed*dir_y)
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)
+
+class Fatty(pygame.sprite.Sprite):
+    # Fatty's design is that of a pig. Fireballs come out of its snout.
+    def __init__(self, position, velocity, player):
+        super().__init__()
+        self.image = pygame.Surface((32,32))
+        self.image.fill("PINK")
+        self.rect = self.image.get_rect()
+        self.rect.x = position.x
+        self.rect.y = position.y
+        self.position = position
+        self.velocity = velocity
+        self.player = player
+        self.speed = 150
+        self.bob_y = 0
+
+        # For shooting
+        self.shoot_delay = 500
+        self.shoot_timer = pygame.time.get_ticks()
+        self.BULLET_SPEED = 300
+        self.cur_turret = 0
+        self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
+
+    def update(self, dt):
+        self.update_bullet_position()
+        self.follow_player()
+        self.bob()
+        self.shoot() 
+
+        self.position += self.velocity * dt 
+        self.rect.x = self.position.x
+        self.rect.y = self.position.y
+
+    def follow_player(self):
+        # Calculate delta-x
+        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.velocity.x = -(dx * self.speed)
+
+    def bob(self):
+        self.velocity.y = math.sin(self.bob_y) * 50
+        self.bob_y += 0.1
+
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.shoot_timer > self.shoot_delay:
+            self.shoot_timer = now
+
+            b = FattyBullet(
+                Vec2(self.bullet_position[self.cur_turret]),
+                Vec2(0,self.BULLET_SPEED)
+            )
+            self.change_turret()
+            e_bullets_g.add(b)
+            all_sprites_g.add(b)
+
+    def update_bullet_position(self):
+        self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
+
+    def change_turret(self):
+        if self.cur_turret == 1:
+            self.cur_turret = 0
+        else:
+            self.cur_turret += 1
 
 class Helleye(pygame.sprite.Sprite):
     def __init__(self, position, velocity, player):
@@ -267,7 +367,7 @@ class Helleye(pygame.sprite.Sprite):
                 all_sprites_g.add(b)
 
 class Solturret(pygame.sprite.Sprite): 
-    def __init__(self, position, velocity, player):
+    def __init__(self, position, player):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("ORANGE")
@@ -275,7 +375,6 @@ class Solturret(pygame.sprite.Sprite):
         self.rect.x = position.x
         self.rect.y = position.y
         self.position = position
-        self.velocity = velocity
         self.player = player
 
         # For shooting

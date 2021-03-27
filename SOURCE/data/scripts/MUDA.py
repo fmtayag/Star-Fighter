@@ -89,6 +89,14 @@ def sort(arr):
 def slice_list(inlist, n):
     return [inlist[i:i+n] for i in range(0, len(inlist), n)]
 
+def clamp(val, minim, maxim):
+    if val < minim:
+        return minim
+    elif val > maxim:
+        return maxim
+    else:
+        return val
+
 # DRAWING
 
 def draw_background(surf, img, img_rect, ypos):

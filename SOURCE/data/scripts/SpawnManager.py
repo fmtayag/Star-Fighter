@@ -15,17 +15,19 @@ class SpawnManager:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    self.spawn_hellfighter()
+                    self.spawn_helleye()
                 elif event.key == pygame.K_2:
-                    self.spawn_netherdrone()
+                    self.spawn_hellfighter()
                 elif event.key == pygame.K_3:
                     self.spawn_solturret()
+                elif event.key == pygame.K_4:
+                    self.spawn_fatty()
 
     def update(self):
         pass
 
-    def spawn_netherdrone(self):
-        e = Netherdrone(
+    def spawn_hellfighter(self):
+        e = Hellfighter(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
             Vec2(0,0),
             self.player
@@ -33,7 +35,7 @@ class SpawnManager:
         hostiles_g.add(e)
         all_sprites_g.add(e)
             
-    def spawn_hellfighter(self):
+    def spawn_helleye(self):
         e = Helleye(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
             Vec2(0,0),
@@ -45,9 +47,18 @@ class SpawnManager:
     def spawn_solturret(self):
         e = Solturret(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            self.player
+        )
+        hostiles_g.add(e)
+        all_sprites_g.add(e)
+
+    def spawn_fatty(self):
+        e = Fatty(
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
             Vec2(0,0),
             self.player
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
+ 
 
