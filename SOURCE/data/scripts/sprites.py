@@ -32,9 +32,10 @@ class Player(pygame.sprite.Sprite):
         self.position = Vec2(self.rect.x,self.rect.y)
         self.velocity = Vec2(0,0)
         self.speed = 225
-        self.gun_level = 1
+        self.gun_level = 3
         
         # For shooting
+        self.BULLET_SPEED = 600
         self.bullet_image = bullet_image
         self.shoot_delay = 125
         self.shoot_timer = pygame.time.get_ticks()
@@ -100,21 +101,28 @@ class Player(pygame.sprite.Sprite):
                 self.bullet_increase_timer = 0
 
     def attack1(self):
-        b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.speed))
+        b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.BULLET_SPEED))
         all_sprites_g.add(b)
         p_bullets_g.add(b)
 
     def attack2(self):
-        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.speed))
-        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.speed))
+        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
+        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
         all_sprites_g.add(b1)
         all_sprites_g.add(b2)
         p_bullets_g.add(b1)
         p_bullets_g.add(b2)
 
     def attack3(self):
-        self.attack1()
-        self.attack2()
+        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(-100, -self.BULLET_SPEED))
+        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
+        b3 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(100, -self.BULLET_SPEED))
+        all_sprites_g.add(b1)
+        all_sprites_g.add(b2)
+        all_sprites_g.add(b3)
+        p_bullets_g.add(b1)
+        p_bullets_g.add(b2)
+        p_bullets_g.add(b3)
     
 class PlayerBullet(pygame.sprite.Sprite):
     def __init__(self, image, position, velocity):
@@ -124,7 +132,7 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.rect.centerx = position.x
         self.rect.bottom = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
-        self.velocity = Vec2(velocity.x, velocity.y*3)
+        self.velocity = Vec2(velocity.x, velocity.y)
         self.damage = PLAYER_DAMAGE
 
     def update(self, dt):
@@ -205,7 +213,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.shoot_delay = 400
         self.shoot_timer = pygame.time.get_ticks()
         self.accuracy = 0.2 # The lower the value, the more accurate it is.
-        self.bullet_speed = 400
+        self.bullet_speed = 300
 
     def update(self, dt):
         self.follow_player()
@@ -261,9 +269,9 @@ class Fatty(pygame.sprite.Sprite):
         self.bob_y = 0
 
         # For shooting
-        self.shoot_delay = 500
+        self.shoot_delay = 1500
         self.shoot_timer = pygame.time.get_ticks()
-        self.BULLET_SPEED = 300
+        self.BULLET_SPEED = 200
         self.cur_turret = 0
         self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
 
