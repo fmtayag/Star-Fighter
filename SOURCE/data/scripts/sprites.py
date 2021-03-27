@@ -168,7 +168,7 @@ class FattyBullet(pygame.sprite.Sprite):
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity)
         self.damage = 1
-        self.decelerate_speed = random.randrange(3,5)
+        self.decelerate_speed = random.randrange(3,6)
 
     def update(self, dt):
         # Decelerate
