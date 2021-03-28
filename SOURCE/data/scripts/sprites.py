@@ -114,9 +114,9 @@ class Player(pygame.sprite.Sprite):
         p_bullets_g.add(b2)
 
     def attack3(self):
-        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(-100, -self.BULLET_SPEED))
+        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(-50, -self.BULLET_SPEED))
         b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
-        b3 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(100, -self.BULLET_SPEED))
+        b3 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(50, -self.BULLET_SPEED))
         all_sprites_g.add(b1)
         all_sprites_g.add(b2)
         all_sprites_g.add(b3)
@@ -176,7 +176,9 @@ class FattyBullet(pygame.sprite.Sprite):
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity)
         self.damage = 1
-        self.decelerate_speed = random.randrange(3,6)
+
+        self.decelerate_speed = random.randrange(6,8)
+        self.BULLET_SPEED = 200
 
     def update(self, dt):
         # Decelerate
@@ -193,7 +195,43 @@ class FattyBullet(pygame.sprite.Sprite):
             self.kill()
 
     def explode(self):
-        # TODO - produce a ripple
+        # TODO - If "killed" by player, bullets go into opposite direction 
+        b_directions = [
+                Vec2(1,0), # To Right
+                Vec2(1,1), # To Bottom Right
+                Vec2(0,1), # To Bottom
+                Vec2(-1,1), # To Bottom Left
+                Vec2(-1,0), # To Left
+        ]
+
+        # Note: Speed placement corresponds the b directions
+        b_speedx = [
+            1, # Right
+            2, # Bottom right
+            3, # Bottom
+            2, # Bottom left
+            1, # Left
+        ]
+        b_speedy = [
+            2,
+            1,
+            2,
+            1,
+            2
+        ]
+
+        for i in range(len(b_directions)):
+            #print(b_directions[i].x * self.BULLET_SPEED * b_speedx[i])
+            b = EnemyBullet(
+                Vec2(self.rect.center),
+                Vec2(
+                        b_directions[i].x * self.BULLET_SPEED * b_speedx[i], 
+                        b_directions[i].y * self.BULLET_SPEED * b_speedy[i]
+                    )
+            )
+            e_bullets_g.add(b)
+            all_sprites_g.add(b)
+        
         self.kill()
 
 class Hellfighter(pygame.sprite.Sprite):
@@ -271,7 +309,7 @@ class Fatty(pygame.sprite.Sprite):
         # For shooting
         self.shoot_delay = 1500
         self.shoot_timer = pygame.time.get_ticks()
-        self.BULLET_SPEED = 200
+        self.BULLET_SPEED = 300
         self.cur_turret = 0
         self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
 
@@ -355,7 +393,7 @@ class Helleye(pygame.sprite.Sprite):
         if now - self.shoot_timer > self.shoot_delay:
             self.shoot_timer = now
 
-            patterns = [
+            b_directions = [
                 Vec2(0,-1),
                 Vec2(1,-1),
                 Vec2(1,0),
@@ -366,10 +404,10 @@ class Helleye(pygame.sprite.Sprite):
                 Vec2(-1,-1)
             ]
 
-            for i in range(len(patterns)):
+            for i in range(len(b_directions)):
                 b = EnemyBullet(
                     Vec2(self.rect.center),
-                    Vec2(patterns[i]*100)
+                    Vec2(b_directions[i]*100)
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)

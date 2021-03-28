@@ -54,7 +54,7 @@ class SpawnManager:
 
     def spawn_fatty(self):
         e = Fatty(
-            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
             Vec2(0,0),
             self.player
         )

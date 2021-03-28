@@ -1,0 +1,6 @@
+3-28-2021
++ make the Fatty's bullets explode
++ make a table or dictionary for enemy values like their damage and health
++ re-add the raider
++ preferabbly make the raider target the player
++ add upgrades (extra lives, score crates, player turrets)
