@@ -235,7 +235,7 @@ class FattyBullet(pygame.sprite.Sprite):
         self.kill()
 
 class Hellfighter(pygame.sprite.Sprite):
-    def __init__(self, position, velocity, player):
+    def __init__(self, position, player):
         super().__init__() 
         self.image = pygame.Surface((32,32))
         self.image.fill("CYAN")
@@ -243,7 +243,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.rect.x = position.x 
         self.rect.y = position.y 
         self.position = position
-        self.velocity = velocity
+        self.velocity = Vec2(0,0)
         self.player = player
         self.speed = 200
 
@@ -293,7 +293,7 @@ class Hellfighter(pygame.sprite.Sprite):
 
 class Fatty(pygame.sprite.Sprite):
     # Fatty's design is that of a pig. Fireballs come out of its snout.
-    def __init__(self, position, velocity, player):
+    def __init__(self, position, player):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("PINK")
@@ -301,7 +301,7 @@ class Fatty(pygame.sprite.Sprite):
         self.rect.x = position.x
         self.rect.y = position.y
         self.position = position
-        self.velocity = velocity
+        self.velocity = Vec2(0,0)
         self.player = player
         self.speed = 150
         self.bob_y = 0
@@ -357,8 +357,51 @@ class Fatty(pygame.sprite.Sprite):
         else:
             self.cur_turret += 1
 
+class Raider(pygame.sprite.Sprite):
+    def __init__(self, position, player):
+        super().__init__()
+        self.image = pygame.Surface((32,32))
+        self.image.fill("GREEN")
+        self.rect = self.image.get_rect()
+        self.rect.x = position.x
+        self.rect.y = position.y
+        self.position = position
+        self.velocity = Vec2(0,0)
+        self.player = player
+        self.speed = 250
+        self.dash_threshold = 0.2 # Note: The lower it is, the more 'accurate' the dash is.
+        self.is_dashing = False
+        self.dash_x = -2
+        self.MAX_SPEED = 600
+
+    def update(self, dt):
+        if not self.is_dashing:
+            self.follow_player()
+        else:
+            self.dash()
+
+        self.position += self.velocity * dt
+        self.rect.x = self.position.x
+        self.rect.y = self.position.y
+
+    def follow_player(self):
+        # Calculate delta-x
+        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.velocity.x = -(dx * self.speed)
+        
+        if dx > -self.dash_threshold and dx < self.dash_threshold:
+            self.is_dashing = True
+
+    def dash(self):
+        if self.velocity.y < self.MAX_SPEED:
+            self.velocity.y += math.pow(self.dash_x, 3)
+            self.dash_x += 0.1
+
 class Helleye(pygame.sprite.Sprite):
-    def __init__(self, position, velocity, player):
+    def __init__(self, position, player):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("RED")
@@ -366,7 +409,7 @@ class Helleye(pygame.sprite.Sprite):
         self.rect.x = position.x
         self.rect.y = position.y
         self.position = position
-        self.velocity = velocity
+        self.velocity = Vec2(0,0)
         self.player = player
     
         # For shooting

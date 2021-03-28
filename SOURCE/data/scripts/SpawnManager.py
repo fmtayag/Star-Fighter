@@ -22,6 +22,8 @@ class SpawnManager:
                     self.spawn_solturret()
                 elif event.key == pygame.K_4:
                     self.spawn_fatty()
+                elif event.key == pygame.K_5:
+                    self.spawn_raider()
 
     def update(self):
         pass
@@ -29,7 +31,6 @@ class SpawnManager:
     def spawn_hellfighter(self):
         e = Hellfighter(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-            Vec2(0,0),
             self.player
         )
         hostiles_g.add(e)
@@ -38,7 +39,6 @@ class SpawnManager:
     def spawn_helleye(self):
         e = Helleye(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-            Vec2(0,0),
             self.player
         )
         hostiles_g.add(e)
@@ -55,7 +55,14 @@ class SpawnManager:
     def spawn_fatty(self):
         e = Fatty(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
-            Vec2(0,0),
+            self.player
+        )
+        hostiles_g.add(e)
+        all_sprites_g.add(e)
+
+    def spawn_raider(self):
+        e = Raider(
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
             self.player
         )
         hostiles_g.add(e)

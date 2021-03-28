@@ -1,6 +1,7 @@
 3-28-2021
-+ make the Fatty's bullets explode
++ make the Fatty's bullets explode ///
 + make a table or dictionary for enemy values like their damage and health
-+ re-add the raider
-+ preferabbly make the raider target the player
++ re-add the raider ///
++ preferabbly make the raider target the player ///
 + add upgrades (extra lives, score crates, player turrets)
++ "garbage collection" - need a way to delete the enemy sprites and bullets if they go out of bounds
