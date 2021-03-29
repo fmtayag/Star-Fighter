@@ -1,7 +1,7 @@
 # Star Fighter
+# An arcade shoot 'em up (shmup) set in outer space.
 # Version: 2.0.0
 #   > Release date: March 30th 2021
-# A space shoot 'em up (shmup) made in the style of old arcade games.
 # Written in: Python, pygame 2.0.0
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
@@ -15,7 +15,7 @@ from pygame.locals import *
 from itertools import repeat
 from data.scripts.settings import *
 from data.scripts.scenes import *
-from data.scripts.MUDA import (
+from data.scripts.muda import (
     load_img, 
     load_sound, 
     read_savedata,

@@ -1,11 +1,12 @@
 import pygame
-import pygame.math as pygmath
-Vec2 = pygame.math.Vector2
+import pygame.math
 import random
 from data.scripts.settings import *
 from data.scripts.sprites import *
 
-class SpawnManager:
+Vec2 = pygame.math.Vector2
+
+class Spawner:
     def __init__(self, player):
         self.spawn_delay = 1000
         self.spawn_timer = pygame.time.get_ticks()

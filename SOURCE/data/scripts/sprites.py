@@ -1,24 +1,11 @@
 import pygame
-import pygame.math
-Vec2 = pygame.math.Vector2
 import math
 import random
+import pygame.math
 from data.scripts.settings import *
-from data.scripts.MUDA import (
-    load_img, 
-    load_sound, 
-    sort,
-    read_savedata,
-    write_savedata,
-    Scene,
-    SceneManager,
-    draw_background, 
-    draw_text,
-    shake,
-    slice_list,
-    clamp
-)
 from data.scripts.defines import *
+
+Vec2 = pygame.math.Vector2
 
 # Player =====================================
 

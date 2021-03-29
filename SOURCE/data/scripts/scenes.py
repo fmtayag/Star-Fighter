@@ -1,8 +1,8 @@
 import pygame, sys
 from data.scripts.sprites import Player, PlayerBullet
-from data.scripts.SpawnManager import SpawnManager
+from data.scripts.spawner import Spawner
 from data.scripts.settings import *
-from data.scripts.MUDA import (
+from data.scripts.muda import (
     load_img, 
     load_sound, 
     sort,
@@ -425,7 +425,8 @@ class GameScene(Scene):
         all_sprites_g.add(self.player)
 
         # Spawn Manager
-        self.spawn_manager = SpawnManager(self.player)
+        self.spawner = Spawner(self.player)
+        g_diff = "HARD"
     
     def handle_events(self, events):
         for event in events:
@@ -433,7 +434,8 @@ class GameScene(Scene):
                 if event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(0))
 
-        self.spawn_manager.handle_events(events)
+        self.spawner.handle_events(events)
+        #print(g_diff)
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
@@ -441,7 +443,7 @@ class GameScene(Scene):
         
         hits = pygame.sprite.groupcollide(p_bullets_g, hostiles_g, True, True)
 
-        self.spawn_manager.update()
+        self.spawner.update()
         all_sprites_g.update(dt)
 
     def draw(self, window):

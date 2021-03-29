@@ -1,4 +1,4 @@
-# The Mostly Unexceptional Development Assemblage (MUDA)
+# The Mostly Useful Development Assemblage (MUDA)
 # Version: 1.0.0
 #   > Release date: March 12th 2021
 # Just a collection of boilerplate code to make development of games easier.
