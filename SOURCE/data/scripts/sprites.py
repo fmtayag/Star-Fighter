@@ -180,15 +180,15 @@ class FattyBullet(pygame.sprite.Sprite):
         self.rect.centery = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity)
-        self.DAMAGE = damage
 
-        self.decelerate_speed = random.randrange(6,8)
-        self.BULLET_SPEEDX = 200
+        self.DAMAGE = damage
+        self.DECELERATE_SPEED = random.randrange(6,8)
+        self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
 
     def update(self, dt):
         # Decelerate
         if self.velocity.y > 0:
-            self.velocity.y -= self.decelerate_speed
+            self.velocity.y -= self.DECELERATE_SPEED
         else:
             self.explode()
 
@@ -200,38 +200,12 @@ class FattyBullet(pygame.sprite.Sprite):
             self.kill()
 
     def explode(self):
-        # TODO - If "killed" by player, bullets go into opposite direction 
-        b_directions = [
-                Vec2(1,0), # To Right
-                Vec2(1,1), # To Bottom Right
-                Vec2(0,1), # To Bottom
-                Vec2(-1,1), # To Bottom Left
-                Vec2(-1,0), # To Left
-        ]
-
-        # Note: Speed placement corresponds the b directions
-        b_speedx = [
-            1, # Right
-            2, # Bottom right
-            3, # Bottom
-            2, # Bottom left
-            1, # Left
-        ]
-        b_speedy = [
-            2,
-            1,
-            2,
-            1,
-            2
-        ]
-
-        for i in range(len(b_directions)):
-            #print(b_directions[i].x * self.BULLET_SPEEDX * b_speedx[i])
+        for i in range(len(FATTY_BULLET_DIRECTION)):
             b = EnemyBullet(
                 Vec2(self.rect.center),
                 Vec2(
-                        b_directions[i].x * self.BULLET_SPEEDX * b_speedx[i], 
-                        b_directions[i].y * self.BULLET_SPEEDX * b_speedy[i]
+                        FATTY_BULLET_DIRECTION[i].x * FATTY_BULLET_SPEED_X[i] * self.SMALL_BULLET_SPEED, 
+                        FATTY_BULLET_DIRECTION[i].y * FATTY_BULLET_SPEED_Y[i] * self.SMALL_BULLET_SPEED
                     ),
                 self.DAMAGE
             )
@@ -319,7 +293,7 @@ class Fatty(pygame.sprite.Sprite):
         self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
         self.shoot_timer = pygame.time.get_ticks()
         self.SHOOT_DELAY = FATTY_SHOOT_DELAY[g_diff]
-        self.BULLET_SPEED = FATTY_BULLET_SPEED[g_diff]
+        self.BULLET_SPEED = FATTY_LARGE_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = FATTY_BULLET_DAMAGE[g_diff]
 
     def update(self, dt):

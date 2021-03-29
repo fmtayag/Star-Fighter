@@ -1,4 +1,6 @@
 import pygame
+import pygame.math
+Vec2 = pygame.math.Vector2
 
 # GLOBAL DIFFICULTY VARIABLE
 g_diff = "MEDIUM"
@@ -58,13 +60,39 @@ FATTY_SHOOT_DELAY = {
     "MEDIUM": 1500,
     "HARD": 1200
 }
-FATTY_BULLET_SPEED = {
+FATTY_LARGE_BULLET_SPEED = {
     "EASY": 200,
     "MEDIUM": 300,
     "HARD": 400
+}
+FATTY_SMALL_BULLET_SPEED = {
+    "EASY": 100,
+    "MEDIUM": 200,
+    "HARD": 300
 }
 FATTY_BULLET_DAMAGE = {
     "EASY": 0.5,
     "MEDIUM": 1,
     "HARD": 1.5
 }
+FATTY_BULLET_DIRECTION = [
+    Vec2(1,0), # To Right
+    Vec2(1,1), # To Bottom Right
+    Vec2(0,1), # To Bottom
+    Vec2(-1,1), # To Bottom Left
+    Vec2(-1,0), # To Left
+]
+FATTY_BULLET_SPEED_X = [
+    1,
+    2,
+    3,
+    2,
+    1
+]
+FATTY_BULLET_SPEED_Y = [
+    2,
+    1,
+    2,
+    1,
+    2
+]
