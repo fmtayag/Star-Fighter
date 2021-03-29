@@ -171,7 +171,7 @@ class EnemyBullet(pygame.sprite.Sprite):
             self.kill()
 
 class FattyBullet(pygame.sprite.Sprite):
-    def __init__(self, position, velocity):
+    def __init__(self, position, velocity, damage):
         super().__init__()
         self.image = pygame.Surface((16,16))
         self.image.fill("ORANGE")
@@ -180,10 +180,10 @@ class FattyBullet(pygame.sprite.Sprite):
         self.rect.centery = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity)
-        self.damage = 1
+        self.DAMAGE = damage
 
         self.decelerate_speed = random.randrange(6,8)
-        self.BULLET_SPEED = 200
+        self.BULLET_SPEEDX = 200
 
     def update(self, dt):
         # Decelerate
@@ -226,13 +226,14 @@ class FattyBullet(pygame.sprite.Sprite):
         ]
 
         for i in range(len(b_directions)):
-            #print(b_directions[i].x * self.BULLET_SPEED * b_speedx[i])
+            #print(b_directions[i].x * self.BULLET_SPEEDX * b_speedx[i])
             b = EnemyBullet(
                 Vec2(self.rect.center),
                 Vec2(
-                        b_directions[i].x * self.BULLET_SPEED * b_speedx[i], 
-                        b_directions[i].y * self.BULLET_SPEED * b_speedy[i]
-                    )
+                        b_directions[i].x * self.BULLET_SPEEDX * b_speedx[i], 
+                        b_directions[i].y * self.BULLET_SPEEDX * b_speedy[i]
+                    ),
+                self.DAMAGE
             )
             e_bullets_g.add(b)
             all_sprites_g.add(b)
@@ -310,15 +311,16 @@ class Fatty(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
-        self.speed = 150
+        self.SPEED = FATTY_SPEED[g_diff]
         self.bob_y = 0
 
         # For shooting
-        self.shoot_delay = 1500
-        self.shoot_timer = pygame.time.get_ticks()
-        self.BULLET_SPEED = 300
         self.cur_turret = 0
         self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
+        self.shoot_timer = pygame.time.get_ticks()
+        self.SHOOT_DELAY = FATTY_SHOOT_DELAY[g_diff]
+        self.BULLET_SPEED = FATTY_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = FATTY_BULLET_DAMAGE[g_diff]
 
     def update(self, dt):
         self.update_bullet_position()
@@ -336,7 +338,7 @@ class Fatty(pygame.sprite.Sprite):
         dx = math.cos(radians)
 
         # Add delta-x to velocity
-        self.velocity.x = -(dx * self.speed)
+        self.velocity.x = -(dx * self.SPEED)
 
     def bob(self):
         self.velocity.y = math.sin(self.bob_y) * 50
@@ -344,12 +346,13 @@ class Fatty(pygame.sprite.Sprite):
 
     def shoot(self):
         now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.shoot_delay:
+        if now - self.shoot_timer > self.SHOOT_DELAY:
             self.shoot_timer = now
 
             b = FattyBullet(
                 Vec2(self.bullet_position[self.cur_turret]),
-                Vec2(0,self.BULLET_SPEED)
+                Vec2(0,self.BULLET_SPEED),
+                self.BULLET_DAMAGE
             )
             self.change_turret()
             e_bullets_g.add(b)

@@ -46,3 +46,25 @@ HELLFIGHTER_BULLET_DAMAGE = {
     "MEDIUM": 1,
     "HARD": 1.5
 }
+
+# FATTY DEFINES
+FATTY_SPEED = {
+    "EASY": 100,
+    "MEDIUM": 150,
+    "HARD": 200
+}
+FATTY_SHOOT_DELAY = {
+    "EASY": 2000,
+    "MEDIUM": 1500,
+    "HARD": 1200
+}
+FATTY_BULLET_SPEED = {
+    "EASY": 200,
+    "MEDIUM": 300,
+    "HARD": 400
+}
+FATTY_BULLET_DAMAGE = {
+    "EASY": 0.5,
+    "MEDIUM": 1,
+    "HARD": 1.5
+}
