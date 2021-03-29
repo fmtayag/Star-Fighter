@@ -18,6 +18,7 @@ from data.scripts.MUDA import (
     slice_list,
     clamp
 )
+from data.scripts.defines import *
 
 # Player =====================================
 
@@ -31,20 +32,22 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = WIN_RES["h"]*0.9
         self.position = Vec2(self.rect.x,self.rect.y)
         self.velocity = Vec2(0,0)
-        self.speed = 225
-        self.gun_level = 3
+        self.speed = PLAYER_SPEED
+        self.gun_level = PLAYER_DEFAULT_GUN_LEVEL
         
         # For shooting
-        self.BULLET_SPEED = 600
+        self.BULLET_SPEED = PLAYER_BULLET_SPEED
         self.bullet_image = bullet_image
-        self.shoot_delay = 125
+        self.shoot_delay = PLAYER_SHOOT_DELAY
         self.shoot_timer = pygame.time.get_ticks()
-        self.bullet_increase_delay = 50
+
+        self.bullet_increase_delay = PLAYER_INCREASE_BULLET_DELAY
         self.bullet_increase_timer = 0
-        self.bullet_increase_tick = 25
-        self.weak_bullet_delay = 200
+        self.bullet_increase_tick = PLAYER_INCREASE_BULLET_TICK
+
+        self.weak_bullet_delay = PLAYER_WEAK_BULLET_DELAY
         self.weak_bullet_timer = pygame.time.get_ticks()
-        self.weak_bullet_tick = 10
+        self.weak_bullet_tick = PLAYER_WEAK_BULLET_TICK
 
     def update(self, dt):
         self.image = self.images["N"]
@@ -133,7 +136,7 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.rect.bottom = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity.x, velocity.y)
-        self.damage = PLAYER_DAMAGE
+        self.damage = PLAYER_BULLET_DAMAGE
 
     def update(self, dt):
         self.position += self.velocity * dt 

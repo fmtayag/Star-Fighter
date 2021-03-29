@@ -15,6 +15,7 @@ from data.scripts.MUDA import (
     shake,
     slice_list
 )
+from data.scripts.defines import *
 
 # TITLE SCENE ================================
 

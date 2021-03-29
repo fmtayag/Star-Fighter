@@ -1,4 +1,4 @@
-import os, pygame
+import os
 
 # Loop
 FPS = 60
@@ -24,19 +24,10 @@ SCALE = 2
 FONT_SIZE = 16
 
 # Directories
-GAME_DIR = os.path.dirname("..") # What the fuck?
+GAME_DIR = os.path.dirname("..") # This works apparently...what the fuck?
 DATA_DIR = os.path.join(GAME_DIR, "data")
 FONT_DIR = os.path.join(DATA_DIR, "font")
 IMG_DIR = os.path.join(DATA_DIR, "img")
 SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
 SFX_DIR = os.path.join(DATA_DIR, "sfx")
 GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
-
-# Game variables
-PLAYER_DAMAGE = 1
-
-# Sprite groups
-all_sprites_g = pygame.sprite.Group()
-hostiles_g = pygame.sprite.Group()
-p_bullets_g = pygame.sprite.Group()
-e_bullets_g = pygame.sprite.Group()
