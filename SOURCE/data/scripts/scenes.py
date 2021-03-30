@@ -435,7 +435,7 @@ class GameScene(Scene):
                     self.manager.go_to(TitleScene(0))
 
         self.spawner.handle_events(events)
-        #print(g_diff)
+        #print(len(hostiles_g), len(e_bullets_g), len(p_bullets_g))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt

@@ -154,7 +154,11 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
 
-        if self.rect.top > WIN_RES["h"] or self.rect.bottom < 0:
+        # Kill if it goes out of bounds
+        if (self.rect.top > WIN_RES["h"] or 
+            self.rect.bottom < 0 or
+            self.rect.right < 0 or
+            self.rect.left > WIN_RES["w"]):
             self.kill()
 
 class FattyBullet(pygame.sprite.Sprite):
@@ -357,6 +361,10 @@ class Raider(pygame.sprite.Sprite):
         self.position += self.velocity * dt
         self.rect.x = self.position.x
         self.rect.y = self.position.y
+
+        # Kill if it goes out of bounds
+        if self.rect.top > WIN_RES["h"]:
+            self.kill()
 
     def follow_player(self):
         # Calculate delta-x
