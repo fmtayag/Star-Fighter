@@ -17,7 +17,7 @@ from data.scripts.muda import (
 )
 from data.scripts.defines import *
 
-# TITLE SCENE ================================
+# TITLE SCENE ==================================================================
 
 class TitleMenu:
     def __init__(self, init_selected):
@@ -125,7 +125,7 @@ class TitleScene(Scene):
         self.title_menu.draw(window)
         draw_text(window, "Copydown", FONT_SIZE, GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-(FONT_SIZE/2)*2, "WHITE", "centered")
 
-# SCORES SCENE ===============================
+# SCORES SCENE =================================================================
 
 class ScoresControlPanel():
     def __init__(self):
@@ -336,7 +336,7 @@ class ScoresScene(Scene):
         self.scores_table.draw(window)
         self.control_panel.draw(window)
 
-# OPTIONS SCENE ==============================
+# OPTIONS SCENE ================================================================
 
 class OptionsScene(Scene):
     def __init__(self):
@@ -365,7 +365,7 @@ class OptionsScene(Scene):
         draw_text(window, "OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
 
-# CREDITS SCENE ==============================
+# CREDITS SCENE ================================================================
 
 class CreditsScene(Scene):
     def __init__(self):
@@ -394,7 +394,7 @@ class CreditsScene(Scene):
         draw_text(window, "CREDITS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
 
-# GAME SCENE =================================
+# GAME SCENE ===================================================================
 
 class GameScene(Scene):
     def __init__(self):

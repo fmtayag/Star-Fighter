@@ -7,7 +7,7 @@ from data.scripts.defines import *
 
 Vec2 = pygame.math.Vector2
 
-# Player =====================================
+# Player ======================================================================
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, images, bullet_image):
@@ -135,7 +135,7 @@ class PlayerBullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-# Enemies ====================================
+# Enemies ======================================================================
 
 class EnemyBullet(pygame.sprite.Sprite):
     def __init__(self, position, velocity, damage):

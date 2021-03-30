@@ -1,13 +1,13 @@
 import os
 
-# Loop
+# Loop =========================================================================
 FPS = 60
 
-# Background and Parallax
+# Background and Parallax ======================================================
 BG_SPD = 25
 PAR_SPD = 50
 
-# Colors
+# Colors =======================================================================
 BLACK = (0,0,0)
 WHITE = (235,235,235)
 GRAY = (100,100,100)
@@ -15,15 +15,15 @@ RED = (180,32,42)
 GOLD = (255,215,0)
 PURPLE = (219,84,180)
 
-# Window Resolution and Metadata
+# Window Resolution and Metadata ===============================================
 WIN_RES = {"w": 320, "h": 480}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
-VERSION = "2.0"
+VERSION = "1.1.0"
 SCALE = 2
 FONT_SIZE = 16
 
-# Directories
+# Directories ===================================================================
 GAME_DIR = os.path.dirname("..") # This works apparently...what the fuck?
 DATA_DIR = os.path.join(GAME_DIR, "data")
 FONT_DIR = os.path.join(DATA_DIR, "font")
