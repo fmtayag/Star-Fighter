@@ -339,11 +339,11 @@ class Raider(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
-        self.speed = 250
-        self.dash_threshold = 0.2 # Note: The lower it is, the more 'accurate' the dash is.
+        self.SPEED = RAIDER_SPEED[g_diff]
+        self.DASH_THRESHOLD = RAIDER_DASH_THRESHOLD[g_diff]
+        self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[g_diff]
         self.is_dashing = False
         self.dash_x = -2
-        self.MAX_SPEED = 600
 
     def update(self, dt):
         if not self.is_dashing:
@@ -361,13 +361,13 @@ class Raider(pygame.sprite.Sprite):
         dx = math.cos(radians)
 
         # Add delta-x to velocity
-        self.velocity.x = -(dx * self.speed)
+        self.velocity.x = -(dx * self.SPEED)
         
-        if dx > -self.dash_threshold and dx < self.dash_threshold:
+        if dx > -self.DASH_THRESHOLD and dx < self.DASH_THRESHOLD:
             self.is_dashing = True
 
     def dash(self):
-        if self.velocity.y < self.MAX_SPEED:
+        if self.velocity.y < self.MAX_DASH_SPEED:
             self.velocity.y += math.pow(self.dash_x, 3)
             self.dash_x += 0.1
 

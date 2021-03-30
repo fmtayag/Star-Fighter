@@ -97,3 +97,20 @@ FATTY_BULLET_SPEED_Y = [
     1,
     2
 ]
+
+# RAIDER DEFINES 
+RAIDER_SPEED = {
+    "EASY": 200,
+    "MEDIUM": 250,
+    "HARD": 300
+}
+RAIDER_DASH_THRESHOLD = {
+    "EASY": 0.5,
+    "MEDIUM": 0.3,
+    "HARD": 0.2
+}
+RAIDER_MAX_SPEED = {
+    "EASY": 500,
+    "MEDIUM": 600,
+    "HARD": 700
+} 
