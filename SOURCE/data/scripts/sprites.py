@@ -382,9 +382,12 @@ class Helleye(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
+        self.SPEED = HELLEYE_SPEED[g_diff]
     
         # For shooting
-        self.shoot_delay = 700
+        self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
+        self.BULLET_SPEED = HELLEYE_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = HELLEYE_BULLET_DAMAGE[g_diff]
         self.shoot_timer = pygame.time.get_ticks()
     
     def update(self, dt):
@@ -400,28 +403,18 @@ class Helleye(pygame.sprite.Sprite):
         dx = math.cos(radians)
 
         # Add delta-x to velocity
-        self.velocity.x = -(dx * 100)
+        self.velocity.x = -(dx * self.SPEED)
 
     def shoot(self):
         now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.shoot_delay:
+        if now - self.shoot_timer > self.SHOOT_DELAY:
             self.shoot_timer = now
 
-            b_directions = [
-                Vec2(0,-1),
-                Vec2(1,-1),
-                Vec2(1,0),
-                Vec2(1,1),
-                Vec2(0,1),
-                Vec2(-1,1),
-                Vec2(-1,0),
-                Vec2(-1,-1)
-            ]
-
-            for i in range(len(b_directions)):
+            for i in range(len(HELLEYE_BULLET_DIRECTION)):
                 b = EnemyBullet(
                     Vec2(self.rect.center),
-                    Vec2(b_directions[i]*100)
+                    Vec2(HELLEYE_BULLET_DIRECTION[i] * self.BULLET_SPEED),
+                    self.BULLET_DAMAGE
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)

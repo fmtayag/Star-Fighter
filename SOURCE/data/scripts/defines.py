@@ -114,3 +114,35 @@ RAIDER_MAX_SPEED = {
     "MEDIUM": 600,
     "HARD": 700
 } 
+
+# HELLEYE DEFINES
+HELLEYE_BULLET_DIRECTION = (
+    Vec2(0,-1),
+    Vec2(1,-1),
+    Vec2(1,0),
+    Vec2(1,1),
+    Vec2(0,1),
+    Vec2(-1,1),
+    Vec2(-1,0),
+    Vec2(-1,-1)
+)
+HELLEYE_SHOOT_DELAY = {
+    "EASY": 900,
+    "MEDIUM": 700,
+    "HARD": 500
+}
+HELLEYE_SPEED = {
+    "EASY": 50,
+    "MEDIUM": 100,
+    "HARD": 200
+}
+HELLEYE_BULLET_SPEED = {
+    "EASY": 50,
+    "MEDIUM": 100,
+    "HARD": 150
+}
+HELLEYE_BULLET_DAMAGE = {
+    "EASY": 0.5,
+    "MEDIUM": 1,
+    "HARD": 1.5
+}
