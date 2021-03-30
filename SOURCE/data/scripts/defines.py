@@ -146,3 +146,20 @@ HELLEYE_BULLET_DAMAGE = {
     "MEDIUM": 1,
     "HARD": 1.5
 }
+
+# SOLTURRET DEFINES
+SOLTURRET_SHOOT_DELAY = {
+    "EASY": 700,
+    "MEDIUM": 500,
+    "HARD": 300
+}
+SOLTURRET_BULLET_SPEED = {
+    "EASY": 200,
+    "MEDIUM": 300,
+    "HARD": 400
+}
+SOLTURRET_BULLET_DAMAGE = {
+    "EASY": 0.5,
+    "MEDIUM": 1,
+    "HARD": 1.5
+}

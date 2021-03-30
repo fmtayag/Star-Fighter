@@ -431,16 +431,17 @@ class Solturret(pygame.sprite.Sprite):
         self.player = player
 
         # For shooting
-        self.shoot_delay = 500
+        self.SHOOT_DELAY = SOLTURRET_SHOOT_DELAY[g_diff]
+        self.BULLET_SPEED = SOLTURRET_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = SOLTURRET_BULLET_DAMAGE[g_diff]
         self.shoot_timer = pygame.time.get_ticks()
-        self.BULLET_SPEED = 300
 
     def update(self, dt):
         self.shoot()
 
     def shoot(self):
         now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.shoot_delay:
+        if now - self.shoot_timer > self.SHOOT_DELAY:
             self.shoot_timer = now
 
             # Calculate radians, delta x, and delta y
@@ -449,6 +450,6 @@ class Solturret(pygame.sprite.Sprite):
             dy = -(math.sin(radians) * self.BULLET_SPEED)
 
             # Create bullet
-            b = EnemyBullet(Vec2(self.rect.center), Vec2(dx, dy))
+            b = EnemyBullet(Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
             all_sprites_g.add(b)
             e_bullets_g.add(b)
