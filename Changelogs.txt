@@ -8,11 +8,11 @@ Update 1.1.0
 - Changed the Fatty's attack from bouncing fireballs to exploding fireballs
 - Added the Solturret
 - Added the Helleye
+- Updated the Raider enemy. It now follows the player before dashing.
 # TODOS
 - Change the logo
 - Add scene transition animations
-- Update the Raider enemy
-- Player now dies instantly instead of having an HP bar. Lives are present, quantity dependent on difficulty
+- [X] Player now dies instantly instead of having an HP bar. Lives are present, quantity dependent on difficulty 
 - Add difficulty system
 - Add German translations
 - Add Filipino translations
