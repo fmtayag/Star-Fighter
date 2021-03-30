@@ -213,6 +213,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.velocity = Vec2(0,0)
         self.player = player
         self.SPEED = HELLFIGHTER_SPEED[g_diff]
+        self.health = HELLEYE_HEALTH[g_diff]
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -274,6 +275,7 @@ class Fatty(pygame.sprite.Sprite):
         self.player = player
         self.SPEED = FATTY_SPEED[g_diff]
         self.bob_y = 0
+        self.health = FATTY_HEALTH[g_diff]
 
         # For shooting
         self.cur_turret = 0
@@ -342,6 +344,7 @@ class Raider(pygame.sprite.Sprite):
         self.SPEED = RAIDER_SPEED[g_diff]
         self.DASH_THRESHOLD = RAIDER_DASH_THRESHOLD[g_diff]
         self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[g_diff]
+        self.health = RAIDER_HEALTH[g_diff]
         self.is_dashing = False
         self.dash_x = -2
 
@@ -383,6 +386,7 @@ class Helleye(pygame.sprite.Sprite):
         self.velocity = Vec2(0,0)
         self.player = player
         self.SPEED = HELLEYE_SPEED[g_diff]
+        self.health = HELLEYE_HEALTH[g_diff]
     
         # For shooting
         self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
@@ -429,6 +433,7 @@ class Solturret(pygame.sprite.Sprite):
         self.rect.y = position.y
         self.position = position
         self.player = player
+        self.health = SOLTURRET_HEALTH[g_diff]
 
         # For shooting
         self.SHOOT_DELAY = SOLTURRET_SHOOT_DELAY[g_diff]

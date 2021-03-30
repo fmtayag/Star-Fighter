@@ -6,13 +6,13 @@ Vec2 = pygame.math.Vector2
 # GLOBAL DIFFICULTY VARIABLE
 g_diff = "MEDIUM" # TODO - pass this variable onto the sprites
 
-# SPRITE GROUPS
+# SPRITE GROUPS ================================================================
 all_sprites_g = pygame.sprite.Group()
 hostiles_g = pygame.sprite.Group()
 p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
 
-# PLAYER DEFINES
+# PLAYER DEFINES ===============================================================
 PLAYER_SPEED = 255
 PLAYER_BULLET_SPEED = 600
 PLAYER_SHOOT_DELAY = 125
@@ -23,7 +23,7 @@ PLAYER_WEAK_BULLET_TICK = 10
 PLAYER_DEFAULT_GUN_LEVEL = 3 # Max of 3, Min of 1. Don't change unless debugging.
 PLAYER_BULLET_DAMAGE = 1
 
-# HELLFIGHTER DEFINES
+# HELLFIGHTER DEFINES ==========================================================
 HELLFIGHTER_SPEED = {
     "EASY": 100,
     "MEDIUM": 200,
@@ -49,8 +49,13 @@ HELLFIGHTER_BULLET_DAMAGE = {
     "MEDIUM": 1,
     "HARD": 1.5
 }
+HELLFIGHTER_HEALTH = {
+    "EASY": 2,
+    "MEDIUM": 3,
+    "HARD": 5
+}
 
-# FATTY DEFINES
+# FATTY DEFINES ================================================================
 FATTY_SPEED = {
     "EASY": 100,
     "MEDIUM": 150,
@@ -76,29 +81,34 @@ FATTY_BULLET_DAMAGE = {
     "MEDIUM": 1,
     "HARD": 1.5
 }
-FATTY_BULLET_DIRECTION = [
+FATTY_BULLET_DIRECTION = (
     Vec2(1,0), # To Right
     Vec2(1,1), # To Bottom Right
     Vec2(0,1), # To Bottom
     Vec2(-1,1), # To Bottom Left
     Vec2(-1,0), # To Left
-]
-FATTY_BULLET_SPEED_X = [
+)
+FATTY_BULLET_SPEED_X = (
     1,
     2,
     3,
     2,
     1
-]
-FATTY_BULLET_SPEED_Y = [
+)
+FATTY_BULLET_SPEED_Y = (
     2,
     1,
     2,
     1,
     2
-]
+)
+FATTY_HEALTH = {
+    "EASY": 2,
+    "MEDIUM": 3,
+    "HARD": 5
+}
 
-# RAIDER DEFINES 
+# RAIDER DEFINES ===============================================================
 RAIDER_SPEED = {
     "EASY": 200,
     "MEDIUM": 250,
@@ -113,9 +123,14 @@ RAIDER_MAX_SPEED = {
     "EASY": 500,
     "MEDIUM": 600,
     "HARD": 700
-} 
+}
+RAIDER_HEALTH = {
+    "EASY": 2,
+    "MEDIUM": 3,
+    "HARD": 5
+}
 
-# HELLEYE DEFINES
+# HELLEYE DEFINES ==============================================================
 HELLEYE_BULLET_DIRECTION = (
     Vec2(0,-1),
     Vec2(1,-1),
@@ -146,8 +161,13 @@ HELLEYE_BULLET_DAMAGE = {
     "MEDIUM": 1,
     "HARD": 1.5
 }
+HELLEYE_HEALTH = {
+    "EASY": 2,
+    "MEDIUM": 3,
+    "HARD": 5
+}
 
-# SOLTURRET DEFINES
+# SOLTURRET DEFINES ============================================================
 SOLTURRET_SHOOT_DELAY = {
     "EASY": 700,
     "MEDIUM": 500,
@@ -162,4 +182,9 @@ SOLTURRET_BULLET_DAMAGE = {
     "EASY": 0.5,
     "MEDIUM": 1,
     "HARD": 1.5
+}
+SOLTURRET_HEALTH = {
+    "EASY": 2,
+    "MEDIUM": 3,
+    "HARD": 5
 }
