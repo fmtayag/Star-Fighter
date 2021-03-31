@@ -152,9 +152,9 @@ HELLEYE_SPEED = {
     "HARD": 200
 }
 HELLEYE_BULLET_SPEED = {
-    "EASY": 50,
-    "MEDIUM": 100,
-    "HARD": 150
+    "EASY": 100,
+    "MEDIUM": 150,
+    "HARD": 200
 }
 HELLEYE_BULLET_DAMAGE = {
     "EASY": 0.5,
