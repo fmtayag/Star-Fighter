@@ -1,4 +1,4 @@
 3-31-2021
-+ pass the g_diff variable (game difficulty) into sprites 
++ /// pass the g_diff variable (game difficulty) into sprites 
 + add upgrades (extra health, score crates, player turrets)
 + /// "garbage collection" - need a way to delete the enemy sprites and bullets if they go out of bounds
