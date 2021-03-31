@@ -3,8 +3,8 @@ import pygame.math
 
 Vec2 = pygame.math.Vector2
 
-# GLOBAL DIFFICULTY VARIABLE
-g_diff = "MEDIUM" # TODO - pass this variable onto the sprites
+# DIFFICULTY LIST ==============================================================
+DIFFICULTIES = ("EASY", "MEDIUM", "HARD")
 
 # SPRITE GROUPS ================================================================
 all_sprites_g = pygame.sprite.Group()

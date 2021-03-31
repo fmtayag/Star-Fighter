@@ -162,7 +162,7 @@ class EnemyBullet(pygame.sprite.Sprite):
             self.kill()
 
 class FattyBullet(pygame.sprite.Sprite):
-    def __init__(self, position, velocity, damage):
+    def __init__(self, position, velocity, damage, sb_speed):
         super().__init__()
         self.image = pygame.Surface((16,16))
         self.image.fill("ORANGE")
@@ -174,7 +174,7 @@ class FattyBullet(pygame.sprite.Sprite):
 
         self.DAMAGE = damage
         self.DECELERATE_SPEED = random.randrange(6,8)
-        self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
+        self.SMALL_BULLET_SPEED = sb_speed
 
     def update(self, dt):
         # Decelerate
@@ -206,7 +206,7 @@ class FattyBullet(pygame.sprite.Sprite):
         self.kill()
 
 class Hellfighter(pygame.sprite.Sprite):
-    def __init__(self, position, player):
+    def __init__(self, position, player, g_diff):
         super().__init__() 
         self.image = pygame.Surface((32,32))
         self.image.fill("CYAN")
@@ -267,7 +267,7 @@ class Hellfighter(pygame.sprite.Sprite):
 
 class Fatty(pygame.sprite.Sprite):
     # Fatty's design is that of a pig. Fireballs come out of its snout.
-    def __init__(self, position, player):
+    def __init__(self, position, player, g_diff):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("PINK")
@@ -288,6 +288,7 @@ class Fatty(pygame.sprite.Sprite):
         self.SHOOT_DELAY = FATTY_SHOOT_DELAY[g_diff]
         self.BULLET_SPEED = FATTY_LARGE_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = FATTY_BULLET_DAMAGE[g_diff]
+        self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
 
     def update(self, dt):
         self.update_bullet_position()
@@ -319,7 +320,8 @@ class Fatty(pygame.sprite.Sprite):
             b = FattyBullet(
                 Vec2(self.bullet_position[self.cur_turret]),
                 Vec2(0,self.BULLET_SPEED),
-                self.BULLET_DAMAGE
+                self.BULLET_DAMAGE,
+                self.SMALL_BULLET_SPEED
             )
             self.change_turret()
             e_bullets_g.add(b)
@@ -335,7 +337,7 @@ class Fatty(pygame.sprite.Sprite):
             self.cur_turret += 1
 
 class Raider(pygame.sprite.Sprite):
-    def __init__(self, position, player):
+    def __init__(self, position, player, g_diff):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("GREEN")
@@ -383,7 +385,7 @@ class Raider(pygame.sprite.Sprite):
             self.dash_x += 0.1
 
 class Helleye(pygame.sprite.Sprite):
-    def __init__(self, position, player):
+    def __init__(self, position, player, g_diff):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("RED")
@@ -432,7 +434,7 @@ class Helleye(pygame.sprite.Sprite):
                 all_sprites_g.add(b)
 
 class Solturret(pygame.sprite.Sprite): 
-    def __init__(self, position, player):
+    def __init__(self, position, player, g_diff):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill("ORANGE")

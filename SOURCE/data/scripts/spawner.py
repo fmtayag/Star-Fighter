@@ -7,10 +7,11 @@ from data.scripts.sprites import *
 Vec2 = pygame.math.Vector2
 
 class Spawner:
-    def __init__(self, player):
+    def __init__(self, player, g_diff):
         self.spawn_delay = 1000
         self.spawn_timer = pygame.time.get_ticks()
         self.player = player
+        self.g_diff = g_diff
     
     def handle_events(self, events):
         for event in events:
@@ -32,7 +33,8 @@ class Spawner:
     def spawn_hellfighter(self):
         e = Hellfighter(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-            self.player
+            self.player,
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -40,7 +42,8 @@ class Spawner:
     def spawn_helleye(self):
         e = Helleye(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-            self.player
+            self.player,
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -48,7 +51,8 @@ class Spawner:
     def spawn_solturret(self):
         e = Solturret(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
-            self.player
+            self.player,
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -56,7 +60,8 @@ class Spawner:
     def spawn_fatty(self):
         e = Fatty(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
-            self.player
+            self.player,
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -64,7 +69,8 @@ class Spawner:
     def spawn_raider(self):
         e = Raider(
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
-            self.player
+            self.player,
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)

@@ -406,6 +406,9 @@ class GameScene(Scene):
         self.par_rect = self.bg_img.get_rect()
         self.par_y = 0
 
+        # TODO - Set difficulty
+        g_diff = DIFFICULTIES[0]
+
         # Images
         PLAYER_IMGS = {
             "L": load_img("player_l.png", IMG_DIR, SCALE).convert_alpha(),
@@ -425,7 +428,7 @@ class GameScene(Scene):
         all_sprites_g.add(self.player)
 
         # Spawn Manager
-        self.spawner = Spawner(self.player)
+        self.spawner = Spawner(self.player, g_diff)
         g_diff = "HARD"
     
     def handle_events(self, events):
