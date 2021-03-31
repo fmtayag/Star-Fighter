@@ -444,7 +444,9 @@ class GameScene(Scene):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
         
-        hits = pygame.sprite.groupcollide(p_bullets_g, hostiles_g, True, True)
+        hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True)
+        for hit in hits:
+            hit.health -= self.player.BULLET_DAMAGE
 
         self.spawner.update()
         all_sprites_g.update(dt)

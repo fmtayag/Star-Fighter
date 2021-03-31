@@ -93,22 +93,22 @@ class Player(pygame.sprite.Sprite):
                 self.bullet_increase_timer = 0
 
     def attack1(self):
-        b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.BULLET_SPEED), self.BULLET_DAMAGE)
+        b = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top), Vec2(0, -self.BULLET_SPEED))
         all_sprites_g.add(b)
         p_bullets_g.add(b)
 
     def attack2(self):
-        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.BULLET_SPEED), self.BULLET_DAMAGE)
-        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.BULLET_SPEED), self.BULLET_DAMAGE)
+        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
+        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
         all_sprites_g.add(b1)
         all_sprites_g.add(b2)
         p_bullets_g.add(b1)
         p_bullets_g.add(b2)
 
     def attack3(self):
-        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(-50, -self.BULLET_SPEED), self.BULLET_DAMAGE)
-        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top+12), Vec2(0, -self.BULLET_SPEED), self.BULLET_DAMAGE)
-        b3 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(50, -self.BULLET_SPEED), self.BULLET_DAMAGE)
+        b1 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx-10, self.rect.top+12), Vec2(-50, -self.BULLET_SPEED))
+        b2 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx, self.rect.top+12), Vec2(0, -self.BULLET_SPEED))
+        b3 = PlayerBullet(self.bullet_image, Vec2(self.rect.centerx+10, self.rect.top+12), Vec2(50, -self.BULLET_SPEED))
         all_sprites_g.add(b1)
         all_sprites_g.add(b2)
         all_sprites_g.add(b3)
@@ -117,7 +117,7 @@ class Player(pygame.sprite.Sprite):
         p_bullets_g.add(b3)
     
 class PlayerBullet(pygame.sprite.Sprite):
-    def __init__(self, image, position, velocity, damage):
+    def __init__(self, image, position, velocity):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
@@ -125,7 +125,6 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.rect.bottom = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity.x, velocity.y)
-        self.damage = damage
 
     def update(self, dt):
         self.position += self.velocity * dt 
@@ -227,6 +226,9 @@ class Hellfighter(pygame.sprite.Sprite):
         self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[g_diff]
 
     def update(self, dt):
+        if self.health <= 0:
+            self.kill()
+
         self.follow_player()
         self.shoot()
         self.position += self.velocity * dt 
@@ -291,6 +293,9 @@ class Fatty(pygame.sprite.Sprite):
         self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
 
     def update(self, dt):
+        if self.health <= 0:
+            self.kill()
+
         self.update_bullet_position()
         self.follow_player()
         self.bob()
@@ -355,6 +360,9 @@ class Raider(pygame.sprite.Sprite):
         self.dash_x = -2
 
     def update(self, dt):
+        if self.health <= 0 or self.rect.top > WIN_RES["h"]:
+            self.kill()
+
         if not self.is_dashing:
             self.follow_player()
         else:
@@ -363,10 +371,6 @@ class Raider(pygame.sprite.Sprite):
         self.position += self.velocity * dt
         self.rect.x = self.position.x
         self.rect.y = self.position.y
-
-        # Kill if it goes out of bounds
-        if self.rect.top > WIN_RES["h"]:
-            self.kill()
 
     def follow_player(self):
         # Calculate delta-x
@@ -405,6 +409,9 @@ class Helleye(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
     
     def update(self, dt):
+        if self.health <= 0:
+            self.kill()
+
         self.follow_player()
         self.shoot()
         self.position += self.velocity * dt 
@@ -452,6 +459,9 @@ class Solturret(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
 
     def update(self, dt):
+        if self.health <= 0:
+            self.kill()
+
         self.shoot()
 
     def shoot(self):
