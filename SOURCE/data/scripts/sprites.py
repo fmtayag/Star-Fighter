@@ -216,12 +216,12 @@ class Hellfighter(pygame.sprite.Sprite):
         self.velocity = Vec2(0,0)
         self.player = player
         self.SPEED = HELLFIGHTER_SPEED[g_diff]
-        self.health = HELLEYE_HEALTH[g_diff]
+        self.health = HELLFIGHTER_HEALTH[g_diff]
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
         self.SHOOT_DELAY = HELLFIGHTER_SHOOT_DELAY[g_diff]
-        self.ACCURACY = HELLFIGHTER_ACCURACY[g_diff] 
+        self.RANGE = HELLFIGHTER_RANGE[g_diff] 
         self.BULLET_SPEED = HELLFIGHTER_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[g_diff]
 
@@ -251,7 +251,7 @@ class Hellfighter(pygame.sprite.Sprite):
         x_com = math.cos(radians)
 
         # Only shoot if in range
-        if x_com > -self.ACCURACY and x_com < self.ACCURACY:
+        if x_com > -self.RANGE and x_com < self.RANGE:
             now = pygame.time.get_ticks()
             if now - self.shoot_timer > self.SHOOT_DELAY:
                 self.shoot_timer = now

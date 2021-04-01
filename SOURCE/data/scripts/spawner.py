@@ -17,22 +17,22 @@ class Spawner:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    self.spawn_helleye()
-                elif event.key == pygame.K_2:
                     self.spawn_hellfighter()
-                elif event.key == pygame.K_3:
-                    self.spawn_solturret()
-                elif event.key == pygame.K_4:
+                elif event.key == pygame.K_2:
                     self.spawn_fatty()
-                elif event.key == pygame.K_5:
+                elif event.key == pygame.K_3:
                     self.spawn_raider()
+                elif event.key == pygame.K_4:
+                    self.spawn_solturret()
+                elif event.key == pygame.K_5:
+                    self.spawn_helleye()
 
     def update(self):
         pass
 
     def spawn_hellfighter(self):
         e = Hellfighter(
-            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
             self.g_diff
         )
@@ -41,7 +41,7 @@ class Spawner:
             
     def spawn_helleye(self):
         e = Helleye(
-            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
             self.g_diff
         )
@@ -50,7 +50,7 @@ class Spawner:
 
     def spawn_solturret(self):
         e = Solturret(
-            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/2)),
+            Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
             self.g_diff
         )

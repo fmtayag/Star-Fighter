@@ -25,24 +25,24 @@ PLAYER_BULLET_DAMAGE = 1
 
 # HELLFIGHTER DEFINES ==========================================================
 HELLFIGHTER_SPEED = {
-    "EASY": 100,
+    "EASY": 150,
     "MEDIUM": 200,
     "HARD": 300
 }
 HELLFIGHTER_SHOOT_DELAY = {
-    "EASY": 500,
+    "EASY": 600,
     "MEDIUM": 500,
     "HARD": 300
 }
-HELLFIGHTER_ACCURACY = {
-    "EASY": 0.6,
+HELLFIGHTER_RANGE = {
+    "EASY": 0.2,
     "MEDIUM": 0.4,
-    "HARD": 0.2
+    "HARD": 0.6
 } 
 HELLFIGHTER_BULLET_SPEED = {
-    "EASY": 200,
+    "EASY": 250,
     "MEDIUM": 300,
-    "HARD": 400
+    "HARD": 350
 }
 HELLFIGHTER_BULLET_DAMAGE = {
     "EASY": 0.5,
@@ -130,6 +130,28 @@ RAIDER_HEALTH = {
     "HARD": 5
 }
 
+# SOLTURRET DEFINES ============================================================
+SOLTURRET_SHOOT_DELAY = {
+    "EASY": 700,
+    "MEDIUM": 500,
+    "HARD": 300
+}
+SOLTURRET_BULLET_SPEED = {
+    "EASY": 200,
+    "MEDIUM": 300,
+    "HARD": 400
+}
+SOLTURRET_BULLET_DAMAGE = {
+    "EASY": 0.5,
+    "MEDIUM": 1,
+    "HARD": 1.5
+}
+SOLTURRET_HEALTH = {
+    "EASY": 2,
+    "MEDIUM": 5,
+    "HARD": 5
+}
+
 # HELLEYE DEFINES ==============================================================
 HELLEYE_BULLET_DIRECTION = (
     Vec2(0,-1),
@@ -164,27 +186,5 @@ HELLEYE_BULLET_DAMAGE = {
 HELLEYE_HEALTH = {
     "EASY": 2,
     "MEDIUM": 8,
-    "HARD": 5
-}
-
-# SOLTURRET DEFINES ============================================================
-SOLTURRET_SHOOT_DELAY = {
-    "EASY": 700,
-    "MEDIUM": 500,
-    "HARD": 300
-}
-SOLTURRET_BULLET_SPEED = {
-    "EASY": 200,
-    "MEDIUM": 300,
-    "HARD": 400
-}
-SOLTURRET_BULLET_DAMAGE = {
-    "EASY": 0.5,
-    "MEDIUM": 1,
-    "HARD": 1.5
-}
-SOLTURRET_HEALTH = {
-    "EASY": 2,
-    "MEDIUM": 5,
     "HARD": 5
 }
