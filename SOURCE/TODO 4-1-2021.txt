@@ -1,6 +1,6 @@
 4-1-2021
 + add upgrades (extra health, score crates, player turrets)
-+ balance the enemies and crap 
++ // balance the enemies and crap 
     This is on the normal difficulty btw
     PLAYER PROPERTIES:
         - Health: 10

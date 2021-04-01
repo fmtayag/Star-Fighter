@@ -114,7 +114,7 @@ RAIDER_SPEED = {
     "MEDIUM": 250,
     "HARD": 300
 }
-RAIDER_DASH_THRESHOLD = {
+RAIDER_DASH_RANGE = {
     "EASY": 0.5,
     "MEDIUM": 0.3,
     "HARD": 0.2
@@ -127,7 +127,7 @@ RAIDER_MAX_SPEED = {
 RAIDER_HEALTH = {
     "EASY": 2,
     "MEDIUM": 3,
-    "HARD": 5
+    "HARD": 4
 }
 
 # SOLTURRET DEFINES ============================================================
@@ -149,7 +149,7 @@ SOLTURRET_BULLET_DAMAGE = {
 SOLTURRET_HEALTH = {
     "EASY": 2,
     "MEDIUM": 5,
-    "HARD": 5
+    "HARD": 6
 }
 
 # HELLEYE DEFINES ==============================================================
@@ -176,15 +176,15 @@ HELLEYE_SPEED = {
 HELLEYE_BULLET_SPEED = {
     "EASY": 100,
     "MEDIUM": 150,
-    "HARD": 200
+    "HARD": 250
 }
 HELLEYE_BULLET_DAMAGE = {
     "EASY": 0.5,
-    "MEDIUM": 0.5,
+    "MEDIUM": 1,
     "HARD": 1.5
 }
 HELLEYE_HEALTH = {
     "EASY": 2,
-    "MEDIUM": 8,
-    "HARD": 5
+    "MEDIUM": 5,
+    "HARD": 8
 }

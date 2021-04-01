@@ -340,7 +340,7 @@ class Raider(pygame.sprite.Sprite):
         self.velocity = Vec2(0,0)
         self.player = player
         self.SPEED = RAIDER_SPEED[g_diff]
-        self.DASH_THRESHOLD = RAIDER_DASH_THRESHOLD[g_diff]
+        self.DASH_RANGE = RAIDER_DASH_RANGE[g_diff]
         self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[g_diff]
         self.health = RAIDER_HEALTH[g_diff]
         self.is_dashing = False
@@ -367,7 +367,7 @@ class Raider(pygame.sprite.Sprite):
         # Add delta-x to velocity
         self.velocity.x = -(dx * self.SPEED)
         
-        if dx > -self.DASH_THRESHOLD and dx < self.DASH_THRESHOLD:
+        if dx > -self.DASH_RANGE and dx < self.DASH_RANGE:
             self.is_dashing = True
 
     def dash(self):
