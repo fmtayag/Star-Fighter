@@ -407,7 +407,7 @@ class GameScene(Scene):
         self.par_y = 0
 
         # TODO - Set difficulty
-        g_diff = DIFFICULTIES[0]
+        g_diff = DIFFICULTIES[1]
 
         # Images
         PLAYER_IMGS = {

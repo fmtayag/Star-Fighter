@@ -20,7 +20,7 @@ PLAYER_INCREASE_BULLET_DELAY = 50
 PLAYER_INCREASE_BULLET_TICK = 25
 PLAYER_WEAK_BULLET_DELAY = 200
 PLAYER_WEAK_BULLET_TICK = 10
-PLAYER_DEFAULT_GUN_LEVEL = 3 # Max of 3, Min of 1. Don't change unless debugging.
+PLAYER_DEFAULT_GUN_LEVEL = 1 # Max of 3, Min of 1. Don't change unless debugging.
 PLAYER_BULLET_DAMAGE = 1
 
 # HELLFIGHTER DEFINES ==========================================================
@@ -31,7 +31,7 @@ HELLFIGHTER_SPEED = {
 }
 HELLFIGHTER_SHOOT_DELAY = {
     "EASY": 500,
-    "MEDIUM": 400,
+    "MEDIUM": 500,
     "HARD": 300
 }
 HELLFIGHTER_ACCURACY = {
@@ -104,7 +104,7 @@ FATTY_BULLET_SPEED_Y = (
 )
 FATTY_HEALTH = {
     "EASY": 2,
-    "MEDIUM": 3,
+    "MEDIUM": 4,
     "HARD": 5
 }
 
@@ -158,12 +158,12 @@ HELLEYE_BULLET_SPEED = {
 }
 HELLEYE_BULLET_DAMAGE = {
     "EASY": 0.5,
-    "MEDIUM": 1,
+    "MEDIUM": 0.5,
     "HARD": 1.5
 }
 HELLEYE_HEALTH = {
     "EASY": 2,
-    "MEDIUM": 3,
+    "MEDIUM": 8,
     "HARD": 5
 }
 
@@ -185,6 +185,6 @@ SOLTURRET_BULLET_DAMAGE = {
 }
 SOLTURRET_HEALTH = {
     "EASY": 2,
-    "MEDIUM": 3,
+    "MEDIUM": 5,
     "HARD": 5
 }

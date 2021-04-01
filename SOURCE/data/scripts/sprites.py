@@ -284,8 +284,6 @@ class Fatty(pygame.sprite.Sprite):
         self.health = FATTY_HEALTH[g_diff]
 
         # For shooting
-        self.cur_turret = 0
-        self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
         self.shoot_timer = pygame.time.get_ticks()
         self.SHOOT_DELAY = FATTY_SHOOT_DELAY[g_diff]
         self.BULLET_SPEED = FATTY_LARGE_BULLET_SPEED[g_diff]
@@ -296,7 +294,6 @@ class Fatty(pygame.sprite.Sprite):
         if self.health <= 0:
             self.kill()
 
-        self.update_bullet_position()
         self.follow_player()
         self.bob()
         self.shoot() 
@@ -323,23 +320,13 @@ class Fatty(pygame.sprite.Sprite):
             self.shoot_timer = now
 
             b = FattyBullet(
-                Vec2(self.bullet_position[self.cur_turret]),
+                Vec2(self.rect.centerx, self.rect.bottom),
                 Vec2(0,self.BULLET_SPEED),
                 self.BULLET_DAMAGE,
                 self.SMALL_BULLET_SPEED
             )
-            self.change_turret()
             e_bullets_g.add(b)
             all_sprites_g.add(b)
-
-    def update_bullet_position(self):
-        self.bullet_position = [Vec2(self.rect.left, self.rect.bottom), Vec2(self.rect.right, self.rect.bottom)]
-
-    def change_turret(self):
-        if self.cur_turret == 1:
-            self.cur_turret = 0
-        else:
-            self.cur_turret += 1
 
 class Raider(pygame.sprite.Sprite):
     def __init__(self, position, player, g_diff):
