@@ -1,6 +1,6 @@
 import pygame, sys
-from data.scripts.sprites import Player, PlayerBullet
 from data.scripts.spawner import Spawner
+from data.scripts.sprites import Player
 from data.scripts.settings import *
 from data.scripts.muda import (
     load_img, 

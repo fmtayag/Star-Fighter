@@ -15,7 +15,7 @@ e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
 
 # PLAYER DEFINES ===============================================================
-PLAYER_SPEED = 300
+PLAYER_SPEED = 250
 PLAYER_BULLET_SPEED = 600
 PLAYER_SHOOT_DELAY = 125
 PLAYER_INCREASE_BULLET_DELAY = 50
