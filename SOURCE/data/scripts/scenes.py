@@ -418,6 +418,7 @@ class GameScene(Scene):
         all_sprites_g.empty()
         hostiles_g.empty()
         p_bullets_g.empty()
+        powerups_g.empty()
         e_bullets_g.empty()
 
         # Instantiate the player
@@ -450,6 +451,7 @@ class GameScene(Scene):
             hit.health -= self.player.BULLET_DAMAGE
             if hit.health <= 0:
                 hit.kill()
+                self.spawner.spawn_powerup(hit.position)
 
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
         for hit in hits:

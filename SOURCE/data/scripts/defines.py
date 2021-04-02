@@ -9,6 +9,7 @@ DIFFICULTIES = ("EASY", "MEDIUM", "HARD")
 # SPRITE GROUPS ================================================================
 all_sprites_g = pygame.sprite.Group()
 hostiles_g = pygame.sprite.Group()
+powerups_g = pygame.sprite.Group()
 p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
 
@@ -187,4 +188,23 @@ HELLEYE_HEALTH = {
     "EASY": 3,
     "MEDIUM": 5,
     "HARD": 8
+}
+
+# POWERUP DEFINES ==============================================================
+POWERUP_SPEED = {
+    "EASY": 100,
+    "MEDIUM": 200,
+    "HARD": 300
+}
+POWERUP_TYPES = (
+    "GUN",
+    "HEALTH",
+    "SCORE",
+    "TURRET"
+)
+POWERUP_TYPES_WEIGHTS = {
+    20,
+    30,
+    70,
+    10
 }

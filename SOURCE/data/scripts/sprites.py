@@ -453,3 +453,25 @@ class Solturret(pygame.sprite.Sprite):
             b = EnemyBullet(Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
             all_sprites_g.add(b)
             e_bullets_g.add(b)
+
+# Powerup ======================================================================
+
+class Powerup(pygame.sprite.Sprite):
+    def __init__(self, position, pow_type, g_diff):
+        super().__init__()
+        self.image = pygame.Surface((16,16))
+        self.image.fill("MAGENTA")
+        self.rect = self.image.get_rect()
+        self.rect.x = position.x
+        self.rect.y = position.y 
+        self.position = position
+        self.SPEED = POWERUP_SPEED[g_diff]
+        self.POW_TYPE = pow_type
+
+    def update(self, dt):
+        if self.rect.top > WIN_RES["h"]:
+            self.kill()
+
+        self.position.y += self.SPEED * dt
+        self.rect.x = self.position.x 
+        self.rect.y = self.position.y 

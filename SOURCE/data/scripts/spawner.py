@@ -74,5 +74,19 @@ class Spawner:
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
- 
+
+    def spawn_powerup(self, position):
+        pow_type = self.roll_powerup()
+        p = Powerup(position, pow_type, self.g_diff)
+        powerups_g.add(p)
+        all_sprites_g.add(p)
+
+    def roll_powerup(self):
+        type_choices = POWERUP_TYPES
+        weights = POWERUP_TYPES_WEIGHTS
+        pow_choices = random.choices(type_choices, weights, k=10)
+        pow_type = random.choice(pow_choices)
+        print(pow_type)
+
+        return pow_type
 
