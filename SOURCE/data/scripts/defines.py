@@ -74,7 +74,7 @@ FATTY_LARGE_BULLET_SPEED = {
 FATTY_SMALL_BULLET_SPEED = {
     "EASY": 100,
     "MEDIUM": 200,
-    "HARD": 300
+    "HARD": 250
 }
 FATTY_BULLET_DAMAGE = {
     "EASY": 0.5,
@@ -184,7 +184,7 @@ HELLEYE_BULLET_DAMAGE = {
     "HARD": 1.5
 }
 HELLEYE_HEALTH = {
-    "EASY": 2,
+    "EASY": 3,
     "MEDIUM": 5,
     "HARD": 8
 }

@@ -425,7 +425,7 @@ class GameScene(Scene):
         all_sprites_g.add(self.player)
 
         # Spawn Manager
-        g_diff = DIFFICULTIES[1] # TODO - Set difficulty
+        g_diff = DIFFICULTIES[2] # TODO - Set difficulty
         print(g_diff)
         self.spawner = Spawner(self.player, g_diff)
     
