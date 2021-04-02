@@ -425,9 +425,12 @@ class GameScene(Scene):
         all_sprites_g.add(self.player)
 
         # Spawn Manager
-        g_diff = DIFFICULTIES[2] # TODO - Set difficulty
+        g_diff = DIFFICULTIES[1] # TODO - Set difficulty
         print(g_diff)
         self.spawner = Spawner(self.player, g_diff)
+
+        # For testing
+        self.alive_timer = pygame.time.get_ticks()
     
     def handle_events(self, events):
         for event in events:
@@ -445,6 +448,12 @@ class GameScene(Scene):
         hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True)
         for hit in hits:
             hit.health -= self.player.BULLET_DAMAGE
+            if hit.health <= 0:
+                hit.kill()
+
+        hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
+        for hit in hits:
+            print("HIT")
 
         self.spawner.update()
         all_sprites_g.update(dt)

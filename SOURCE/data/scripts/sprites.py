@@ -226,9 +226,6 @@ class Hellfighter(pygame.sprite.Sprite):
         self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[g_diff]
 
     def update(self, dt):
-        if self.health <= 0:
-            self.kill()
-
         self.follow_player()
         self.shoot()
         self.position += self.velocity * dt 
@@ -291,9 +288,6 @@ class Fatty(pygame.sprite.Sprite):
         self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
 
     def update(self, dt):
-        if self.health <= 0:
-            self.kill()
-
         self.follow_player()
         self.bob()
         self.shoot() 
@@ -347,7 +341,7 @@ class Raider(pygame.sprite.Sprite):
         self.dash_x = -2
 
     def update(self, dt):
-        if self.health <= 0 or self.rect.top > WIN_RES["h"]:
+        if self.rect.top > WIN_RES["h"]:
             self.kill()
 
         if not self.is_dashing:
@@ -396,9 +390,6 @@ class Helleye(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
     
     def update(self, dt):
-        if self.health <= 0:
-            self.kill()
-
         self.follow_player()
         self.shoot()
         self.position += self.velocity * dt 
@@ -446,9 +437,6 @@ class Solturret(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
 
     def update(self, dt):
-        if self.health <= 0:
-            self.kill()
-
         self.shoot()
 
     def shoot(self):
