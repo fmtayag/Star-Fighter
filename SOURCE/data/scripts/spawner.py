@@ -26,6 +26,8 @@ class Spawner:
                     self.spawn_solturret()
                 elif event.key == pygame.K_5:
                     self.spawn_helleye()
+                elif event.key == pygame.K_6:
+                    self.spawn_sentry()
 
     def update(self):
         pass
@@ -86,7 +88,11 @@ class Spawner:
         weights = POWERUP_TYPES_WEIGHTS
         pow_choices = random.choices(type_choices, weights, k=10)
         pow_type = random.choice(pow_choices)
-        print(pow_type)
 
         return pow_type
+
+    def spawn_sentry(self):
+        s = Sentry(Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(WIN_RES["h"]/2, WIN_RES["h"]-64)))
+        sentries_g.add(s)
+        all_sprites_g.add(s)
 

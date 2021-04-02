@@ -420,6 +420,7 @@ class GameScene(Scene):
         p_bullets_g.empty()
         powerups_g.empty()
         e_bullets_g.empty()
+        sentries_g.empty()
 
         # Instantiate the player
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
@@ -446,6 +447,7 @@ class GameScene(Scene):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
         
+        # Check for collisions between hostiles and player bullet
         hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True)
         for hit in hits:
             hit.health -= self.player.BULLET_DAMAGE
@@ -453,9 +455,16 @@ class GameScene(Scene):
                 hit.kill()
                 self.spawner.spawn_powerup(hit.position)
 
+        # Check for collisions between player and enemy bullet
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
         for hit in hits:
             print("HIT")
+
+        # Check for collisions between sentries and enemy bullet
+        for sentry in sentries_g:
+            hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True)
+            for hit in hits:
+                sentry.health -= hit.DAMAGE
 
         self.spawner.update()
         all_sprites_g.update(dt)

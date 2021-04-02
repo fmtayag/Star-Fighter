@@ -12,6 +12,7 @@ hostiles_g = pygame.sprite.Group()
 powerups_g = pygame.sprite.Group()
 p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
+sentries_g = pygame.sprite.Group()
 
 # PLAYER DEFINES ===============================================================
 PLAYER_SPEED = 300
@@ -200,7 +201,7 @@ POWERUP_TYPES = (
     "GUN",
     "HEALTH",
     "SCORE",
-    "TURRET"
+    "SENTRY"
 )
 POWERUP_TYPES_WEIGHTS = {
     20,

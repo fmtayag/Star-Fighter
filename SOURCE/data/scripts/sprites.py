@@ -149,16 +149,16 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.DAMAGE = damage
 
     def update(self, dt):
-        self.position += self.velocity * dt 
-        self.rect.centerx = self.position.x
-        self.rect.bottom = self.position.y
-
         # Kill if it goes out of bounds
         if (self.rect.top > WIN_RES["h"] or 
             self.rect.bottom < 0 or
             self.rect.right < 0 or
             self.rect.left > WIN_RES["w"]):
             self.kill()
+
+        self.position += self.velocity * dt 
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
 
 class FattyBullet(pygame.sprite.Sprite):
     def __init__(self, position, velocity, damage, sb_speed):
@@ -341,6 +341,7 @@ class Raider(pygame.sprite.Sprite):
         self.dash_x = -2
 
     def update(self, dt):
+        # Kill if it goes out of bounds
         if self.rect.top > WIN_RES["h"]:
             self.kill()
 
@@ -475,3 +476,77 @@ class Powerup(pygame.sprite.Sprite):
         self.position.y += self.SPEED * dt
         self.rect.x = self.position.x 
         self.rect.y = self.position.y 
+
+class Sentry(pygame.sprite.Sprite):
+    def __init__(self, position):
+        super().__init__()
+        self.image = pygame.Surface((32,32))
+        self.image.fill("CYAN")
+        self.rect = self.image.get_rect()
+        self.rect.x = position.x 
+        self.rect.y = position.y 
+        self.position = position
+        self.health = 10
+
+        # For shooting
+        self.BULLET_SPEED = 500
+        self.BULLET_DAMAGE = 0.5
+        self.target = None
+        self.shoot_delay = 300
+        self.shoot_timer = pygame.time.get_ticks()
+
+    def update(self, dt):
+        self.find_enemy()
+        self.shoot()
+
+    def shoot(self):
+        if self.target != None:
+            now = pygame.time.get_ticks()
+            if now - self.shoot_timer > self.shoot_delay:
+                self.shoot_timer = now
+                # Calculate radians, delta x, and delta y
+                radians = math.atan2(self.rect.y - self.target.rect.y, self.rect.x - self.target.rect.x)
+                dx = -(math.cos(radians) * self.BULLET_SPEED)
+                dy = -(math.sin(radians) * self.BULLET_SPEED)
+
+                # Create bullet
+                b = SentryBullet(Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
+                p_bullets_g.add(b)
+                all_sprites_g.add(b)
+
+    def find_enemy(self):
+        if self.target == None:
+            hostiles_list = list(hostiles_g)
+            
+            # Select random enemy
+            if len(hostiles_list) > 0:
+                self.target = random.choice(hostiles_list)
+        else:
+            # De-select enemy if enemy is killed
+            if not self.target.groups():
+                self.target = None
+            
+
+class SentryBullet(pygame.sprite.Sprite):
+    def __init__(self, position, velocity, damage):
+        super().__init__()
+        self.image = pygame.Surface((8,8))
+        self.image.fill("CYAN")
+        self.rect = self.image.get_rect()
+        self.rect.x = position.x 
+        self.rect.y = position.y 
+        self.position = position
+        self.velocity = velocity
+        self.DAMAGE = damage
+
+    def update(self, dt):
+        # Kill if it goes out of bounds
+        if (self.rect.top > WIN_RES["h"] or 
+            self.rect.bottom < 0 or
+            self.rect.right < 0 or
+            self.rect.left > WIN_RES["w"]):
+            self.kill()
+
+        self.position += self.velocity * dt 
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
