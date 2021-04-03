@@ -41,6 +41,9 @@ PLAYER_DEFAULT_GUN_LEVEL = 1 # Max of 3, Min of 1. Don't change unless debugging
 PLAYER_BULLET_DAMAGE = 1
 PLAYER_HEALTH = 20
 
+# ENEMY DEFINES ================================================================
+ENEMY_COLLISION_DAMAGE = PLAYER_HEALTH / 2
+
 # HELLFIGHTER DEFINES ==========================================================
 HELLFIGHTER_SPEED = {
     "EASY": 150,

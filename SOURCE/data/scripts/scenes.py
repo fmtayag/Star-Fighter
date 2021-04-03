@@ -419,6 +419,7 @@ class GameScene(Scene):
         print(g_diff)
         self.score = 10000
         self.SCORE_MULT = SCORE_MULTIPLIER[g_diff]
+        self.ENEMY_COLLISION_DAMAGE = ENEMY_COLLISION_DAMAGE
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
         all_sprites_g.add(self.player)
         
@@ -469,6 +470,12 @@ class GameScene(Scene):
             if self.player.health <= 0:
                 # TODO - implement game over screen
                 print("GAME OVER")
+
+        # Check for collisions between player and enemy
+        hits = pygame.sprite.spritecollide(self.player, hostiles_g, True)
+        for hit in hits:
+            self.player.health -= self.ENEMY_COLLISION_DAMAGE
+            print(self.player.health)
 
         # Check for collisions between sentries and enemy bullet
         for sentry in sentries_g:
