@@ -465,8 +465,10 @@ class GameScene(Scene):
         # Check for collisions between player and enemy bullet
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
         for hit in hits:
-            self.player.health -= hit.damage
-            print(self.player.health)
+            self.player.health -= hit.DAMAGE
+            if self.player.health <= 0:
+                # TODO - implement game over screen
+                print("GAME OVER")
 
         # Check for collisions between sentries and enemy bullet
         for sentry in sentries_g:

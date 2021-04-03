@@ -39,6 +39,7 @@ PLAYER_WEAK_BULLET_DELAY = 200
 PLAYER_WEAK_BULLET_TICK = 10
 PLAYER_DEFAULT_GUN_LEVEL = 1 # Max of 3, Min of 1. Don't change unless debugging.
 PLAYER_BULLET_DAMAGE = 1
+PLAYER_HEALTH = 20
 
 # HELLFIGHTER DEFINES ==========================================================
 HELLFIGHTER_SPEED = {

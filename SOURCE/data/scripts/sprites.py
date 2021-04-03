@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.velocity = Vec2(0,0)
         self.speed = PLAYER_SPEED
         self.gun_level = PLAYER_DEFAULT_GUN_LEVEL
+        self.health = PLAYER_HEALTH
         
         # For shooting
         self.BULLET_SPEED = PLAYER_BULLET_SPEED
