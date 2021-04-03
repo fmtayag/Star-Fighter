@@ -3,3 +3,5 @@
 + implement game over scene
 + implement difficulty selection scene
 + work on the spawning logic
++ problem: the roll rates for the upgrades...gotta work on it somehow
++ idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?

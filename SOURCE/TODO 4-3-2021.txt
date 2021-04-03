@@ -2,3 +2,6 @@
 + /// implement the score
 + /// implement hp
 + /// implement collision between monsters and players
++ /// add health gui
++ /// add collisions between player and powerup
++ /// add collision logic for sentries and enemies

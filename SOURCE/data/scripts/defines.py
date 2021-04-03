@@ -38,8 +38,37 @@ PLAYER_INCREASE_BULLET_TICK = 25
 PLAYER_WEAK_BULLET_DELAY = 200
 PLAYER_WEAK_BULLET_TICK = 10
 PLAYER_DEFAULT_GUN_LEVEL = 1 # Max of 3, Min of 1. Don't change unless debugging.
+PLAYER_MAX_GUN_LEVEL = 3 # Don't change.
 PLAYER_BULLET_DAMAGE = 1
-PLAYER_HEALTH = 20
+PLAYER_HEALTH = 20 
+PLAYER_MAX_HEALTH = 20
+
+# SENTRY DEFINES ===============================================================
+SENTRY_HEALTH = 5
+
+# POWERUP DEFINES ==============================================================
+POWERUP_SPEED = {
+    "EASY": 100,
+    "MEDIUM": 200,
+    "HARD": 300
+}
+POWERUP_TYPES = (
+    "GUN",
+    "HEALTH",
+    "SCORE",
+    "SENTRY"
+)
+POWERUP_TYPES_WEIGHTS = {
+    20, # GUN 
+    50, # HEALTH
+    70, # SCORE
+    10 # SENTRY
+}
+POWERUP_HEALTH_AMOUNT = {
+    "EASY": 5,
+    "MEDIUM": 3,
+    "HARD": 1
+}
 
 # ENEMY DEFINES ================================================================
 ENEMY_COLLISION_DAMAGE = PLAYER_HEALTH / 2
@@ -208,23 +237,4 @@ HELLEYE_HEALTH = {
     "EASY": 3,
     "MEDIUM": 5,
     "HARD": 8
-}
-
-# POWERUP DEFINES ==============================================================
-POWERUP_SPEED = {
-    "EASY": 100,
-    "MEDIUM": 200,
-    "HARD": 300
-}
-POWERUP_TYPES = (
-    "GUN",
-    "HEALTH",
-    "SCORE",
-    "SENTRY"
-)
-POWERUP_TYPES_WEIGHTS = {
-    20,
-    30,
-    70,
-    10
 }

@@ -86,8 +86,8 @@ class Spawner:
     def roll_powerup(self):
         type_choices = POWERUP_TYPES
         weights = POWERUP_TYPES_WEIGHTS
-        pow_choices = random.choices(type_choices, weights, k=10)
-        pow_type = random.choice(pow_choices)
+        pow_choices = random.choices(type_choices, weights)
+        pow_type = pow_choices[0]
 
         return pow_type
 

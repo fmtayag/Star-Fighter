@@ -492,7 +492,7 @@ class Sentry(pygame.sprite.Sprite):
         self.rect.x = position.x 
         self.rect.y = position.y 
         self.position = position
-        self.health = 10
+        self.health = SENTRY_HEALTH
 
         # For shooting
         self.BULLET_SPEED = 500

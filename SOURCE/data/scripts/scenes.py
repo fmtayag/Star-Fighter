@@ -13,7 +13,8 @@ from data.scripts.muda import (
     draw_background, 
     draw_text,
     shake,
-    slice_list
+    slice_list,
+    clamp
 )
 from data.scripts.defines import *
 
@@ -415,10 +416,10 @@ class GameScene(Scene):
         BULLET_IMG = load_img("player_bullet.png", IMG_DIR, SCALE).convert_alpha()
 
         # Variables for the game
-        g_diff = DIFFICULTIES[1] # TODO - pass difficulty
-        print(g_diff)
+        self.g_diff = DIFFICULTIES[1] # TODO - pass difficulty
+        print(self.g_diff)
         self.score = 10000
-        self.SCORE_MULT = SCORE_MULTIPLIER[g_diff]
+        self.SCORE_MULT = SCORE_MULTIPLIER[self.g_diff]
         self.ENEMY_COLLISION_DAMAGE = ENEMY_COLLISION_DAMAGE
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
         all_sprites_g.add(self.player)
@@ -432,7 +433,7 @@ class GameScene(Scene):
         self.par_y = 0
 
         # Spawn Manager
-        self.spawner = Spawner(self.player, g_diff)
+        self.spawner = Spawner(self.player, self.g_diff)
 
         # For testing
         self.alive_timer = pygame.time.get_ticks()
@@ -449,8 +450,8 @@ class GameScene(Scene):
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
-        
-        # Check for collisions between hostiles and player bullet
+
+        # HOSTILES - PLAYER BULLET COLLISION
         hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True)
         for hit in hits:
             hit.health -= self.player.BULLET_DAMAGE
@@ -463,7 +464,7 @@ class GameScene(Scene):
                 # Spawn powerup
                 self.spawner.spawn_powerup(hit.position)
 
-        # Check for collisions between player and enemy bullet
+        # PLAYER - ENEMY BULLET COLLISION
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
         for hit in hits:
             self.player.health -= hit.DAMAGE
@@ -471,17 +472,46 @@ class GameScene(Scene):
                 # TODO - implement game over screen
                 print("GAME OVER")
 
-        # Check for collisions between player and enemy
+        # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True)
         for hit in hits:
             self.player.health -= self.ENEMY_COLLISION_DAMAGE
             print(self.player.health)
 
-        # Check for collisions between sentries and enemy bullet
+        # PLAYER - POWERUP COLLISION
+        hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
+        for hit in hits:
+            if hit.POW_TYPE == "GUN":
+                if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
+                    self.player.gun_level = 3
+                else:
+                    self.player.gun_level += 1
+            elif hit.POW_TYPE == "HEALTH":
+                if self.player.health >= PLAYER_MAX_HEALTH:
+                    self.player.health = PLAYER_MAX_HEALTH
+                else: 
+                    self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
+            elif hit.POW_TYPE == "SCORE":
+                pass
+            elif hit.POW_TYPE == "SENTRY":
+                self.spawner.spawn_sentry()
+
+            print(hit.POW_TYPE)
+
+        # SENTRY - ENEMY COLLISION
+        hits = pygame.sprite.groupcollide(sentries_g, hostiles_g, False, True)
+        for hit in hits:
+            hit.health -= ENEMY_COLLISION_DAMAGE
+            if hit.health <= 0:
+                hit.kill() 
+
+        # SENTRY - ENEMY BULLET COLLISION
         for sentry in sentries_g:
             hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True)
             for hit in hits:
                 sentry.health -= hit.DAMAGE
+                if sentry.health <= 0:
+                    sentry.kill()
 
         self.spawner.update()
         all_sprites_g.update(dt)
