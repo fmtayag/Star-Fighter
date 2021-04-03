@@ -14,6 +14,21 @@ p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
 
+# SCORE DEFINES ================================================================
+SCORE_MULTIPLIER = {
+    "EASY": 0.75,
+    "MEDIUM": 1.00,
+    "HARD": 1.50
+}
+
+SCORE_WORTH = {
+    "HELLFIGHTER": 10,
+    "RAIDER": 20,
+    "FATTY": 30,
+    "HELLEYE": 50,
+    "SOLTURRET": 100
+}
+
 # PLAYER DEFINES ===============================================================
 PLAYER_SPEED = 250
 PLAYER_BULLET_SPEED = 600

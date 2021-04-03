@@ -217,6 +217,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.player = player
         self.SPEED = HELLFIGHTER_SPEED[g_diff]
         self.health = HELLFIGHTER_HEALTH[g_diff]
+        self.WORTH = SCORE_WORTH["HELLFIGHTER"]
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -279,6 +280,7 @@ class Fatty(pygame.sprite.Sprite):
         self.SPEED = FATTY_SPEED[g_diff]
         self.bob_y = 0
         self.health = FATTY_HEALTH[g_diff]
+        self.WORTH = SCORE_WORTH["FATTY"]
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -339,6 +341,7 @@ class Raider(pygame.sprite.Sprite):
         self.health = RAIDER_HEALTH[g_diff]
         self.is_dashing = False
         self.dash_x = -2
+        self.WORTH = SCORE_WORTH["RAIDER"]
 
     def update(self, dt):
         # Kill if it goes out of bounds
@@ -383,6 +386,7 @@ class Helleye(pygame.sprite.Sprite):
         self.player = player
         self.SPEED = HELLEYE_SPEED[g_diff]
         self.health = HELLEYE_HEALTH[g_diff]
+        self.WORTH = SCORE_WORTH["HELLEYE"]
     
         # For shooting
         self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
@@ -430,6 +434,7 @@ class Solturret(pygame.sprite.Sprite):
         self.position = position
         self.player = player
         self.health = SOLTURRET_HEALTH[g_diff]
+        self.WORTH = SCORE_WORTH["SOLTURRET"]
 
         # For shooting
         self.SHOOT_DELAY = SOLTURRET_SHOOT_DELAY[g_diff]
@@ -526,7 +531,6 @@ class Sentry(pygame.sprite.Sprite):
             if not self.target.groups():
                 self.target = None
             
-
 class SentryBullet(pygame.sprite.Sprite):
     def __init__(self, position, velocity, damage):
         super().__init__()

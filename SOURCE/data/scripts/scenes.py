@@ -398,13 +398,13 @@ class CreditsScene(Scene):
 
 class GameScene(Scene):
     def __init__(self):
-        # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
-        self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
-        self.par_y = 0
+        # Clear the sprite groups
+        all_sprites_g.empty()
+        hostiles_g.empty()
+        p_bullets_g.empty()
+        powerups_g.empty()
+        e_bullets_g.empty()
+        sentries_g.empty()
 
         # Images
         PLAYER_IMGS = {
@@ -414,21 +414,23 @@ class GameScene(Scene):
         }
         BULLET_IMG = load_img("player_bullet.png", IMG_DIR, SCALE).convert_alpha()
 
-        # Clear the sprite groups
-        all_sprites_g.empty()
-        hostiles_g.empty()
-        p_bullets_g.empty()
-        powerups_g.empty()
-        e_bullets_g.empty()
-        sentries_g.empty()
-
-        # Instantiate the player
+        # Variables for the game
+        g_diff = DIFFICULTIES[1] # TODO - pass difficulty
+        print(g_diff)
+        self.score = 10000
+        self.SCORE_MULT = SCORE_MULTIPLIER[g_diff]
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
         all_sprites_g.add(self.player)
+        
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
 
         # Spawn Manager
-        g_diff = DIFFICULTIES[1] # TODO - Set difficulty
-        print(g_diff)
         self.spawner = Spawner(self.player, g_diff)
 
         # For testing
@@ -453,12 +455,18 @@ class GameScene(Scene):
             hit.health -= self.player.BULLET_DAMAGE
             if hit.health <= 0:
                 hit.kill()
+
+                # Add score
+                self.score += hit.WORTH * self.SCORE_MULT
+
+                # Spawn powerup
                 self.spawner.spawn_powerup(hit.position)
 
         # Check for collisions between player and enemy bullet
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
         for hit in hits:
-            print("HIT")
+            self.player.health -= hit.damage
+            print(self.player.health)
 
         # Check for collisions between sentries and enemy bullet
         for sentry in sentries_g:
@@ -472,4 +480,7 @@ class GameScene(Scene):
     def draw(self, window):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
+
+        draw_text(window, f"{int(self.score)}", FONT_SIZE*2, GAME_FONT, 48, 8, "WHITE", "centered")
+
         all_sprites_g.draw(window)
