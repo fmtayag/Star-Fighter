@@ -1,6 +1,5 @@
-import pygame
+import pygame, random
 import pygame.math
-import random
 from data.scripts.settings import *
 from data.scripts.sprites import *
 
@@ -86,6 +85,8 @@ class Spawner:
     def roll_powerup(self):
         type_choices = POWERUP_TYPES
         weights = POWERUP_TYPES_WEIGHTS
+        print(len(type_choices), len(weights))
+        print(type_choices, weights)
         pow_choices = random.choices(type_choices, weights)
         pow_type = pow_choices[0]
 

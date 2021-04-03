@@ -3,5 +3,8 @@
 + implement game over scene
 + implement difficulty selection scene
 + work on the spawning logic
-+ problem: the roll rates for the upgrades...gotta work on it somehow
++ /// problem: the roll chances for the upgrades are crap...gotta work on it somehow
++ idea: roll chances for the powerups / upgrades change depending on the circumstance? 
+    for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
+    ...and so on.
 + idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?

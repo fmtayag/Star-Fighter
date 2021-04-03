@@ -44,7 +44,7 @@ PLAYER_HEALTH = 20
 PLAYER_MAX_HEALTH = 20
 
 # SENTRY DEFINES ===============================================================
-SENTRY_HEALTH = 5
+SENTRY_HEALTH = 3
 
 # POWERUP DEFINES ==============================================================
 POWERUP_SPEED = {
@@ -58,17 +58,23 @@ POWERUP_TYPES = (
     "SCORE",
     "SENTRY"
 )
-POWERUP_TYPES_WEIGHTS = {
-    20, # GUN 
-    50, # HEALTH
-    70, # SCORE
-    10 # SENTRY
-}
+POWERUP_TYPES_WEIGHTS = (
+    15, # GUN 
+    20, # HEALTH
+    60, # SCORE
+    5 # SENTRY
+)
 POWERUP_HEALTH_AMOUNT = {
     "EASY": 5,
     "MEDIUM": 3,
     "HARD": 1
 }
+POWERUP_ROLL_CHANCE = {
+    "EASY": 30,
+    "MEDIUM": 15,
+    "HARD": 5
+}
+POWERUP_SCORE_BASE_WORTH = 100
 
 # ENEMY DEFINES ================================================================
 ENEMY_COLLISION_DAMAGE = PLAYER_HEALTH / 2

@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random
 from data.scripts.spawner import Spawner
 from data.scripts.sprites import Player
 from data.scripts.settings import *
@@ -462,7 +462,9 @@ class GameScene(Scene):
                 self.score += hit.WORTH * self.SCORE_MULT
 
                 # Spawn powerup
-                self.spawner.spawn_powerup(hit.position)
+                spawn_roll = random.randrange(1,100)
+                if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
+                    self.spawner.spawn_powerup(hit.position)
 
         # PLAYER - ENEMY BULLET COLLISION
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
@@ -476,7 +478,6 @@ class GameScene(Scene):
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True)
         for hit in hits:
             self.player.health -= self.ENEMY_COLLISION_DAMAGE
-            print(self.player.health)
 
         # PLAYER - POWERUP COLLISION
         hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
@@ -492,7 +493,7 @@ class GameScene(Scene):
                 else: 
                     self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
             elif hit.POW_TYPE == "SCORE":
-                pass
+                self.score += POWERUP_SCORE_BASE_WORTH * self.SCORE_MULT
             elif hit.POW_TYPE == "SENTRY":
                 self.spawner.spawn_sentry()
 
