@@ -490,6 +490,7 @@ class GameScene(Scene):
         draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
         draw_background(window, self.par_img, self.par_rect, self.par_y)
 
-        draw_text(window, f"{int(self.score)}", FONT_SIZE*2, GAME_FONT, 48, 8, "WHITE", "centered")
+        draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
+        draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
 
         all_sprites_g.draw(window)
