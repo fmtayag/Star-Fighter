@@ -435,7 +435,7 @@ class DifficultySelectionScene(Scene):
 # GAME SCENE ===================================================================
 
 class GameScene(Scene):
-    def __init__(self, difficulty):
+    def __init__(self, difficulty=1):
         # Clear the sprite groups
         all_sprites_g.empty()
         hostiles_g.empty()
@@ -508,8 +508,7 @@ class GameScene(Scene):
         for hit in hits:
             self.player.health -= hit.DAMAGE
             if self.player.health <= 0:
-                # TODO - implement game over screen
-                print("GAME OVER")
+                self.manager.go_to(GameOverScene(self.score))
 
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True)
@@ -533,8 +532,6 @@ class GameScene(Scene):
                 self.score += POWERUP_SCORE_BASE_WORTH * self.SCORE_MULT
             elif hit.POW_TYPE == "SENTRY":
                 self.spawner.spawn_sentry()
-
-            print(hit.POW_TYPE)
 
         # SENTRY - ENEMY COLLISION
         hits = pygame.sprite.groupcollide(sentries_g, hostiles_g, False, True)
@@ -562,3 +559,36 @@ class GameScene(Scene):
         draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
 
         all_sprites_g.draw(window)
+
+# GAME OVER SCENE ================================================================
+
+class GameOverScene(Scene):
+    def __init__(self, score):
+        # Scene variables
+        self.score = score
+
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
+    
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.manager.go_to(TitleScene(0))
+    
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+    def draw(self, window):
+        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
+        draw_background(window, self.par_img, self.par_rect, self.par_y)
+
+        draw_text(window, "GAME OVER", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        draw_text(window, f"{self.score}", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
+        draw_text(window, "X to Exit", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, 256, "WHITE", "centered")

@@ -44,7 +44,7 @@ def main():
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
 
     # Scene Manager
-    manager = SceneManager(GameScene(0))
+    manager = SceneManager(GameScene())
 
     # Loop variables
     clock = pygame.time.Clock()
