@@ -1,5 +1,10 @@
 4-4-2021
 + gui work, exciting stuff!!
++ /// palette recoloring
++ /// create solturret sprite
++ /// create sentry sprite
++ /// create helleye sprite
++ /// create shield sprite
 + /// add a barebones game over scene
 + /// implement difficulty selection scene
 + work on the spawning logic. enemies shouldn't ideally appear on the same "row".
@@ -8,3 +13,4 @@
     for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
     ...and so on.
 + idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?
++ idea: add shield powerup
