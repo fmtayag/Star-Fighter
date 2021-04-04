@@ -102,7 +102,7 @@ class TitleScene(Scene):
                     self.title_menu.select_down()
                 elif event.key == pygame.K_z:
                     if self.title_menu.get_selected() == 0:
-                        self.manager.go_to(GameScene())
+                        self.manager.go_to(DifficultySelectionScene())
                     elif self.title_menu.get_selected() == 1:
                         self.manager.go_to(ScoresScene())
                     elif self.title_menu.get_selected() == 2:
@@ -395,10 +395,47 @@ class CreditsScene(Scene):
         draw_text(window, "CREDITS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
 
+# DIFFICULTY SELECTION SCENE ================================================================
+
+class DifficultySelectionScene(Scene):
+    def __init__(self):
+        # Background
+        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.bg_img.get_rect()
+        self.bg_y = 0
+        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.bg_img.get_rect()
+        self.par_y = 0
+    
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.manager.go_to(TitleScene(0))
+                elif event.key == pygame.K_1:
+                    self.manager.go_to(GameScene(0))
+                elif event.key == pygame.K_2:
+                    self.manager.go_to(GameScene(1))
+                elif event.key == pygame.K_3:
+                    self.manager.go_to(GameScene(2))
+    
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+    def draw(self, window):
+        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
+        draw_background(window, self.par_img, self.par_rect, self.par_y)
+
+        draw_text(window, "SELECT DIFFICULTY", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        draw_text(window, "1 - Easy", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 - 64, "WHITE", "centered")
+        draw_text(window, "2 - Medium", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
+        draw_text(window, "3 - Hard", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 + 64, "WHITE", "centered")
+
 # GAME SCENE ===================================================================
 
 class GameScene(Scene):
-    def __init__(self):
+    def __init__(self, difficulty):
         # Clear the sprite groups
         all_sprites_g.empty()
         hostiles_g.empty()
@@ -416,7 +453,7 @@ class GameScene(Scene):
         BULLET_IMG = load_img("player_bullet.png", IMG_DIR, SCALE).convert_alpha()
 
         # Variables for the game
-        self.g_diff = DIFFICULTIES[1] # TODO - pass difficulty
+        self.g_diff = DIFFICULTIES[difficulty]
         print(self.g_diff)
         self.score = 10000
         self.SCORE_MULT = SCORE_MULTIPLIER[self.g_diff]

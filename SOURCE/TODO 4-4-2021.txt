@@ -1,8 +1,8 @@
 4-4-2021
 + gui work, exciting stuff!!
 + implement game over scene
-+ implement difficulty selection scene
-+ work on the spawning logic
++ /// implement difficulty selection scene
++ work on the spawning logic. enemies shouldn't ideally appear on the same row.
 + /// problem: the roll chances for the upgrades are crap...gotta work on it somehow
 + idea: roll chances for the powerups / upgrades change depending on the circumstance? 
     for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
