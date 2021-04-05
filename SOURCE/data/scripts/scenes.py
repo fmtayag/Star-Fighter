@@ -445,12 +445,12 @@ class GameScene(Scene):
         sentries_g.empty()
 
         # Images
-        PLAYER_IMGS = {
-            "L": load_img("player_l.png", IMG_DIR, SCALE).convert_alpha(),
-            "N": load_img("player_n.png", IMG_DIR, SCALE).convert_alpha(),
-            "R": load_img("player_r.png", IMG_DIR, SCALE).convert_alpha()
+        PLAYER_IMGS = { # TODO - change the orientation images
+            "L": load_img("player_level3_n1.png", PLAYER_IMG_DIR, SCALE).convert_alpha(),
+            "N": load_img("player_level3_n1.png", PLAYER_IMG_DIR, SCALE).convert_alpha(),
+            "R": load_img("player_level3_n1.png", PLAYER_IMG_DIR, SCALE).convert_alpha()
         }
-        BULLET_IMG = load_img("player_bullet.png", IMG_DIR, SCALE).convert_alpha()
+        BULLET_IMG = load_img("bullet_player.png", BULLET_IMG_DIR, SCALE).convert_alpha()
 
         # Variables for the game
         self.g_diff = DIFFICULTIES[difficulty]

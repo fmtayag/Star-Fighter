@@ -16,7 +16,7 @@ sentries_g = pygame.sprite.Group()
 
 # SCORE DEFINES ================================================================
 SCORE_MULTIPLIER = {
-    "EASY": 0.75,
+    "EASY": 0.50,
     "MEDIUM": 1.00,
     "HARD": 1.50
 }
@@ -240,7 +240,7 @@ HELLEYE_BULLET_DAMAGE = {
     "HARD": 1.5
 }
 HELLEYE_HEALTH = {
-    "EASY": 3,
-    "MEDIUM": 5,
-    "HARD": 8
+    "EASY": 5,
+    "MEDIUM": 8,
+    "HARD": 12
 }

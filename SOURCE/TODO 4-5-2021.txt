@@ -1,0 +1,16 @@
+4-5-2021
++ gui work, exciting stuff!!
++ work on the spawning logic. enemies shouldn't ideally appear on the same "row".
++ idea: roll chances for the powerups / upgrades change depending on the circumstance? 
+    for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
+    ...and so on.
++ idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?
++ idea: add shield powerup
++ /// add images to sprites 
++ add animations to sprites
++ add radius to sprite collisions
++ /// work on sentry gun rotation
+    ... this one took me 4 fuckin hours to figure out. but it works now! and its kinda crap, the way the image distorts i mean...
+    ... i guess that's just how SDL rotates images...oh welp.
+    ... well, i managed to make it smooth looking using the rotozoom() function. VERY NICE!!!
+    ... credits to Neck Deep for fueling my resolve to...rotate an image.

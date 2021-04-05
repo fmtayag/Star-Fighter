@@ -138,10 +138,9 @@ class PlayerBullet(pygame.sprite.Sprite):
 # Enemies ======================================================================
 
 class EnemyBullet(pygame.sprite.Sprite):
-    def __init__(self, position, velocity, damage):
+    def __init__(self, image, position, velocity, damage):
         super().__init__()
-        self.image = pygame.Surface((8,8))
-        self.image.fill("ORANGE")
+        self.image = image
         self.rect = self.image.get_rect()
         self.rect.centerx = position.x
         self.rect.centery = position.y
@@ -162,10 +161,9 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.rect.bottom = self.position.y
 
 class FattyBullet(pygame.sprite.Sprite):
-    def __init__(self, position, velocity, damage, sb_speed):
+    def __init__(self, image, small_bullet_img, position, velocity, damage, sb_speed):
         super().__init__()
-        self.image = pygame.Surface((16,16))
-        self.image.fill("ORANGE")
+        self.image = image
         self.rect = self.image.get_rect()
         self.rect.centerx = position.x
         self.rect.centery = position.y
@@ -175,6 +173,7 @@ class FattyBullet(pygame.sprite.Sprite):
         self.DAMAGE = damage
         self.DECELERATE_SPEED = random.randrange(6,8)
         self.SMALL_BULLET_SPEED = sb_speed
+        self.SMALL_BULLET_IMAGE = small_bullet_img
 
     def update(self, dt):
         # Decelerate
@@ -193,6 +192,7 @@ class FattyBullet(pygame.sprite.Sprite):
     def explode(self):
         for i in range(len(FATTY_BULLET_DIRECTION)):
             b = EnemyBullet(
+                self.SMALL_BULLET_IMAGE,
                 Vec2(self.rect.center),
                 Vec2(
                         FATTY_BULLET_DIRECTION[i].x * FATTY_BULLET_SPEED_X[i] * self.SMALL_BULLET_SPEED, 
@@ -206,10 +206,11 @@ class FattyBullet(pygame.sprite.Sprite):
         self.kill()
 
 class Hellfighter(pygame.sprite.Sprite):
-    def __init__(self, position, player, g_diff):
-        super().__init__() 
-        self.image = pygame.Surface((32,32))
-        self.image.fill("CYAN")
+    def __init__(self, images, bullet_img, position, player, g_diff):
+        # TODO - animation
+        super().__init__()
+        self.images = images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x 
         self.rect.y = position.y 
@@ -226,6 +227,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.RANGE = HELLFIGHTER_RANGE[g_diff] 
         self.BULLET_SPEED = HELLFIGHTER_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[g_diff]
+        self.BULLET_IMAGE = bullet_img
 
     def update(self, dt):
         self.follow_player()
@@ -259,6 +261,7 @@ class Hellfighter(pygame.sprite.Sprite):
                 dir_y = -(math.copysign(1, math.sin(radians)))
 
                 b = EnemyBullet(
+                    self.BULLET_IMAGE,
                     Vec2(self.rect.center),
                     Vec2(-x_com * (self.BULLET_SPEED / 2), self.BULLET_SPEED * dir_y),
                     self.BULLET_DAMAGE
@@ -267,11 +270,11 @@ class Hellfighter(pygame.sprite.Sprite):
                 all_sprites_g.add(b)
 
 class Fatty(pygame.sprite.Sprite):
-    # Fatty's design is that of a pig. Fireballs come out of its snout.
-    def __init__(self, position, player, g_diff):
+    def __init__(self, images, bullet_imgs, position, player, g_diff):
+        # TODO - animation
         super().__init__()
-        self.image = pygame.Surface((32,32))
-        self.image.fill("PINK")
+        self.images = images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -289,6 +292,9 @@ class Fatty(pygame.sprite.Sprite):
         self.BULLET_SPEED = FATTY_LARGE_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = FATTY_BULLET_DAMAGE[g_diff]
         self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
+        self.BULLET_IMAGES = bullet_imgs
+        self.LARGE_BULLET_IMAGE = self.BULLET_IMAGES["LARGE"]
+        self.SMALL_BULLET_IMAGE = self.BULLET_IMAGES["SMALL"]
 
     def update(self, dt):
         self.follow_player()
@@ -317,6 +323,8 @@ class Fatty(pygame.sprite.Sprite):
             self.shoot_timer = now
 
             b = FattyBullet(
+                self.LARGE_BULLET_IMAGE,
+                self.SMALL_BULLET_IMAGE,
                 Vec2(self.rect.centerx, self.rect.bottom),
                 Vec2(0,self.BULLET_SPEED),
                 self.BULLET_DAMAGE,
@@ -326,10 +334,11 @@ class Fatty(pygame.sprite.Sprite):
             all_sprites_g.add(b)
 
 class Raider(pygame.sprite.Sprite):
-    def __init__(self, position, player, g_diff):
+    def __init__(self, images, position, player, g_diff):
+        # TODO - animation
         super().__init__()
-        self.image = pygame.Surface((32,32))
-        self.image.fill("GREEN")
+        self.images = images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -375,10 +384,11 @@ class Raider(pygame.sprite.Sprite):
             self.dash_x += 0.1
 
 class Helleye(pygame.sprite.Sprite):
-    def __init__(self, position, player, g_diff):
+    def __init__(self, images, bullet_img, position, player, g_diff):
+        # TODO - animation
         super().__init__()
-        self.image = pygame.Surface((32,32))
-        self.image.fill("RED")
+        self.images = images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -394,6 +404,7 @@ class Helleye(pygame.sprite.Sprite):
         self.BULLET_SPEED = HELLEYE_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = HELLEYE_BULLET_DAMAGE[g_diff]
         self.shoot_timer = pygame.time.get_ticks()
+        self.BULLET_IMAGE = bullet_img
     
     def update(self, dt):
         self.follow_player()
@@ -417,6 +428,7 @@ class Helleye(pygame.sprite.Sprite):
 
             for i in range(len(HELLEYE_BULLET_DIRECTION)):
                 b = EnemyBullet(
+                    self.BULLET_IMAGE,
                     Vec2(self.rect.center),
                     Vec2(HELLEYE_BULLET_DIRECTION[i] * self.BULLET_SPEED),
                     self.BULLET_DAMAGE
@@ -425,10 +437,11 @@ class Helleye(pygame.sprite.Sprite):
                 all_sprites_g.add(b)
 
 class Solturret(pygame.sprite.Sprite): 
-    def __init__(self, position, player, g_diff):
+    def __init__(self, images, bullet_img, position, player, g_diff):
+        # TODO - animation
         super().__init__()
-        self.image = pygame.Surface((32,32))
-        self.image.fill("ORANGE")
+        self.images = images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -442,6 +455,7 @@ class Solturret(pygame.sprite.Sprite):
         self.BULLET_SPEED = SOLTURRET_BULLET_SPEED[g_diff]
         self.BULLET_DAMAGE = SOLTURRET_BULLET_DAMAGE[g_diff]
         self.shoot_timer = pygame.time.get_ticks()
+        self.BULLET_IMAGE = bullet_img
 
     def update(self, dt):
         self.shoot()
@@ -457,17 +471,18 @@ class Solturret(pygame.sprite.Sprite):
             dy = -(math.sin(radians) * self.BULLET_SPEED)
 
             # Create bullet
-            b = EnemyBullet(Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
+            b = EnemyBullet(self.BULLET_IMAGE, Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
             all_sprites_g.add(b)
             e_bullets_g.add(b)
 
 # Powerup ======================================================================
 
 class Powerup(pygame.sprite.Sprite):
-    def __init__(self, position, pow_type, g_diff):
+    def __init__(self, images, position, pow_type, g_diff):
+        # TODO - animation
         super().__init__()
-        self.image = pygame.Surface((16,16))
-        self.image.fill("MAGENTA")
+        self.images = images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y 
@@ -484,15 +499,21 @@ class Powerup(pygame.sprite.Sprite):
         self.rect.y = self.position.y 
 
 class Sentry(pygame.sprite.Sprite):
-    def __init__(self, position):
+    def __init__(self, images, bullet_img, position):
         super().__init__()
+        self.images = images
         self.image = pygame.Surface((32,32))
-        self.image.fill("CYAN")
         self.rect = self.image.get_rect()
         self.rect.x = position.x 
         self.rect.y = position.y 
         self.position = position
         self.health = SENTRY_HEALTH
+
+        # Base image
+        self.base_image = self.images["BASE"]
+
+        # Gun image
+        self.gun_image = self.images["GUN"]
 
         # For shooting
         self.BULLET_SPEED = 500
@@ -500,8 +521,23 @@ class Sentry(pygame.sprite.Sprite):
         self.target = None
         self.shoot_delay = 300
         self.shoot_timer = pygame.time.get_ticks()
+        self.BULLET_IMG = bullet_img
+
+        # For animation
+        self.frame_timer = pygame.time.get_ticks()
+        self.FRAME_DELAY = 10
+        self.rot = 0
 
     def update(self, dt):
+        # Update surface
+        self.rotate_gun()
+        self.image.fill("BLACK")
+        self.image.set_colorkey("BLACK")
+        self.image.blit(self.base_image, (0,0))
+        self.image.blit(
+            self.gun_image, 
+            (self.image.get_width()/2 - self.gun_image.get_width()/2, self.image.get_height()/2 - self.gun_image.get_height()/2))
+
         self.find_enemy()
         self.shoot()
 
@@ -516,9 +552,25 @@ class Sentry(pygame.sprite.Sprite):
                 dy = -(math.sin(radians) * self.BULLET_SPEED)
 
                 # Create bullet
-                b = SentryBullet(Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
+                b = SentryBullet(self.BULLET_IMG, Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
                 p_bullets_g.add(b)
                 all_sprites_g.add(b)
+
+    def rotate_gun(self):
+        if self.target != None:
+            now = pygame.time.get_ticks()
+            if now - self.frame_timer > self.FRAME_DELAY:
+                self.frame_timer = now
+
+                # Zyenapz says: This fucking code took me 4 hours to figure out. Jesus Christ.
+                rel_x = self.target.rect.x - self.rect.x
+                rel_y = self.target.rect.y - self.rect.y
+                radians = math.atan2(rel_y, rel_x)
+                angle = (180 / math.pi) * -radians - 90
+                #print(angle)
+
+                # Rotate the gun
+                self.gun_image = pygame.transform.rotozoom(self.images["GUN"], int(angle), 1)
 
     def find_enemy(self):
         if self.target == None:
@@ -533,13 +585,12 @@ class Sentry(pygame.sprite.Sprite):
                 self.target = None
             
 class SentryBullet(pygame.sprite.Sprite):
-    def __init__(self, position, velocity, damage):
+    def __init__(self, image, position, velocity, damage):
         super().__init__()
-        self.image = pygame.Surface((8,8))
-        self.image.fill("CYAN")
+        self.image = image
         self.rect = self.image.get_rect()
-        self.rect.x = position.x 
-        self.rect.y = position.y 
+        self.rect.centerx = position.x 
+        self.rect.centery = position.y 
         self.position = position
         self.velocity = velocity
         self.DAMAGE = damage
