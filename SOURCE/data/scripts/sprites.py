@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = PLAYER_SPEED
         self.gun_level = PLAYER_DEFAULT_GUN_LEVEL
         self.health = PLAYER_HEALTH
+        self.radius = PLAYER_RADIUS
         
         # For shooting
         self.BULLET_SPEED = PLAYER_BULLET_SPEED
@@ -126,6 +127,7 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.rect.bottom = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity.x, velocity.y)
+        self.radius = PLAYER_BULLET_RADIUS
 
     def update(self, dt):
         self.position += self.velocity * dt 
@@ -147,6 +149,7 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity)
         self.DAMAGE = damage
+        self.radius = SMALL_BULLET_RADIUS
 
     def update(self, dt):
         # Kill if it goes out of bounds
@@ -169,6 +172,7 @@ class FattyBullet(pygame.sprite.Sprite):
         self.rect.centery = position.y
         self.position = Vec2(self.rect.centerx, self.rect.bottom)
         self.velocity = Vec2(velocity)
+        self.radius = FATTY_BULLET_RADIUS
 
         self.DAMAGE = damage
         self.DECELERATE_SPEED = random.randrange(6,8)
@@ -220,6 +224,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.SPEED = HELLFIGHTER_SPEED[g_diff]
         self.health = HELLFIGHTER_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["HELLFIGHTER"]
+        self.radius = ENEMY_RADIUS
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -285,6 +290,7 @@ class Fatty(pygame.sprite.Sprite):
         self.bob_y = 0
         self.health = FATTY_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["FATTY"]
+        self.radius = ENEMY_RADIUS
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -352,6 +358,7 @@ class Raider(pygame.sprite.Sprite):
         self.is_dashing = False
         self.dash_x = -2
         self.WORTH = SCORE_WORTH["RAIDER"]
+        self.radius = ENEMY_RADIUS
 
     def update(self, dt):
         # Kill if it goes out of bounds
@@ -398,6 +405,7 @@ class Helleye(pygame.sprite.Sprite):
         self.SPEED = HELLEYE_SPEED[g_diff]
         self.health = HELLEYE_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["HELLEYE"]
+        self.radius = ENEMY_RADIUS
     
         # For shooting
         self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
@@ -449,6 +457,7 @@ class Solturret(pygame.sprite.Sprite):
         self.player = player
         self.health = SOLTURRET_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["SOLTURRET"]
+        self.radius = ENEMY_RADIUS
 
         # For shooting
         self.SHOOT_DELAY = SOLTURRET_SHOOT_DELAY[g_diff]
@@ -489,6 +498,7 @@ class Powerup(pygame.sprite.Sprite):
         self.position = position
         self.SPEED = POWERUP_SPEED[g_diff]
         self.POW_TYPE = pow_type
+        self.radius = POWERUP_RADIUS
 
     def update(self, dt):
         if self.rect.top > WIN_RES["h"]:
@@ -508,6 +518,7 @@ class Sentry(pygame.sprite.Sprite):
         self.rect.y = position.y 
         self.position = position
         self.health = SENTRY_HEALTH
+        self.radius = SENTRY_RADIUS
 
         # Base image
         self.base_image = self.images["BASE"]
@@ -594,6 +605,7 @@ class SentryBullet(pygame.sprite.Sprite):
         self.position = position
         self.velocity = velocity
         self.DAMAGE = damage
+        self.radius = SENTRY_BULLET_RADIUS
 
     def update(self, dt):
         # Kill if it goes out of bounds

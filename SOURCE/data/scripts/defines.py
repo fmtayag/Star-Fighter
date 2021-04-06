@@ -14,6 +14,16 @@ p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
 
+# ENTITIES' COLLISION RADII =======================================================
+PLAYER_RADIUS = 24
+PLAYER_BULLET_RADIUS = 16
+SMALL_BULLET_RADIUS = 16
+FATTY_BULLET_RADIUS = 24
+ENEMY_RADIUS = 24
+POWERUP_RADIUS = 20
+SENTRY_RADIUS = 24
+SENTRY_BULLET_RADIUS = 16
+
 # SCORE DEFINES ================================================================
 SCORE_MULTIPLIER = {
     "EASY": 0.50,
@@ -65,8 +75,8 @@ POWERUP_TYPES_WEIGHTS = (
     5 # SENTRY
 )
 POWERUP_HEALTH_AMOUNT = {
-    "EASY": 5,
-    "MEDIUM": 3,
+    "EASY": 10,
+    "MEDIUM": 5,
     "HARD": 1
 }
 POWERUP_ROLL_CHANCE = {

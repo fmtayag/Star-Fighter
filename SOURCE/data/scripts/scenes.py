@@ -507,8 +507,6 @@ class GameScene(Scene):
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
         for hit in hits:
             self.player.health -= hit.DAMAGE
-            if self.player.health <= 0:
-                self.manager.go_to(GameOverScene(self.score))
 
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True)
@@ -547,6 +545,10 @@ class GameScene(Scene):
                 sentry.health -= hit.DAMAGE
                 if sentry.health <= 0:
                     sentry.kill()
+
+        # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
+        if self.player.health <= 0:
+            self.manager.go_to(GameOverScene(self.score))
 
         self.spawner.update()
         all_sprites_g.update(dt)
