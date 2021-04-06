@@ -9,4 +9,5 @@
 + add animations to sprites
 + /// add radius to sprites for sprite collisions
 + /// move the "end game" check outside the sprite collisions loops
-+ add "halo" light around the bullets
++ /// change player bullet palette so it appears brighter
++ SCRAPPED: add "halo" light around the bullets
