@@ -1,11 +1,15 @@
 4-7-2021
 + gui work, exciting stuff!!
-+ work on the spawning logic. enemies shouldn't ideally appear on the same "row".
-+ idea: roll chances for the powerups / upgrades change depending on the circumstance? 
-    for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
-    ...and so on.
-+ idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?
++ /// work on the spawning logic. enemies shouldn't ideally appear on the same "row".
 + SCRAPPED: add shield powerup
 + add animations to sprites
 + /// implement the collide_circle sprite collisions
 + /// tweak values of helleye and solturret
++ fix the health pickup bug.
+
++ /// idea: roll chances for the powerups / upgrades change depending on the circumstance? 
+    for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
+    ...and so on.
+    (4/7/2021) this was implemented, however roll chances for powerups now depend on the "stage" of the game
++ SCRAPPED: idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?
+    (4/7/2021) scrapped this one as it's not really a problem during actual gameplay

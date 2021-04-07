@@ -452,10 +452,9 @@ class GameScene(Scene):
         }
         BULLET_IMG = load_img("bullet_player.png", BULLET_IMG_DIR, SCALE).convert_alpha()
 
-        # Variables for the game
+        # Defines for the game
         self.g_diff = DIFFICULTIES[difficulty]
-        print(self.g_diff)
-        self.score = 10000
+        self.score = 0
         self.SCORE_MULT = SCORE_MULTIPLIER[self.g_diff]
         self.ENEMY_COLLISION_DAMAGE = ENEMY_COLLISION_DAMAGE
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
@@ -550,7 +549,7 @@ class GameScene(Scene):
         if self.player.health <= 0:
             self.manager.go_to(GameOverScene(self.score))
 
-        self.spawner.update()
+        self.spawner.update(self.score)
         all_sprites_g.update(dt)
 
     def draw(self, window):
@@ -559,6 +558,8 @@ class GameScene(Scene):
 
         draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
         draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
+        draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
+        draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
 
         all_sprites_g.draw(window)
 

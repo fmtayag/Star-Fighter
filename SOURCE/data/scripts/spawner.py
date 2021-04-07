@@ -8,11 +8,12 @@ Vec2 = pygame.math.Vector2
 
 class Spawner:
     def __init__(self, player, g_diff):
-        self.spawn_delay = 1000
+        # DEFINES
         self.spawn_timer = pygame.time.get_ticks()
         self.player = player
         self.g_diff = g_diff
-
+        self.current_stage = GAME_STAGES[0]
+        
         # ENEMY IMAGES
         self.HELLFIGHTER_IMAGES = [
             load_img("hellfighter1.png", IMG_DIR, SCALE),
@@ -72,8 +73,37 @@ class Spawner:
                     elif event.key == pygame.K_6:
                         self.spawn_sentry()
 
-    def update(self):
-        pass
+    def update(self, score):
+        # UPDATE CURRENT GAME STAGE
+        if score >= LATE_STAGE_SCORE_TRIGGER:
+            self.current_stage = GAME_STAGES[2]
+        elif score >= MID_STAGE_SCORE_TRIGGER:
+            self.current_stage = GAME_STAGES[1]
+        else:
+            self.current_stage = GAME_STAGES[0]
+
+        # SPAWN ENEMIES
+        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage]:
+            now = pygame.time.get_ticks()
+            if now - self.spawn_timer > SPAWN_DELAY[self.current_stage]:
+                self.spawn_timer = now
+
+                # Roll
+                roll_list = SPAWN_ROLLS[self.current_stage]
+                roll_weights = SPAWN_WEIGHTS[self.current_stage]
+                roll_choice = random.choices(roll_list, roll_weights)[0]
+                
+                # Spawn the rolled enemy
+                if roll_choice == "HELLFIGHTER":
+                    self.spawn_hellfighter()
+                elif roll_choice == "RAIDER":
+                    self.spawn_raider()
+                elif roll_choice == "FATTY":
+                    self.spawn_fatty()
+                elif roll_choice == "SOLTURRET":
+                    self.spawn_solturret()
+                elif roll_choice == "HELLEYE":
+                    self.spawn_helleye()
 
     def spawn_hellfighter(self):
         e = Hellfighter(
@@ -138,7 +168,7 @@ class Spawner:
 
     def roll_powerup(self):
         type_choices = POWERUP_TYPES
-        weights = POWERUP_TYPES_WEIGHTS
+        weights = POWERUP_TYPES_WEIGHTS[self.current_stage]
         pow_choices = random.choices(type_choices, weights)
         pow_type = pow_choices[0]
 

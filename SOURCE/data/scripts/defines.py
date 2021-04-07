@@ -14,7 +14,7 @@ p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
 
-# ENTITIES' COLLISION RADII =======================================================
+# ENTITIES' COLLISION RADII ====================================================
 PLAYER_RADIUS = 8
 PLAYER_BULLET_RADIUS = 8
 SMALL_BULLET_RADIUS = 8
@@ -23,6 +23,31 @@ ENEMY_RADIUS = 16
 POWERUP_RADIUS = 24
 SENTRY_RADIUS = 16
 SENTRY_BULLET_RADIUS = 8
+
+# ENEMY SPAWN DEFINES ===========================================================
+GAME_STAGES = ("EARLY", "MID", "LATE")
+SPAWN_ROLLS = {
+    "EARLY": ("HELLFIGHTER", "RAIDER"),
+    "MID": ("HELLFIGHTER", "RAIDER", "FATTY"),
+    "LATE": ("HELLFIGHTER", "RAIDER", "FATTY", "SOLTURRET", "HELLEYE")
+}
+SPAWN_WEIGHTS = {
+    "EARLY": (90, 20),
+    "MID": (60, 10, 30),
+    "LATE": (20, 10, 30, 30, 10)
+}
+MAX_ENEMY_COUNT = {
+    "EARLY": 3,
+    "MID": 4,
+    "LATE": 6
+}
+SPAWN_DELAY = { # In ticks
+    "EARLY": 2000,
+    "MID": 1700,
+    "LATE": 1200
+}
+MID_STAGE_SCORE_TRIGGER = 500
+LATE_STAGE_SCORE_TRIGGER = 1000
 
 # SCORE DEFINES ================================================================
 SCORE_MULTIPLIER = {
@@ -68,12 +93,27 @@ POWERUP_TYPES = (
     "SCORE",
     "SENTRY"
 )
-POWERUP_TYPES_WEIGHTS = (
-    15, # GUN 
-    20, # HEALTH
-    60, # SCORE
-    5 # SENTRY
-)
+POWERUP_TYPES_WEIGHTS = {
+    "EARLY": (
+        0, # GUN 
+        20, # HEALTH
+        80, # SCORE
+        0 # SENTRY
+    ),
+    "MID": (
+        15, # GUN 
+        20, # HEALTH
+        60, # SCORE
+        5 # SENTRY
+    ),
+    "LATE": (
+        20, # GUN 
+        20, # HEALTH
+        40, # SCORE
+        20 # SENTRY
+    ) 
+}
+
 POWERUP_HEALTH_AMOUNT = {
     "EASY": 10,
     "MEDIUM": 5,
