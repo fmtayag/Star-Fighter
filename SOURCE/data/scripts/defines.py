@@ -208,14 +208,14 @@ SOLTURRET_BULLET_SPEED = {
     "HARD": 400
 }
 SOLTURRET_BULLET_DAMAGE = {
-    "EASY": 0.5,
-    "MEDIUM": 1,
-    "HARD": 1.5
+    "EASY": 1.5,
+    "MEDIUM": 2.0,
+    "HARD": 3.0
 }
 SOLTURRET_HEALTH = {
-    "EASY": 2,
-    "MEDIUM": 5,
-    "HARD": 6
+    "EASY": 5,
+    "MEDIUM": 8,
+    "HARD": 10
 }
 
 # HELLEYE DEFINES ==============================================================
@@ -245,12 +245,12 @@ HELLEYE_BULLET_SPEED = {
     "HARD": 250
 }
 HELLEYE_BULLET_DAMAGE = {
-    "EASY": 0.5,
-    "MEDIUM": 1,
-    "HARD": 1.5
+    "EASY": 1.5,
+    "MEDIUM": 2.0,
+    "HARD": 3.0
 }
 HELLEYE_HEALTH = {
-    "EASY": 5,
-    "MEDIUM": 8,
-    "HARD": 12
+    "EASY": 8,
+    "MEDIUM": 10,
+    "HARD": 15
 }

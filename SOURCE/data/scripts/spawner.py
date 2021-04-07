@@ -58,18 +58,19 @@ class Spawner:
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    self.spawn_hellfighter()
-                elif event.key == pygame.K_2:
-                    self.spawn_fatty()
-                elif event.key == pygame.K_3:
-                    self.spawn_raider()
-                elif event.key == pygame.K_4:
-                    self.spawn_solturret()
-                elif event.key == pygame.K_5:
-                    self.spawn_helleye()
-                elif event.key == pygame.K_6:
-                    self.spawn_sentry()
+                if DEBUG_MODE:
+                    if event.key == pygame.K_1:
+                        self.spawn_hellfighter()
+                    elif event.key == pygame.K_2:
+                        self.spawn_fatty()
+                    elif event.key == pygame.K_3:
+                        self.spawn_raider()
+                    elif event.key == pygame.K_4:
+                        self.spawn_solturret()
+                    elif event.key == pygame.K_5:
+                        self.spawn_helleye()
+                    elif event.key == pygame.K_6:
+                        self.spawn_sentry()
 
     def update(self):
         pass

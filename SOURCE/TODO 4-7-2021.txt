@@ -8,3 +8,4 @@
 + SCRAPPED: add shield powerup
 + add animations to sprites
 + /// implement the collide_circle sprite collisions
++ /// tweak values of helleye and solturret
