@@ -93,27 +93,29 @@ POWERUP_TYPES = (
     "SCORE",
     "SENTRY"
 )
+POWERUP_TYPES_WEIGHTS_EARLY = (
+    0, # GUN 
+    20, # HEALTH
+    80, # SCORE
+    0 # SENTRY
+)
+POWERUP_TYPES_WEIGHTS_MID = (
+    50, # GUN 
+    20, # HEALTH
+    25, # SCORE
+    5 # SENTRY
+)
+POWERUP_TYPES_WEIGHTS_LATE = (
+    30, # GUN 
+    20, # HEALTH
+    30, # SCORE
+    20 # SENTRY
+) 
 POWERUP_TYPES_WEIGHTS = {
-    "EARLY": (
-        0, # GUN 
-        20, # HEALTH
-        80, # SCORE
-        0 # SENTRY
-    ),
-    "MID": (
-        50, # GUN 
-        20, # HEALTH
-        25, # SCORE
-        5 # SENTRY
-    ),
-    "LATE": (
-        30, # GUN 
-        20, # HEALTH
-        30, # SCORE
-        20 # SENTRY
-    ) 
+    "EARLY": POWERUP_TYPES_WEIGHTS_EARLY,
+    "MID": POWERUP_TYPES_WEIGHTS_MID,
+    "LATE": POWERUP_TYPES_WEIGHTS_LATE 
 }
-
 POWERUP_HEALTH_AMOUNT = {
     "EASY": 10,
     "MEDIUM": 5,
