@@ -521,10 +521,10 @@ class GameScene(Scene):
                 else:
                     self.player.gun_level += 1
             elif hit.POW_TYPE == "HEALTH":
+                self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
                 if self.player.health >= PLAYER_MAX_HEALTH:
                     self.player.health = PLAYER_MAX_HEALTH
-                else: 
-                    self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
+                    
             elif hit.POW_TYPE == "SCORE":
                 self.score += POWERUP_SCORE_BASE_WORTH * self.SCORE_MULT
             elif hit.POW_TYPE == "SENTRY":

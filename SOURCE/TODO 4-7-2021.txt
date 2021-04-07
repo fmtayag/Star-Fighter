@@ -5,7 +5,7 @@
 + add animations to sprites
 + /// implement the collide_circle sprite collisions
 + /// tweak values of helleye and solturret
-+ fix the health pickup bug.
++ /// fix the health pickup bug.
 
 + /// idea: roll chances for the powerups / upgrades change depending on the circumstance? 
     for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
