@@ -489,7 +489,7 @@ class GameScene(Scene):
         self.par_y += PAR_SPD * dt
 
         # HOSTILES - PLAYER BULLET COLLISION
-        hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True)
+        hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True, pygame.sprite.collide_circle)
         for hit in hits:
             hit.health -= self.player.BULLET_DAMAGE
             if hit.health <= 0:
@@ -504,17 +504,17 @@ class GameScene(Scene):
                     self.spawner.spawn_powerup(hit.position)
 
         # PLAYER - ENEMY BULLET COLLISION
-        hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True)
+        hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
         for hit in hits:
             self.player.health -= hit.DAMAGE
 
         # PLAYER - ENEMY COLLISION
-        hits = pygame.sprite.spritecollide(self.player, hostiles_g, True)
+        hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
         for hit in hits:
             self.player.health -= self.ENEMY_COLLISION_DAMAGE
 
         # PLAYER - POWERUP COLLISION
-        hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
+        hits = pygame.sprite.spritecollide(self.player, powerups_g, True, pygame.sprite.collide_circle)
         for hit in hits:
             if hit.POW_TYPE == "GUN":
                 if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
@@ -532,7 +532,7 @@ class GameScene(Scene):
                 self.spawner.spawn_sentry()
 
         # SENTRY - ENEMY COLLISION
-        hits = pygame.sprite.groupcollide(sentries_g, hostiles_g, False, True)
+        hits = pygame.sprite.groupcollide(sentries_g, hostiles_g, False, True, pygame.sprite.collide_circle)
         for hit in hits:
             hit.health -= ENEMY_COLLISION_DAMAGE
             if hit.health <= 0:
@@ -540,7 +540,7 @@ class GameScene(Scene):
 
         # SENTRY - ENEMY BULLET COLLISION
         for sentry in sentries_g:
-            hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True)
+            hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True, pygame.sprite.collide_circle)
             for hit in hits:
                 sentry.health -= hit.DAMAGE
                 if sentry.health <= 0:

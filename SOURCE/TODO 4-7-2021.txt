@@ -5,6 +5,6 @@
     for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...
     ...and so on.
 + idea: maybe limit the number of sentries at any given time to n amount depending on difficulty?
-+ idea: add shield powerup
++ SCRAPPED: add shield powerup
 + add animations to sprites
-+ implement the collide_circle sprite collisions
++ /// implement the collide_circle sprite collisions

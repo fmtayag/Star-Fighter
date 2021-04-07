@@ -41,6 +41,9 @@ class Player(pygame.sprite.Sprite):
         self.BULLET_DAMAGE = PLAYER_BULLET_DAMAGE
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         self.image = self.images["N"]
         self.velocity *= 0
 
@@ -130,6 +133,9 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.radius = PLAYER_BULLET_RADIUS
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
@@ -152,6 +158,9 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.radius = SMALL_BULLET_RADIUS
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         # Kill if it goes out of bounds
         if (self.rect.top > WIN_RES["h"] or 
             self.rect.bottom < 0 or
@@ -180,6 +189,9 @@ class FattyBullet(pygame.sprite.Sprite):
         self.SMALL_BULLET_IMAGE = small_bullet_img
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         # Decelerate
         if self.velocity.y > 0:
             self.velocity.y -= self.DECELERATE_SPEED
@@ -235,6 +247,9 @@ class Hellfighter(pygame.sprite.Sprite):
         self.BULLET_IMAGE = bullet_img
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         self.follow_player()
         self.shoot()
         self.position += self.velocity * dt 
@@ -303,6 +318,9 @@ class Fatty(pygame.sprite.Sprite):
         self.SMALL_BULLET_IMAGE = self.BULLET_IMAGES["SMALL"]
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         self.follow_player()
         self.bob()
         self.shoot() 
@@ -361,6 +379,9 @@ class Raider(pygame.sprite.Sprite):
         self.radius = ENEMY_RADIUS
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         # Kill if it goes out of bounds
         if self.rect.top > WIN_RES["h"]:
             self.kill()
@@ -415,6 +436,9 @@ class Helleye(pygame.sprite.Sprite):
         self.BULLET_IMAGE = bullet_img
     
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+            
         self.follow_player()
         self.shoot()
         self.position += self.velocity * dt 
@@ -467,6 +491,9 @@ class Solturret(pygame.sprite.Sprite):
         self.BULLET_IMAGE = bullet_img
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         self.shoot()
 
     def shoot(self):
@@ -501,6 +528,9 @@ class Powerup(pygame.sprite.Sprite):
         self.radius = POWERUP_RADIUS
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         if self.rect.top > WIN_RES["h"]:
             self.kill()
 
@@ -540,6 +570,7 @@ class Sentry(pygame.sprite.Sprite):
         self.rot = 0
 
     def update(self, dt):
+
         # Update surface
         self.rotate_gun()
         self.image.fill("BLACK")
@@ -548,6 +579,9 @@ class Sentry(pygame.sprite.Sprite):
         self.image.blit(
             self.gun_image, 
             (self.image.get_width()/2 - self.gun_image.get_width()/2, self.image.get_height()/2 - self.gun_image.get_height()/2))
+
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
 
         self.find_enemy()
         self.shoot()
@@ -608,6 +642,9 @@ class SentryBullet(pygame.sprite.Sprite):
         self.radius = SENTRY_BULLET_RADIUS
 
     def update(self, dt):
+        if DEBUG_MODE:
+            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
         # Kill if it goes out of bounds
         if (self.rect.top > WIN_RES["h"] or 
             self.rect.bottom < 0 or
