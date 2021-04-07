@@ -6,6 +6,8 @@
 + /// implement the collide_circle sprite collisions
 + /// tweak values of helleye and solturret
 + /// fix the health pickup bug.
++ /// random tweaking and balancing
++ add a timed "supercharged" mode for the player's gun when gun level is 4  
 
 + /// idea: roll chances for the powerups / upgrades change depending on the circumstance? 
     for example, high health means there is less chance for health powerups, low gun level means there is a high chance for gun powerups...

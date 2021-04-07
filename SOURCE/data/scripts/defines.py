@@ -34,7 +34,7 @@ SPAWN_ROLLS = {
 SPAWN_WEIGHTS = {
     "EARLY": (90, 20),
     "MID": (60, 10, 30),
-    "LATE": (20, 10, 30, 30, 10)
+    "LATE": (15, 10, 30, 30, 15)
 }
 MAX_ENEMY_COUNT = {
     "EARLY": 3,
@@ -44,7 +44,7 @@ MAX_ENEMY_COUNT = {
 SPAWN_DELAY = { # In ticks
     "EARLY": 2000,
     "MID": 1700,
-    "LATE": 1200
+    "LATE": 700
 }
 MID_STAGE_SCORE_TRIGGER = 500
 LATE_STAGE_SCORE_TRIGGER = 1000
@@ -79,7 +79,7 @@ PLAYER_HEALTH = 20
 PLAYER_MAX_HEALTH = 20
 
 # SENTRY DEFINES ===============================================================
-SENTRY_HEALTH = 3
+SENTRY_HEALTH = 10
 
 # POWERUP DEFINES ==============================================================
 POWERUP_SPEED = {
@@ -101,15 +101,15 @@ POWERUP_TYPES_WEIGHTS = {
         0 # SENTRY
     ),
     "MID": (
-        15, # GUN 
+        50, # GUN 
         20, # HEALTH
-        60, # SCORE
+        25, # SCORE
         5 # SENTRY
     ),
     "LATE": (
-        20, # GUN 
+        30, # GUN 
         20, # HEALTH
-        40, # SCORE
+        30, # SCORE
         20 # SENTRY
     ) 
 }
@@ -209,9 +209,9 @@ FATTY_BULLET_SPEED_Y = (
     2
 )
 FATTY_HEALTH = {
-    "EASY": 2,
-    "MEDIUM": 4,
-    "HARD": 5
+    "EASY": 4,
+    "MEDIUM": 6,
+    "HARD": 8
 }
 
 # RAIDER DEFINES ===============================================================
@@ -253,9 +253,9 @@ SOLTURRET_BULLET_DAMAGE = {
     "HARD": 3.0
 }
 SOLTURRET_HEALTH = {
-    "EASY": 5,
-    "MEDIUM": 8,
-    "HARD": 10
+    "EASY": 8,
+    "MEDIUM": 10,
+    "HARD": 15
 }
 
 # HELLEYE DEFINES ==============================================================
@@ -290,7 +290,7 @@ HELLEYE_BULLET_DAMAGE = {
     "HARD": 3.0
 }
 HELLEYE_HEALTH = {
-    "EASY": 8,
-    "MEDIUM": 10,
-    "HARD": 15
+    "EASY": 10,
+    "MEDIUM": 15,
+    "HARD": 20
 }

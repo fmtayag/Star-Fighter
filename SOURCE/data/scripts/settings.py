@@ -2,7 +2,7 @@ import os
 
 # Loop =========================================================================
 FPS = 60
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # Background and Parallax ======================================================
 BG_SPD = 25
