@@ -1,6 +1,5 @@
 import pygame, random
 import pygame.math
-from data.scripts.settings import *
 from data.scripts.sprites import *
 from data.scripts.muda import load_img
 

@@ -12,8 +12,6 @@
 # Import libraries =============================================================
 import pygame, os, random, math, time
 from pygame.locals import *
-from itertools import repeat
-from data.scripts.settings import *
 from data.scripts.scenes import *
 from data.scripts.muda import (
     load_img, 

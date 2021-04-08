@@ -1,7 +1,33 @@
-import pygame
-import pygame.math
+import pygame, pygame.math, os
 
 Vec2 = pygame.math.Vector2
+
+# WINDOW AND METADATA DEFINES ==================================================
+WIN_RES = {"w": 320, "h": 480}
+TITLE = "Star Fighter"
+AUTHOR = "zyenapz"
+VERSION = "1.1.0"
+
+# DIRECTORIES ==================================================================
+GAME_DIR = os.path.dirname("..") # This works apparently...what the fuck?
+DATA_DIR = os.path.join(GAME_DIR, "data")
+FONT_DIR = os.path.join(DATA_DIR, "font")
+IMG_DIR = os.path.join(DATA_DIR, "img")
+SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
+SFX_DIR = os.path.join(DATA_DIR, "sfx")
+GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
+
+# LOOP DEFINES =================================================================
+FPS = 60
+DEBUG_MODE = False
+
+# BG AND PARALLAX DEFINES ======================================================
+BG_SPD = 25
+PAR_SPD = 50
+
+# FONT AND IMAGE DEFINES =======================================================
+SCALE = 2
+FONT_SIZE = 16
 
 # DIFFICULTY LIST ==============================================================
 DIFFICULTIES = ("EASY", "MEDIUM", "HARD")
