@@ -1,16 +1,14 @@
 # The Mostly Useful Development Assemblage (MUDA)
 # Version: 1.0.0
 #   > Release date: March 12th 2021
-# Just a collection of boilerplate code to make development of games easier.
+# Just a collection of utility code to make development of games easier.
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
 #   > Website: zyenapz.github.io
 #   > GitHub: github.com/zyenapz
 #   > Twitter: @zyenapz
 
-import pygame
-import os
-import pickle
+import pygame, os, pickle
 
 # SCENES & MANAGERS
 

@@ -221,7 +221,7 @@ class FattyBullet(pygame.sprite.Sprite):
         self.kill()
 
 class Hellfighter(pygame.sprite.Sprite):
-    def __init__(self, images, bullet_img, position, player, G_DIFF):
+    def __init__(self, images, bullet_img, position, player, g_diff):
         # TODO - animation
         super().__init__()
         self.images = images
@@ -232,17 +232,17 @@ class Hellfighter(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
-        self.SPEED = HELLFIGHTER_SPEED[G_DIFF]
-        self.health = HELLFIGHTER_HEALTH[G_DIFF]
+        self.SPEED = HELLFIGHTER_SPEED[g_diff]
+        self.health = HELLFIGHTER_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["HELLFIGHTER"]
         self.radius = ENEMY_RADIUS
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
-        self.SHOOT_DELAY = HELLFIGHTER_SHOOT_DELAY[G_DIFF]
-        self.RANGE = HELLFIGHTER_RANGE[G_DIFF] 
-        self.BULLET_SPEED = HELLFIGHTER_BULLET_SPEED[G_DIFF]
-        self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[G_DIFF]
+        self.SHOOT_DELAY = HELLFIGHTER_SHOOT_DELAY[g_diff]
+        self.RANGE = HELLFIGHTER_RANGE[g_diff] 
+        self.BULLET_SPEED = HELLFIGHTER_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[g_diff]
         self.BULLET_IMAGE = bullet_img
 
     def update(self, dt):
@@ -289,7 +289,7 @@ class Hellfighter(pygame.sprite.Sprite):
                 all_sprites_g.add(b)
 
 class Fatty(pygame.sprite.Sprite):
-    def __init__(self, images, bullet_imgs, position, player, G_DIFF):
+    def __init__(self, images, bullet_imgs, position, player, g_diff):
         # TODO - animation
         super().__init__()
         self.images = images
@@ -300,18 +300,18 @@ class Fatty(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
-        self.SPEED = FATTY_SPEED[G_DIFF]
+        self.SPEED = FATTY_SPEED[g_diff]
         self.bob_y = 0
-        self.health = FATTY_HEALTH[G_DIFF]
+        self.health = FATTY_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["FATTY"]
         self.radius = ENEMY_RADIUS
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
-        self.SHOOT_DELAY = FATTY_SHOOT_DELAY[G_DIFF]
-        self.BULLET_SPEED = FATTY_LARGE_BULLET_SPEED[G_DIFF]
-        self.BULLET_DAMAGE = FATTY_BULLET_DAMAGE[G_DIFF]
-        self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[G_DIFF]
+        self.SHOOT_DELAY = FATTY_SHOOT_DELAY[g_diff]
+        self.BULLET_SPEED = FATTY_LARGE_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = FATTY_BULLET_DAMAGE[g_diff]
+        self.SMALL_BULLET_SPEED = FATTY_SMALL_BULLET_SPEED[g_diff]
         self.BULLET_IMAGES = bullet_imgs
         self.LARGE_BULLET_IMAGE = self.BULLET_IMAGES["LARGE"]
         self.SMALL_BULLET_IMAGE = self.BULLET_IMAGES["SMALL"]
@@ -357,7 +357,7 @@ class Fatty(pygame.sprite.Sprite):
             all_sprites_g.add(b)
 
 class Raider(pygame.sprite.Sprite):
-    def __init__(self, images, position, player, G_DIFF):
+    def __init__(self, images, position, player, g_diff):
         # TODO - animation
         super().__init__()
         self.images = images
@@ -368,10 +368,10 @@ class Raider(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
-        self.SPEED = RAIDER_SPEED[G_DIFF]
-        self.DASH_RANGE = RAIDER_DASH_RANGE[G_DIFF]
-        self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[G_DIFF]
-        self.health = RAIDER_HEALTH[G_DIFF]
+        self.SPEED = RAIDER_SPEED[g_diff]
+        self.DASH_RANGE = RAIDER_DASH_RANGE[g_diff]
+        self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[g_diff]
+        self.health = RAIDER_HEALTH[g_diff]
         self.is_dashing = False
         self.dash_x = -2
         self.WORTH = SCORE_WORTH["RAIDER"]
@@ -411,7 +411,7 @@ class Raider(pygame.sprite.Sprite):
             self.dash_x += 0.1
 
 class Helleye(pygame.sprite.Sprite):
-    def __init__(self, images, bullet_img, position, player, G_DIFF):
+    def __init__(self, images, bullet_img, position, player, g_diff):
         # TODO - animation
         super().__init__()
         self.images = images
@@ -422,15 +422,15 @@ class Helleye(pygame.sprite.Sprite):
         self.position = position
         self.velocity = Vec2(0,0)
         self.player = player
-        self.SPEED = HELLEYE_SPEED[G_DIFF]
-        self.health = HELLEYE_HEALTH[G_DIFF]
+        self.SPEED = HELLEYE_SPEED[g_diff]
+        self.health = HELLEYE_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["HELLEYE"]
         self.radius = ENEMY_RADIUS
     
         # For shooting
-        self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[G_DIFF]
-        self.BULLET_SPEED = HELLEYE_BULLET_SPEED[G_DIFF]
-        self.BULLET_DAMAGE = HELLEYE_BULLET_DAMAGE[G_DIFF]
+        self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
+        self.BULLET_SPEED = HELLEYE_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = HELLEYE_BULLET_DAMAGE[g_diff]
         self.shoot_timer = pygame.time.get_ticks()
         self.BULLET_IMAGE = bullet_img
     
@@ -468,7 +468,7 @@ class Helleye(pygame.sprite.Sprite):
                 all_sprites_g.add(b)
 
 class Solturret(pygame.sprite.Sprite): 
-    def __init__(self, images, bullet_img, position, player, G_DIFF):
+    def __init__(self, images, bullet_img, position, player, g_diff):
         # TODO - animation
         super().__init__()
         self.images = images
@@ -478,14 +478,14 @@ class Solturret(pygame.sprite.Sprite):
         self.rect.y = position.y
         self.position = position
         self.player = player
-        self.health = SOLTURRET_HEALTH[G_DIFF]
+        self.health = SOLTURRET_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["SOLTURRET"]
         self.radius = ENEMY_RADIUS
 
         # For shooting
-        self.SHOOT_DELAY = SOLTURRET_SHOOT_DELAY[G_DIFF]
-        self.BULLET_SPEED = SOLTURRET_BULLET_SPEED[G_DIFF]
-        self.BULLET_DAMAGE = SOLTURRET_BULLET_DAMAGE[G_DIFF]
+        self.SHOOT_DELAY = SOLTURRET_SHOOT_DELAY[g_diff]
+        self.BULLET_SPEED = SOLTURRET_BULLET_SPEED[g_diff]
+        self.BULLET_DAMAGE = SOLTURRET_BULLET_DAMAGE[g_diff]
         self.shoot_timer = pygame.time.get_ticks()
         self.BULLET_IMAGE = bullet_img
 
@@ -513,7 +513,7 @@ class Solturret(pygame.sprite.Sprite):
 # POWERUP ======================================================================
 
 class Powerup(pygame.sprite.Sprite):
-    def __init__(self, images, position, pow_type, G_DIFF):
+    def __init__(self, images, position, pow_type, g_diff):
         # TODO - animation
         super().__init__()
         self.images = images
@@ -522,7 +522,7 @@ class Powerup(pygame.sprite.Sprite):
         self.rect.x = position.x
         self.rect.y = position.y 
         self.position = position
-        self.SPEED = POWERUP_SPEED[G_DIFF]
+        self.SPEED = POWERUP_SPEED[g_diff]
         self.POW_TYPE = pow_type
         self.radius = POWERUP_RADIUS
 

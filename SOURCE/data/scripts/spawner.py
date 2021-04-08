@@ -6,11 +6,11 @@ from data.scripts.muda import load_img
 Vec2 = pygame.math.Vector2
 
 class Spawner:
-    def __init__(self, player, G_DIFF):
+    def __init__(self, player, g_diff):
         # SPAWNER DEFINES 
         self.spawn_timer = pygame.time.get_ticks()
         self.player = player
-        self.G_DIFF = G_DIFF
+        self.g_diff = g_diff
         self.current_stage = GAME_STAGES[0]
         
         # ENEMY IMAGES 
@@ -74,9 +74,9 @@ class Spawner:
 
     def update(self, score):
         # Update current game stage
-        if score >= LATE_STAGE_SCORE_TRIGGER[self.G_DIFF]:
+        if score >= LATE_STAGE_SCORE_TRIGGER[self.g_diff]:
             self.current_stage = GAME_STAGES[2]
-        elif score >= MID_STAGE_SCORE_TRIGGER[self.G_DIFF]:
+        elif score >= MID_STAGE_SCORE_TRIGGER[self.g_diff]:
             self.current_stage = GAME_STAGES[1]
         else:
             self.current_stage = GAME_STAGES[0]
@@ -131,7 +131,7 @@ class Spawner:
             self.SMALL_BULLET_IMAGE,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
-            self.G_DIFF
+            self.g_diff
         ),
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -142,7 +142,7 @@ class Spawner:
             self.FATTY_BULLETS_IMAGES,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
             self.player,
-            self.G_DIFF
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -152,7 +152,7 @@ class Spawner:
             self.RAIDER_IMAGES,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
             self.player,
-            self.G_DIFF
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -163,7 +163,7 @@ class Spawner:
             self.SMALL_BULLET_IMAGE,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
-            self.G_DIFF
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -174,7 +174,7 @@ class Spawner:
             self.SMALL_BULLET_IMAGE,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
-            self.G_DIFF
+            self.g_diff
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -182,7 +182,7 @@ class Spawner:
     def spawn_powerup(self, position):
         pow_type = self.roll_powerup()
         pow_image = self.POWERUP_IMAGES[pow_type]
-        p = Powerup(pow_image, position, pow_type, self.G_DIFF)
+        p = Powerup(pow_image, position, pow_type, self.g_diff)
         powerups_g.add(p)
         all_sprites_g.add(p)
 

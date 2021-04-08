@@ -9,7 +9,6 @@
 #   > GitHub: github.com/zyenapz
 #   > Twitter: @zyenapz
 
-# Import libraries =============================================================
 import pygame, os, random, math, time
 from pygame.locals import *
 from data.scripts.scenes import *
@@ -22,8 +21,6 @@ from data.scripts.muda import (
     SceneManager
 )
 
-# Initialize pygame ============================================================
-
 pygame.init()
 
 # Game loop ====================================================================
@@ -34,7 +31,6 @@ def main():
     os.environ["SDL_VIDEO_CENTERED"] = "1"
     #window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
     window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
-    window_rect = window.get_rect()
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)

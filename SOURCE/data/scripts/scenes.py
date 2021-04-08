@@ -436,9 +436,9 @@ class DifficultySelectionScene(Scene):
 class GameScene(Scene):
     def __init__(self, difficulty=1):
         # SCENE DEFINES 
-        self.G_DIFF = DIFFICULTIES[difficulty]
+        self.g_diff = DIFFICULTIES[difficulty]
         self.score = 0
-        self.score_multiplier = SCORE_MULTIPLIER[self.G_DIFF]
+        self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
 
         # PLAYER AND BULLET IMAGES 
         PLAYER_IMGS = { # TODO - change the orientation images
@@ -469,7 +469,7 @@ class GameScene(Scene):
         all_sprites_g.add(self.player)
 
         # Create a spawner
-        self.spawner = Spawner(self.player, self.G_DIFF)
+        self.spawner = Spawner(self.player, self.g_diff)
 
     def handle_events(self, events):
         for event in events:
@@ -496,7 +496,7 @@ class GameScene(Scene):
 
                 # Spawn powerup
                 spawn_roll = random.randrange(1,100)
-                if spawn_roll <= POWERUP_ROLL_CHANCE[self.G_DIFF]:
+                if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
                     self.spawner.spawn_powerup(hit.position)
 
         # PLAYER - ENEMY BULLET COLLISION
@@ -518,7 +518,7 @@ class GameScene(Scene):
                 else:
                     self.player.gun_level += 1
             elif hit.POW_TYPE == "HEALTH":
-                self.player.health += POWERUP_HEALTH_AMOUNT[self.G_DIFF]
+                self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
                 if self.player.health >= PLAYER_MAX_HEALTH:
                     self.player.health = PLAYER_MAX_HEALTH
                     
@@ -556,7 +556,7 @@ class GameScene(Scene):
         draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
         draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
         draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
-        draw_text(window, f"DIFF: {self.G_DIFF}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
+        draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
 
         all_sprites_g.draw(window)
 
