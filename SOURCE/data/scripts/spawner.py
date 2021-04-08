@@ -6,14 +6,14 @@ from data.scripts.muda import load_img
 Vec2 = pygame.math.Vector2
 
 class Spawner:
-    def __init__(self, player, g_diff):
-        # DEFINES
+    def __init__(self, player, G_DIFF):
+        # SPAWNER DEFINES 
         self.spawn_timer = pygame.time.get_ticks()
         self.player = player
-        self.g_diff = g_diff
+        self.G_DIFF = G_DIFF
         self.current_stage = GAME_STAGES[0]
         
-        # ENEMY IMAGES
+        # ENEMY IMAGES 
         self.HELLFIGHTER_IMAGES = [
             load_img("hellfighter1.png", IMG_DIR, SCALE),
             load_img("hellfighter2.png", IMG_DIR, SCALE)
@@ -35,12 +35,12 @@ class Spawner:
             load_img("solturret2.png", IMG_DIR, SCALE)
         ]
 
-        # BULLET IMAGES
+        # BULLET IMAGES 
         self.SMALL_BULLET_IMAGE = load_img("bullet_enemy.png", IMG_DIR, SCALE)
         self.FATTY_BULLET_IMAGE = load_img("bullet_fatty.png", IMG_DIR, SCALE)
         self.FATTY_BULLETS_IMAGES = {"LARGE": self.FATTY_BULLET_IMAGE, "SMALL": self.SMALL_BULLET_IMAGE}
 
-        # POWERUP IMAGES
+        # POWERUP IMAGES 
         self.POWERUP_IMAGES = {
             "GUN": [load_img("powerup_gun.png", IMG_DIR, SCALE)],
             "HEALTH": [load_img("powerup_health.png", IMG_DIR, SCALE)],
@@ -73,15 +73,15 @@ class Spawner:
                         self.spawn_sentry()
 
     def update(self, score):
-        # UPDATE CURRENT GAME STAGE
-        if score >= LATE_STAGE_SCORE_TRIGGER[self.g_diff]:
+        # Update current game stage
+        if score >= LATE_STAGE_SCORE_TRIGGER[self.G_DIFF]:
             self.current_stage = GAME_STAGES[2]
-        elif score >= MID_STAGE_SCORE_TRIGGER[self.g_diff]:
+        elif score >= MID_STAGE_SCORE_TRIGGER[self.G_DIFF]:
             self.current_stage = GAME_STAGES[1]
         else:
             self.current_stage = GAME_STAGES[0]
 
-        # SPAWN ENEMIES
+        # Spawn enemies 
         if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage]:
             now = pygame.time.get_ticks()
             if now - self.spawn_timer > SPAWN_DELAY[self.current_stage]:
@@ -131,7 +131,7 @@ class Spawner:
             self.SMALL_BULLET_IMAGE,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
-            self.g_diff
+            self.G_DIFF
         ),
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -142,7 +142,7 @@ class Spawner:
             self.FATTY_BULLETS_IMAGES,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
             self.player,
-            self.g_diff
+            self.G_DIFF
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -152,7 +152,7 @@ class Spawner:
             self.RAIDER_IMAGES,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/4)),
             self.player,
-            self.g_diff
+            self.G_DIFF
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -163,7 +163,7 @@ class Spawner:
             self.SMALL_BULLET_IMAGE,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
-            self.g_diff
+            self.G_DIFF
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -174,7 +174,7 @@ class Spawner:
             self.SMALL_BULLET_IMAGE,
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
-            self.g_diff
+            self.G_DIFF
         )
         hostiles_g.add(e)
         all_sprites_g.add(e)
@@ -182,7 +182,7 @@ class Spawner:
     def spawn_powerup(self, position):
         pow_type = self.roll_powerup()
         pow_image = self.POWERUP_IMAGES[pow_type]
-        p = Powerup(pow_image, position, pow_type, self.g_diff)
+        p = Powerup(pow_image, position, pow_type, self.G_DIFF)
         powerups_g.add(p)
         all_sprites_g.add(p)
 

@@ -77,11 +77,11 @@ class TitleMenu:
 class TitleScene(Scene):
     def __init__(self, init_selected=0):
         # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
         self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
 
         # Images
@@ -117,8 +117,8 @@ class TitleScene(Scene):
         self.title_menu.update()
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
         window.blit(self.logo_img, (WIN_RES["w"]/2 - self.logo_hw, -32))
 
         # Draw menu
@@ -288,11 +288,11 @@ class ScoresTable():
 class ScoresScene(Scene):
     def __init__(self):
         # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
         self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
 
         # Scores table
@@ -329,8 +329,8 @@ class ScoresScene(Scene):
         self.par_y += PAR_SPD * dt
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "HALL OF FAME", FONT_SIZE*2, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
         self.scores_table.draw(window)
@@ -341,11 +341,11 @@ class ScoresScene(Scene):
 class OptionsScene(Scene):
     def __init__(self):
         # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
         self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
     
     def handle_events(self, events):
@@ -359,8 +359,8 @@ class OptionsScene(Scene):
         self.par_y += PAR_SPD * dt
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
@@ -370,11 +370,11 @@ class OptionsScene(Scene):
 class CreditsScene(Scene):
     def __init__(self):
         # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
         self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
     
     def handle_events(self, events):
@@ -388,8 +388,8 @@ class CreditsScene(Scene):
         self.par_y += PAR_SPD * dt
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "CREDITS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
@@ -399,11 +399,11 @@ class CreditsScene(Scene):
 class DifficultySelectionScene(Scene):
     def __init__(self):
         # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
         self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
     
     def handle_events(self, events):
@@ -423,8 +423,8 @@ class DifficultySelectionScene(Scene):
         self.par_y += PAR_SPD * dt
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "SELECT DIFFICULTY", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, "1 - Easy", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 - 64, "WHITE", "centered")
@@ -435,6 +435,27 @@ class DifficultySelectionScene(Scene):
 
 class GameScene(Scene):
     def __init__(self, difficulty=1):
+        # SCENE DEFINES 
+        self.G_DIFF = DIFFICULTIES[difficulty]
+        self.score = 0
+        self.score_multiplier = SCORE_MULTIPLIER[self.G_DIFF]
+
+        # PLAYER AND BULLET IMAGES 
+        PLAYER_IMGS = { # TODO - change the orientation images
+            "L": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
+            "N": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
+            "R": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha()
+        }
+        BULLET_IMG = load_img("bullet_player.png", IMG_DIR, SCALE).convert_alpha()
+
+        # BG AND PARALLAX IMAGES & DEFINES 
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
         # Clear the sprite groups
         all_sprites_g.empty()
         hostiles_g.empty()
@@ -443,36 +464,13 @@ class GameScene(Scene):
         e_bullets_g.empty()
         sentries_g.empty()
 
-        # Images
-        PLAYER_IMGS = { # TODO - change the orientation images
-            "L": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
-            "N": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
-            "R": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha()
-        }
-        BULLET_IMG = load_img("bullet_player.png", IMG_DIR, SCALE).convert_alpha()
-
-        # Defines for the game
-        self.g_diff = DIFFICULTIES[difficulty]
-        self.score = 0
-        self.SCORE_MULT = SCORE_MULTIPLIER[self.g_diff]
-        self.ENEMY_COLLISION_DAMAGE = ENEMY_COLLISION_DAMAGE
+        # Initialize the player
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
         all_sprites_g.add(self.player)
-        
-        # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
-        self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
-        self.par_y = 0
 
-        # Spawn Manager
-        self.spawner = Spawner(self.player, self.g_diff)
+        # Create a spawner
+        self.spawner = Spawner(self.player, self.G_DIFF)
 
-        # For testing
-        self.alive_timer = pygame.time.get_ticks()
-    
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -480,9 +478,9 @@ class GameScene(Scene):
                     self.manager.go_to(TitleScene(0))
 
         self.spawner.handle_events(events)
-        #print(len(hostiles_g), len(e_bullets_g), len(p_bullets_g))
     
     def update(self, dt):
+        # Update parallax and background
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
 
@@ -494,11 +492,11 @@ class GameScene(Scene):
                 hit.kill()
 
                 # Add score
-                self.score += hit.WORTH * self.SCORE_MULT
+                self.score += hit.WORTH * self.score_multiplier
 
                 # Spawn powerup
                 spawn_roll = random.randrange(1,100)
-                if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
+                if spawn_roll <= POWERUP_ROLL_CHANCE[self.G_DIFF]:
                     self.spawner.spawn_powerup(hit.position)
 
         # PLAYER - ENEMY BULLET COLLISION
@@ -509,7 +507,7 @@ class GameScene(Scene):
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
         for hit in hits:
-            self.player.health -= self.ENEMY_COLLISION_DAMAGE
+            self.player.health -= ENEMY_COLLISION_DAMAGE
 
         # PLAYER - POWERUP COLLISION
         hits = pygame.sprite.spritecollide(self.player, powerups_g, True, pygame.sprite.collide_circle)
@@ -520,12 +518,12 @@ class GameScene(Scene):
                 else:
                     self.player.gun_level += 1
             elif hit.POW_TYPE == "HEALTH":
-                self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
+                self.player.health += POWERUP_HEALTH_AMOUNT[self.G_DIFF]
                 if self.player.health >= PLAYER_MAX_HEALTH:
                     self.player.health = PLAYER_MAX_HEALTH
                     
             elif hit.POW_TYPE == "SCORE":
-                self.score += POWERUP_SCORE_BASE_WORTH * self.SCORE_MULT
+                self.score += POWERUP_SCORE_BASE_WORTH * self.score_multiplier
             elif hit.POW_TYPE == "SENTRY":
                 self.spawner.spawn_sentry()
 
@@ -552,13 +550,13 @@ class GameScene(Scene):
         all_sprites_g.update(dt)
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
         draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
         draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
-        draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
+        draw_text(window, f"DIFF: {self.G_DIFF}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
 
         all_sprites_g.draw(window)
 
@@ -570,11 +568,11 @@ class GameOverScene(Scene):
         self.score = score
 
         # Background
-        self.bg_img = load_img("background.png", IMG_DIR, SCALE)
-        self.bg_rect = self.bg_img.get_rect()
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
         self.bg_y = 0
-        self.par_img = load_img("background_parallax.png", IMG_DIR, SCALE)
-        self.par_rect = self.bg_img.get_rect()
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
     
     def handle_events(self, events):
@@ -588,8 +586,8 @@ class GameOverScene(Scene):
         self.par_y += PAR_SPD * dt
 
     def draw(self, window):
-        draw_background(window, self.bg_img, self.bg_rect, self.bg_y)
-        draw_background(window, self.par_img, self.par_rect, self.par_y)
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "GAME OVER", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         draw_text(window, f"{self.score}", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")

@@ -13,6 +13,7 @@
 import pygame, os, random, math, time
 from pygame.locals import *
 from data.scripts.scenes import *
+from data.scripts.defines import FPS, WIN_RES, TITLE
 from data.scripts.muda import (
     load_img, 
     load_sound, 
@@ -31,8 +32,8 @@ def main():
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
-    window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
-    #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h))
+    #window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
+    window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
     window_rect = window.get_rect()
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
@@ -41,7 +42,7 @@ def main():
     # Render target
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
 
-    # Scene Manager
+    # Create a scene manager
     manager = SceneManager(GameScene())
 
     # Loop variables
@@ -82,8 +83,8 @@ def main():
         targety = int(WIN_RES["h"] * yscale)
 
         window.fill((15,15,30))
-        #window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
-        window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
+        window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
+        #window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
         pygame.display.flip()
 
