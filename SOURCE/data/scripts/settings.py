@@ -2,7 +2,7 @@ import os
 
 # Loop =========================================================================
 FPS = 60
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # Background and Parallax ======================================================
 BG_SPD = 25
@@ -29,8 +29,6 @@ GAME_DIR = os.path.dirname("..") # This works apparently...what the fuck?
 DATA_DIR = os.path.join(GAME_DIR, "data")
 FONT_DIR = os.path.join(DATA_DIR, "font")
 IMG_DIR = os.path.join(DATA_DIR, "img")
-PLAYER_IMG_DIR = os.path.join(IMG_DIR, "player")
-BULLET_IMG_DIR = os.path.join(IMG_DIR, "bullet")
 SCRIPTS_DIR = os.path.join(DATA_DIR, "scripts")
 SFX_DIR = os.path.join(DATA_DIR, "sfx")
 GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
