@@ -1,7 +1,7 @@
 import pygame, random
 import pygame.math
 from data.scripts.sprites import *
-from data.scripts.muda import load_img
+from data.scripts.muda import load_img, image_at, scale_rect
 
 Vec2 = pygame.math.Vector2
 
@@ -13,33 +13,39 @@ class Spawner:
         self.g_diff = g_diff
         self.current_stage = GAME_STAGES[0]
         
-        # ENEMY IMAGES 
+        # HELLFIGHTER IMAGES
         self.HELLFIGHTER_IMAGES = [
             load_img("hellfighter1.png", IMG_DIR, SCALE),
             load_img("hellfighter2.png", IMG_DIR, SCALE)
         ]
+        # FATTY IMAGES
         self.FATTY_IMAGES = [
             load_img("fatty1.png", IMG_DIR, SCALE),
             load_img("fatty2.png", IMG_DIR, SCALE)
         ]
+        # RAIDER IMAGES
+        RAIDER_NORMAL_SPRITESHEET = load_img("raider_normal.png", IMG_DIR, SCALE)
+        RAIDER_SPAWNING_SPRITESHEET = load_img("raider_spawning.png", IMG_DIR, SCALE)
         self.RAIDER_IMAGES = {
             "NORMAL": [
-                load_img("raider1.png", IMG_DIR, SCALE),
-                load_img("raider2.png", IMG_DIR, SCALE),
-                load_img("raider3.png", IMG_DIR, SCALE),
-                load_img("raider4.png", IMG_DIR, SCALE)
+                image_at(RAIDER_NORMAL_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                image_at(RAIDER_NORMAL_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                image_at(RAIDER_NORMAL_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                image_at(RAIDER_NORMAL_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
             ],
             "SPAWNING": [
-                load_img("raider_spawn1.png", IMG_DIR, SCALE),
-                load_img("raider_spawn2.png", IMG_DIR, SCALE),
-                load_img("raider_spawn3.png", IMG_DIR, SCALE),
-                load_img("raider_spawn4.png", IMG_DIR, SCALE)
+                image_at(RAIDER_SPAWNING_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                image_at(RAIDER_SPAWNING_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                image_at(RAIDER_SPAWNING_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                image_at(RAIDER_SPAWNING_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
             ]
         }
+        # HELLEYE IMAGES
         self.HELLEYE_IMAGES = [
             load_img("helleye1.png", IMG_DIR, SCALE),
             load_img("helleye2.png", IMG_DIR, SCALE)
         ]
+        # SOLTURRET IMAGES
         self.SOLTURRET_IMAGES = [
             load_img("solturret1.png", IMG_DIR, SCALE),
             load_img("solturret2.png", IMG_DIR, SCALE)

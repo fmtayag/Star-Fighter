@@ -60,6 +60,17 @@ def load_img(file, directory, scale, convert_alpha=False):
         s.fill('red')
         return s
 
+def image_at(spritesheet, rectangle, convert_alpha=False):
+    rect = pygame.Rect(rectangle)
+    if not convert_alpha:
+        image = pygame.Surface(rect.size).convert()
+        image.blit(spritesheet, (0,0), rect)
+    else:
+        image = pygame.Surface(rect.size).convert_alpha()
+        image.blit(spritesheet, (0,0), rect)
+        image.set_colorkey("BLACK")
+    return image
+
 def read_savedata(path):
     with open(path, 'rb') as f:
         try:
@@ -94,6 +105,10 @@ def clamp(val, minim, maxim):
         return maxim
     else:
         return val
+
+def scale_rect(scale, rect):
+    scaled = map((lambda x: x * scale), rect)
+    return tuple(scaled)
 
 # DRAWING
 
