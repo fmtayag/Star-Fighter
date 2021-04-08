@@ -22,10 +22,20 @@ class Spawner:
             load_img("fatty1.png", IMG_DIR, SCALE),
             load_img("fatty2.png", IMG_DIR, SCALE)
         ]
-        self.RAIDER_IMAGES = [
-            load_img("raider1.png", IMG_DIR, SCALE),
-            load_img("raider2.png", IMG_DIR, SCALE)
-        ]
+        self.RAIDER_IMAGES = {
+            "NORMAL": [
+                load_img("raider1.png", IMG_DIR, SCALE),
+                load_img("raider2.png", IMG_DIR, SCALE),
+                load_img("raider3.png", IMG_DIR, SCALE),
+                load_img("raider4.png", IMG_DIR, SCALE)
+            ],
+            "SPAWNING": [
+                load_img("raider_spawn1.png", IMG_DIR, SCALE),
+                load_img("raider_spawn2.png", IMG_DIR, SCALE),
+                load_img("raider_spawn3.png", IMG_DIR, SCALE),
+                load_img("raider_spawn4.png", IMG_DIR, SCALE)
+            ]
+        }
         self.HELLEYE_IMAGES = [
             load_img("helleye1.png", IMG_DIR, SCALE),
             load_img("helleye2.png", IMG_DIR, SCALE)
