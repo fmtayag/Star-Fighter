@@ -61,6 +61,7 @@ def load_img(file, directory, scale, convert_alpha=False):
         return s
 
 def image_at(spritesheet, rectangle, convert_alpha=False):
+    # Code stolen from the pygame wiki and modified for personal use. I love open source!
     rect = pygame.Rect(rectangle)
     if not convert_alpha:
         image = pygame.Surface(rect.size).convert()
