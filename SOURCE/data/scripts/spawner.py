@@ -197,7 +197,6 @@ class Spawner:
             pow_type = SUBSTITUTE_POWERUP
         elif pow_type == "HEALTH" and self.player.health >= HEALTH_PICKUP_HP_THRESHOLD:
             pow_type = SUBSTITUTE_POWERUP
-            print("max health", self.player.health)
 
         return pow_type
 
