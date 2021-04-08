@@ -377,7 +377,7 @@ class Raider(pygame.sprite.Sprite):
         self.WORTH = SCORE_WORTH["RAIDER"]
         self.radius = ENEMY_RADIUS
 
-        # State - Two values: SPAWNING & NORMAL
+        # State - Values: SPAWNING & NORMAL
         self._state = "SPAWNING"
 
         # For animation
@@ -389,8 +389,6 @@ class Raider(pygame.sprite.Sprite):
     def update(self, dt):
         if self._state == "NORMAL":
             self.animate()
-            #if DEBUG_MODE:
-            # pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
 
             # Kill if it goes out of bounds
             if self.rect.top > WIN_RES["h"]:
@@ -404,8 +402,14 @@ class Raider(pygame.sprite.Sprite):
             self.position += self.velocity * dt
             self.rect.x = self.position.x
             self.rect.y = self.position.y
+
+            if DEBUG_MODE:
+                pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+
+            
         elif self._state == "SPAWNING":
             self.animate()
+
             # Change state
             if self.current_frame == self.MAX_FRAMES - 1:
                 self._state = "NORMAL"
