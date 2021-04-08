@@ -30,12 +30,6 @@ class Spawner:
             ]
         }
 
-        # FATTY IMAGES
-        self.FATTY_IMAGES = [
-            load_img("fatty1.png", IMG_DIR, SCALE),
-            load_img("fatty2.png", IMG_DIR, SCALE)
-        ]
-
         # RAIDER IMAGES
         RAIDER_SPRITESHEET = load_img("raider_sheet.png", IMG_DIR, SCALE)
         self.RAIDER_IMAGES = {
@@ -50,6 +44,23 @@ class Spawner:
                 image_at(RAIDER_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
                 image_at(RAIDER_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
                 image_at(RAIDER_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+            ]
+        }
+
+        # FATTY IMAGES
+        FATTY_SPRITESHEET = load_img("fatty_sheet.png", IMG_DIR, SCALE)
+        self.FATTY_IMAGES = {
+            "NORMAL": [
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
+            ],
+            "SPAWNING": [
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                image_at(FATTY_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
             ]
         }
 

@@ -326,7 +326,7 @@ class Fatty(pygame.sprite.Sprite):
         # TODO - animation
         super().__init__()
         self.images = images
-        self.image = self.images[0]
+        self.image = self.images["SPAWNING"][0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -349,17 +349,50 @@ class Fatty(pygame.sprite.Sprite):
         self.LARGE_BULLET_IMAGE = self.BULLET_IMAGES["LARGE"]
         self.SMALL_BULLET_IMAGE = self.BULLET_IMAGES["SMALL"]
 
+        # State - Values: SPAWNING & NORMAL
+        self._state = "SPAWNING"
+
+        # For animation
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = len(self.images["SPAWNING"]) # could be a constant. maybe 4.
+
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+        if self._state == "NORMAL":
+            self.animate()
 
-        self.follow_player()
-        self.bob()
-        self.shoot() 
+            # if DEBUG_MODE:
+            #     pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
 
-        self.position += self.velocity * dt 
-        self.rect.x = self.position.x
-        self.rect.y = self.position.y
+            self.follow_player()
+            self.bob()
+            self.shoot() 
+
+            self.position += self.velocity * dt 
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+        elif self._state == "SPAWNING":
+            self.animate()
+
+            # Change state
+            if self.current_frame == self.MAX_FRAMES - 1:
+                self._state = "NORMAL"
+
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
+
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+            
+            # Change image
+            self.image = self.images[self._state][self.current_frame]
 
     def follow_player(self):
         # Calculate delta-x

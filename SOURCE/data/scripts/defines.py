@@ -19,7 +19,7 @@ GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
 
 # LOOP DEFINES =================================================================
 FPS = 60
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # BG AND PARALLAX DEFINES ======================================================
 BG_SPD = 25
