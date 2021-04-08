@@ -1,4 +1,5 @@
 4-8-2021
 + gui work, exciting stuff!!
 + add animations to sprites
-+ add a timed "supercharged" mode for the player's gun when gun level is 4  
++ add a timed "supercharged" mode for the player's gun when gun level is 4 
++ /// tweaking and balancing

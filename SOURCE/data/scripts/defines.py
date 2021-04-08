@@ -39,29 +39,39 @@ SPAWN_WEIGHTS = {
 MAX_ENEMY_COUNT = {
     "EARLY": 3,
     "MID": 4,
-    "LATE": 6
+    "LATE": 5
 }
 SPAWN_DELAY = { # In ticks
     "EARLY": 2000,
-    "MID": 1700,
-    "LATE": 700
+    "MID": 1500,
+    "LATE": 800
 }
-MID_STAGE_SCORE_TRIGGER = 500
-LATE_STAGE_SCORE_TRIGGER = 1000
+MID_STAGE_SCORE_TRIGGER = {
+    "EASY": 1200,
+    "MEDIUM": 700,
+    "HARD": 900
+}
+LATE_STAGE_SCORE_TRIGGER = {
+    "EASY": 1600,
+    "MEDIUM": 1300,
+    "HARD": 1800
+}
+MAX_SOLTURRET_COUNT = 2
+MAX_HELLEYE_COUNT = 1
 
 # SCORE DEFINES ================================================================
 SCORE_MULTIPLIER = {
     "EASY": 0.50,
     "MEDIUM": 1.00,
-    "HARD": 1.50
+    "HARD": 2.00
 }
 
 SCORE_WORTH = {
     "HELLFIGHTER": 10,
     "RAIDER": 20,
     "FATTY": 30,
-    "HELLEYE": 50,
-    "SOLTURRET": 100
+    "SOLTURRET": 50,
+    "HELLEYE": 70
 }
 
 # PLAYER DEFINES ===============================================================
@@ -80,6 +90,7 @@ PLAYER_MAX_HEALTH = 20
 
 # SENTRY DEFINES ===============================================================
 SENTRY_HEALTH = 10
+MAX_SENTRY_COUNT = 2
 
 # POWERUP DEFINES ==============================================================
 POWERUP_SPEED = {
@@ -122,11 +133,13 @@ POWERUP_HEALTH_AMOUNT = {
     "HARD": 1
 }
 POWERUP_ROLL_CHANCE = {
-    "EASY": 50,
-    "MEDIUM": 30,
-    "HARD": 10
+    "EASY": 10,
+    "MEDIUM": 20,
+    "HARD": 30
 }
-POWERUP_SCORE_BASE_WORTH = 100
+POWERUP_SCORE_BASE_WORTH = 50
+HEALTH_PICKUP_HP_THRESHOLD = PLAYER_MAX_HEALTH / 2
+SUBSTITUTE_POWERUP = "SCORE"
 
 # ENEMY DEFINES ================================================================
 ENEMY_COLLISION_DAMAGE = PLAYER_HEALTH / 2
@@ -140,7 +153,7 @@ HELLFIGHTER_SPEED = {
 HELLFIGHTER_SHOOT_DELAY = {
     "EASY": 600,
     "MEDIUM": 500,
-    "HARD": 300
+    "HARD": 400
 }
 HELLFIGHTER_RANGE = {
     "EASY": 0.2,
@@ -242,12 +255,12 @@ RAIDER_HEALTH = {
 SOLTURRET_SHOOT_DELAY = {
     "EASY": 700,
     "MEDIUM": 500,
-    "HARD": 300
+    "HARD": 400
 }
 SOLTURRET_BULLET_SPEED = {
     "EASY": 200,
     "MEDIUM": 300,
-    "HARD": 400
+    "HARD": 350
 }
 SOLTURRET_BULLET_DAMAGE = {
     "EASY": 1.5,
@@ -257,7 +270,7 @@ SOLTURRET_BULLET_DAMAGE = {
 SOLTURRET_HEALTH = {
     "EASY": 8,
     "MEDIUM": 10,
-    "HARD": 15
+    "HARD": 12
 }
 
 # HELLEYE DEFINES ==============================================================
@@ -274,17 +287,17 @@ HELLEYE_BULLET_DIRECTION = (
 HELLEYE_SHOOT_DELAY = {
     "EASY": 900,
     "MEDIUM": 700,
-    "HARD": 500
+    "HARD": 600
 }
 HELLEYE_SPEED = {
     "EASY": 50,
     "MEDIUM": 100,
-    "HARD": 200
+    "HARD": 150
 }
 HELLEYE_BULLET_SPEED = {
     "EASY": 100,
     "MEDIUM": 150,
-    "HARD": 250
+    "HARD": 200
 }
 HELLEYE_BULLET_DAMAGE = {
     "EASY": 1.5,
@@ -294,5 +307,5 @@ HELLEYE_BULLET_DAMAGE = {
 HELLEYE_HEALTH = {
     "EASY": 10,
     "MEDIUM": 15,
-    "HARD": 20
+    "HARD": 18
 }

@@ -75,9 +75,9 @@ class Spawner:
 
     def update(self, score):
         # UPDATE CURRENT GAME STAGE
-        if score >= LATE_STAGE_SCORE_TRIGGER:
+        if score >= LATE_STAGE_SCORE_TRIGGER[self.g_diff]:
             self.current_stage = GAME_STAGES[2]
-        elif score >= MID_STAGE_SCORE_TRIGGER:
+        elif score >= MID_STAGE_SCORE_TRIGGER[self.g_diff]:
             self.current_stage = GAME_STAGES[1]
         else:
             self.current_stage = GAME_STAGES[0]
@@ -101,9 +101,30 @@ class Spawner:
                 elif roll_choice == "FATTY":
                     self.spawn_fatty()
                 elif roll_choice == "SOLTURRET":
-                    self.spawn_solturret()
+                    # Count number of solturrets
+                    count = 0
+                    for sprite in hostiles_g:
+                        if type(sprite) == Solturret:
+                            count += 1
+
+                    # Spawn
+                    if count < MAX_SOLTURRET_COUNT:
+                        self.spawn_solturret()
+                    else:
+                        self.spawn_hellfighter()
+
                 elif roll_choice == "HELLEYE":
-                    self.spawn_helleye()
+                    # Count number of helleye
+                    count = 0
+                    for sprite in hostiles_g:
+                        if type(sprite) == Helleye:
+                            count += 1
+
+                    # Spawn
+                    if count < MAX_HELLEYE_COUNT:
+                        self.spawn_helleye()
+                    else:
+                        self.spawn_fatty()
 
     def spawn_hellfighter(self):
         e = Hellfighter(
@@ -171,6 +192,12 @@ class Spawner:
         weights = POWERUP_TYPES_WEIGHTS[self.current_stage]
         pow_choices = random.choices(type_choices, weights)
         pow_type = pow_choices[0]
+
+        if pow_type == "SENTRY" and len(sentries_g) >= MAX_SENTRY_COUNT - 1:
+            pow_type = SUBSTITUTE_POWERUP
+        elif pow_type == "HEALTH" and self.player.health >= HEALTH_PICKUP_HP_THRESHOLD:
+            pow_type = SUBSTITUTE_POWERUP
+            print("max health", self.player.health)
 
         return pow_type
 
