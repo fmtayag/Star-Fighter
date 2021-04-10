@@ -7,13 +7,13 @@ Vec2 = pygame.math.Vector2
 
 class Spawner:
     def __init__(self, player, g_diff):
-        # SPAWNER DEFINES 
+        # Spawner defines 
         self.spawn_timer = pygame.time.get_ticks()
         self.player = player
         self.g_diff = g_diff
         self.current_stage = GAME_STAGES[0]
         
-        # HELLFIGHTER IMAGES
+        # HELLFIGHTER IMAGES ==================
         HELLFIGHTER_SPRITESHEET = load_img("hellfighter_sheet.png", IMG_DIR, SCALE)
         self.HELLFIGHTER_IMAGES = {
             "NORMAL": [
@@ -30,7 +30,7 @@ class Spawner:
             ]
         }
 
-        # RAIDER IMAGES
+        # RAIDER IMAGES =======================
         RAIDER_SPRITESHEET = load_img("raider_sheet.png", IMG_DIR, SCALE)
         self.RAIDER_IMAGES = {
             "NORMAL": [
@@ -47,7 +47,7 @@ class Spawner:
             ]
         }
 
-        # FATTY IMAGES
+        # FATTY IMAGES =======================-
         FATTY_SPRITESHEET = load_img("fatty_sheet.png", IMG_DIR, SCALE)
         self.FATTY_IMAGES = {
             "NORMAL": [
@@ -64,7 +64,7 @@ class Spawner:
             ]
         }
 
-        # HELLEYE IMAGES
+        # HELLEYE IMAGES ======================
         HELLEYE_SPRITESHEET = load_img("helleye_sheet.png", IMG_DIR, SCALE)
         self.HELLEYE_IMAGES = {
             "NORMAL": [
@@ -81,7 +81,7 @@ class Spawner:
             ]
         }
 
-        # SOLTURRET IMAGES
+        # SOLTURRET IMAGES ====================
         SOLTURRET_SPRITESHEET = load_img("solturret_sheet.png", IMG_DIR, SCALE)
         SOLTURRET_NORMAL_IMAGES = {
             "GUN": [
@@ -107,12 +107,12 @@ class Spawner:
             ]
         }
 
-        # BULLET IMAGES 
+        # BULLET IMAGES =======================
         self.SMALL_BULLET_IMAGE = load_img("bullet_enemy.png", IMG_DIR, SCALE)
         self.FATTY_BULLET_IMAGE = load_img("bullet_fatty.png", IMG_DIR, SCALE)
         self.FATTY_BULLETS_IMAGES = {"LARGE": self.FATTY_BULLET_IMAGE, "SMALL": self.SMALL_BULLET_IMAGE}
 
-        # POWERUP IMAGES 
+        # POWERUP IMAGES ======================
         self.POWERUP_IMAGES = {
             "GUN": [load_img("powerup_gun.png", IMG_DIR, SCALE)],
             "HEALTH": [load_img("powerup_health.png", IMG_DIR, SCALE)],
@@ -120,7 +120,7 @@ class Spawner:
             "SENTRY": [load_img("powerup_sentry.png", IMG_DIR, SCALE)]
         }
 
-        # SENTRY IMAGES 
+        # SENTRY IMAGES =======================
         self.SENTRY_IMAGES = {
             "BASE": load_img("sentry_base.png", IMG_DIR, SCALE),
             "GUN": load_img("sentry_gun.png", IMG_DIR, SCALE)

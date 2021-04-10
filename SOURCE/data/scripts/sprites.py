@@ -434,7 +434,7 @@ class Fatty(pygame.sprite.Sprite):
 
 # RAIDER ENEMY ================================
 
-class RaiderSpawnState(SpriteState):
+class RaiderSpawningState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.sprite_.imgdict_key = "SPAWNING"
@@ -445,9 +445,9 @@ class RaiderSpawnState(SpriteState):
 
         # Change state....
         if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(RaiderFollowState(self.sprite_))
+            self.manager.transition(RaiderFollowingState(self.sprite_))
 
-class RaiderFollowState(SpriteState):
+class RaiderFollowingState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.target_acquired = False
@@ -465,7 +465,7 @@ class RaiderFollowState(SpriteState):
 
         # Change state...
         if self.target_acquired:
-            self.manager.transition(RaiderDashState(self.sprite_))
+            self.manager.transition(RaiderDashingState(self.sprite_))
 
     def follow_player(self):
         # Calculate delta-x
@@ -479,7 +479,7 @@ class RaiderFollowState(SpriteState):
         if dx > -self.sprite_.DASH_RANGE and dx < self.sprite_.DASH_RANGE:
             self.target_acquired = True
 
-class RaiderDashState(SpriteState):
+class RaiderDashingState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.dash_x = -2
@@ -522,7 +522,7 @@ class Raider(pygame.sprite.Sprite):
         self.WORTH = SCORE_WORTH["RAIDER"]
 
         # State machine
-        self.machine = SpriteStateManager(RaiderSpawnState(self))
+        self.machine = SpriteStateManager(RaiderSpawningState(self))
 
         # For animation
         self.imgdict_key = "SPAWNING"
@@ -555,7 +555,7 @@ class Raider(pygame.sprite.Sprite):
 
 # HELLEYE ENEMY ===============================
 
-class HelleyeSpawnState(SpriteState):
+class HelleyeSpawningState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.sprite_.imgdict_key = "SPAWNING"
@@ -566,9 +566,9 @@ class HelleyeSpawnState(SpriteState):
 
         # Change state....
         if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(HelleyeFightState(self.sprite_))
+            self.manager.transition(HelleyeFightingState(self.sprite_))
 
-class HelleyeFightState(SpriteState):
+class HelleyeFightingState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.sprite_.imgdict_key = "NORMAL"
@@ -629,7 +629,7 @@ class Helleye(pygame.sprite.Sprite):
         self.WORTH = SCORE_WORTH["HELLEYE"]
 
         # State machine
-        self.machine = SpriteStateManager(HelleyeSpawnState(self))
+        self.machine = SpriteStateManager(HelleyeSpawningState(self))
 
         # For animation
         self.imgdict_key = "SPAWNING"
@@ -665,7 +665,7 @@ class Helleye(pygame.sprite.Sprite):
 
 # SOLTURRET ENEMY =============================
 
-class SolturretSpawnState(SpriteState):
+class SolturretSpawningState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.imgdict_key = "SPAWNING"
@@ -785,7 +785,7 @@ class Solturret(pygame.sprite.Sprite):
         self.WORTH = SCORE_WORTH["SOLTURRET"]
 
         # State machine
-        self.machine = SpriteStateManager(SolturretSpawnState(self))
+        self.machine = SpriteStateManager(SolturretSpawningState(self))
 
         # For animation
         self.imgdict_key = "SPAWNING"
