@@ -82,10 +82,30 @@ class Spawner:
         }
 
         # SOLTURRET IMAGES
-        self.SOLTURRET_IMAGES = [
-            load_img("solturret1.png", IMG_DIR, SCALE),
-            load_img("solturret2.png", IMG_DIR, SCALE)
-        ]
+        SOLTURRET_SPRITESHEET = load_img("solturret_sheet.png", IMG_DIR, SCALE)
+        SOLTURRET_NORMAL_IMAGES = {
+            "GUN": [
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
+            ],
+            "BASE": [
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+            ]
+        }
+        self.SOLTURRET_IMAGES = {
+            "NORMAL": SOLTURRET_NORMAL_IMAGES,
+            "SPAWNING": [
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [0,32,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [16,32,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [32,32,16,16]), True),
+                image_at(SOLTURRET_SPRITESHEET, scale_rect(SCALE, [48,32,16,16]), True)
+            ]
+        }
 
         # BULLET IMAGES 
         self.SMALL_BULLET_IMAGE = load_img("bullet_enemy.png", IMG_DIR, SCALE)
@@ -134,7 +154,7 @@ class Spawner:
             self.current_stage = GAME_STAGES[0]
 
         # Spawn enemies 
-        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage]:
+        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage] and 0:
             now = pygame.time.get_ticks()
             if now - self.spawn_timer > SPAWN_DELAY[self.current_stage]:
                 self.spawn_timer = now

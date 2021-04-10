@@ -111,7 +111,7 @@ PLAYER_WEAK_BULLET_TICK = 10
 PLAYER_DEFAULT_GUN_LEVEL = 1 # Max of 3, Min of 1. Don't change unless debugging.
 PLAYER_MAX_GUN_LEVEL = 3 # Don't change.
 PLAYER_BULLET_DAMAGE = 1
-PLAYER_HEALTH = 20 
+PLAYER_HEALTH = 2000
 PLAYER_MAX_HEALTH = 20
 
 # SENTRY DEFINES ===============================================================
@@ -168,7 +168,7 @@ HEALTH_PICKUP_HP_THRESHOLD = PLAYER_MAX_HEALTH * 0.6
 SUBSTITUTE_POWERUP = "SCORE"
 
 # ENEMY DEFINES ================================================================
-ENEMY_COLLISION_DAMAGE = PLAYER_HEALTH / 2
+ENEMY_COLLISION_DAMAGE = 10
 
 # HELLFIGHTER DEFINES ==========================================================
 HELLFIGHTER_SPEED = {
