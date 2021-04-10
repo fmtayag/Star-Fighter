@@ -65,10 +65,21 @@ class Spawner:
         }
 
         # HELLEYE IMAGES
-        self.HELLEYE_IMAGES = [
-            load_img("helleye1.png", IMG_DIR, SCALE),
-            load_img("helleye2.png", IMG_DIR, SCALE)
-        ]
+        HELLEYE_SPRITESHEET = load_img("helleye_sheet.png", IMG_DIR, SCALE)
+        self.HELLEYE_IMAGES = {
+            "NORMAL": [
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
+            ],
+            "SPAWNING": [
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                image_at(HELLEYE_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+            ]
+        }
 
         # SOLTURRET IMAGES
         self.SOLTURRET_IMAGES = [

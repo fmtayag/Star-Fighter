@@ -526,7 +526,7 @@ class Raider(pygame.sprite.Sprite):
         self.MAX_FRAMES = len(self.images[self.dict_key])
 
     def update(self, dt):
-        # Update current state
+        # Update state
         self.machine.state.update(dt)
 
         # Kill if it goes out of bounds
@@ -549,13 +549,67 @@ class Raider(pygame.sprite.Sprite):
 
 # HELLEYE ENEMY ===============================
 
+class HelleyeSpawnState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.dict_key = "SPAWNING"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+
+        # Change state....
+        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
+            self.manager.transition(HelleyeFollowState(self.sprite_))
+
+class HelleyeFollowState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.dict_key = "NORMAL"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+        self.follow_player()
+        self.shoot()
+
+        # Update position
+        self.sprite_.position += self.sprite_.velocity * dt 
+        self.sprite_.rect.x = self.sprite_.position.x
+        self.sprite_.rect.y = self.sprite_.position.y
+
+    def follow_player(self):
+        # Calculate delta-x
+        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
+        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
+        radians = math.atan2(rel_y, rel_x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
+
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.sprite_.shoot_timer > self.sprite_.SHOOT_DELAY:
+            self.sprite_.shoot_timer = now
+
+            for i in range(len(HELLEYE_BULLET_DIRECTION)):
+                b = EnemyBullet(
+                    self.sprite_.BULLET_IMAGE,
+                    Vec2(self.sprite_.rect.center),
+                    Vec2(HELLEYE_BULLET_DIRECTION[i] * self.sprite_.BULLET_SPEED),
+                    self.sprite_.BULLET_DAMAGE
+                )
+                e_bullets_g.add(b)
+                all_sprites_g.add(b)
+
 class Helleye(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position, player, g_diff):
         # TODO - add animations
         # Sprite defines
         super().__init__()
         self.images = images
-        self.image = self.images[0]
+        self.image = self.images["SPAWNING"][0]
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -568,6 +622,16 @@ class Helleye(pygame.sprite.Sprite):
         self.health = HELLEYE_HEALTH[g_diff]
         self.SPEED = HELLEYE_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["HELLEYE"]
+
+        # State machine
+        self.machine = SpriteStateManager(HelleyeSpawnState(self))
+
+        # For animation
+        self.dict_key = "SPAWNING"
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = len(self.images[self.dict_key])
     
         # For shooting
         self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
@@ -577,37 +641,22 @@ class Helleye(pygame.sprite.Sprite):
         self.BULLET_IMAGE = bullet_img
     
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-            
-        self.follow_player()
-        self.shoot()
-        self.position += self.velocity * dt 
-        self.rect.x = self.position.x
-        self.rect.y = self.position.y
+        # Update state
+        self.machine.state.update(dt)
 
-    def follow_player(self):
-        # Calculate delta-x
-        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
-        dx = math.cos(radians)
-
-        # Add delta-x to velocity
-        self.velocity.x = -(dx * self.SPEED)
-
-    def shoot(self):
+    def animate(self):
         now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.SHOOT_DELAY:
-            self.shoot_timer = now
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
 
-            for i in range(len(HELLEYE_BULLET_DIRECTION)):
-                b = EnemyBullet(
-                    self.BULLET_IMAGE,
-                    Vec2(self.rect.center),
-                    Vec2(HELLEYE_BULLET_DIRECTION[i] * self.BULLET_SPEED),
-                    self.BULLET_DAMAGE
-                )
-                e_bullets_g.add(b)
-                all_sprites_g.add(b)
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+            
+            # Change image
+            self.image = self.images[self.dict_key][self.current_frame]
 
 # SOLTURRET ENEMY =============================
 
