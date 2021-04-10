@@ -19,7 +19,7 @@ from data.scripts.defines import *
 
 # TITLE SCENE ==================================================================
 
-class TitleMenu:
+class TitleMenuWidget:
     def __init__(self, init_selected):
         # Surface
         # Warning - options may go beyond the surface and will be not rendered
@@ -90,7 +90,7 @@ class TitleScene(Scene):
         self.logo_hw = self.logo_rect.width / 2
 
         # Menu object
-        self.title_menu = TitleMenu(init_selected)
+        self.title_menu = TitleMenuWidget(init_selected)
 
     def handle_events(self, events):
         for event in events:
@@ -127,7 +127,7 @@ class TitleScene(Scene):
 
 # SCORES SCENE =================================================================
 
-class ScoresControlPanel():
+class ScoresControlWidget():
     def __init__(self):
         # Panels
         self.sub_panels = ("DIRECTION", "BACK")
@@ -226,7 +226,7 @@ class ScoresControlPanel():
         if self.active_panel == self.sub_panels[0]:
             return self.dp_options[self.sel_i]
 
-class ScoresTable():
+class ScoresTableWidget():
     def __init__(self):
         self.spacing = FONT_SIZE / 2
 
@@ -296,30 +296,30 @@ class ScoresScene(Scene):
         self.par_y = 0
 
         # Scores table
-        self.scores_table = ScoresTable()
+        self.scores_table = ScoresTableWidget()
 
         # Control panel
-        self.control_panel = ScoresControlPanel()
+        self.control_widget = ScoresControlWidget()
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    self.control_panel.move_left()
+                    self.control_widget.move_left()
                 elif event.key == pygame.K_RIGHT:
-                    self.control_panel.move_right()
+                    self.control_widget.move_right()
                 elif event.key == pygame.K_UP:
-                    self.control_panel.move_up()
+                    self.control_widget.move_up()
                 elif event.key == pygame.K_DOWN:
-                    self.control_panel.move_down()
+                    self.control_widget.move_down()
 
                 elif event.key == pygame.K_z:
-                    if self.control_panel.get_active_panel() == "DIRECTION":
-                        if self.control_panel.get_dp_selected_option() == "PREV":
+                    if self.control_widget.get_active_panel() == "DIRECTION":
+                        if self.control_widget.get_dp_selected_option() == "PREV":
                             self.scores_table.prev_table()
-                        elif self.control_panel.get_dp_selected_option() == "NEXT":
+                        elif self.control_widget.get_dp_selected_option() == "NEXT":
                             self.scores_table.next_table()
-                    elif self.control_panel.get_active_panel() == "BACK":
+                    elif self.control_widget.get_active_panel() == "BACK":
                         self.manager.go_to(TitleScene(1))
                 elif event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(1))
@@ -334,7 +334,7 @@ class ScoresScene(Scene):
 
         draw_text(window, "HALL OF FAME", FONT_SIZE*2, GAME_FONT, window.get_rect().centerx, 64, "WHITE", "centered")
         self.scores_table.draw(window)
-        self.control_panel.draw(window)
+        self.control_widget.draw(window)
 
 # OPTIONS SCENE ================================================================
 

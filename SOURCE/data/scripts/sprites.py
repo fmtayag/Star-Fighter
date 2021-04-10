@@ -258,8 +258,8 @@ class Hellfighter(pygame.sprite.Sprite):
         if self._state == "NORMAL":
             self.animate()
 
-            if DEBUG_MODE:
-                pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+            # if DEBUG_MODE:
+            #     pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
 
             self.follow_player()
             self.shoot()
@@ -469,8 +469,8 @@ class Raider(pygame.sprite.Sprite):
             self.rect.x = self.position.x
             self.rect.y = self.position.y
 
-            if DEBUG_MODE:
-                pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+            # if DEBUG_MODE:
+            #     pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
   
         elif self._state == "SPAWNING":
             self.animate()
