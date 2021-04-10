@@ -668,7 +668,7 @@ class Helleye(pygame.sprite.Sprite):
 class SolturretSpawnState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "SPAWNING"
+        self.imgdict_key = "SPAWNING"
 
     def update(self, dt):
         # Run methods
@@ -690,13 +690,14 @@ class SolturretSpawnState(SpriteState):
                 self.sprite_.current_frame = 0
             
             # Change image
-            self.sprite_.image = self.sprite_.images[self.sprite_.imgdict_key][self.sprite_.current_frame]
+            self.sprite_.image = self.sprite_.images[self.imgdict_key][self.sprite_.current_frame]
 
 class SolturretFightState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "NORMAL"
-        #print(id(self.sprite_))
+        self.imgdict_key = "NORMAL"
+        self.sprite_.image = pygame.Surface((32,32)) # note: adding this solved the weird "mimicking" bug
+        self.sprite_.image.set_colorkey("BLACK")
 
     def update(self, dt):
         # Run methods
@@ -744,19 +745,20 @@ class SolturretFightState(SpriteState):
                 self.sprite_.current_frame = 0
 
             # Update Base image ======================
-            self.sprite_.base_image = self.sprite_.images[self.sprite_.imgdict_key]["BASE"][self.sprite_.current_frame]
+            self.sprite_.base_image = self.sprite_.images[self.imgdict_key]["BASE"][self.sprite_.current_frame]
 
             # Update Gun image =======================
             # Calculate angle
             rel_x = self.sprite_.player.rect.x - self.sprite_.rect.x
             rel_y = self.sprite_.player.rect.y - self.sprite_.rect.y
-            radians = math.atan2(rel_y, rel_x)
-            angle = (180 / math.pi) * -radians + 90
+            radians = -(math.atan2(rel_y, rel_x))
+            #angle = (180 / math.pi) * -radians + 90
+            angle = math.degrees(radians) + 90
 
             # Rotate the gun
             self.sprite_.gun_image = pygame.transform.rotate(
-                self.sprite_.images[self.sprite_.imgdict_key]["GUN"][self.sprite_.current_frame], 
-                angle
+                self.sprite_.images[self.imgdict_key]["GUN"][self.sprite_.current_frame], 
+                int(angle)
             )
             self.sprite_.gun_image.set_colorkey("BLACK")
 
@@ -766,6 +768,7 @@ class Solturret(pygame.sprite.Sprite):
         super().__init__()
         self.images = images
         self.image = pygame.Surface((32,32))
+        self.image.set_colorkey("BLACK")
         self.rect = self.image.get_rect()
         self.rect.x = position.x
         self.rect.y = position.y
@@ -843,10 +846,8 @@ class Sentry(pygame.sprite.Sprite):
         self.health = SENTRY_HEALTH
         self.radius = SENTRY_RADIUS
 
-        # Base image
+        # Images
         self.base_image = self.images["BASE"]
-
-        # Gun image
         self.gun_image = self.images["GUN"]
 
         # For shooting
@@ -859,7 +860,7 @@ class Sentry(pygame.sprite.Sprite):
 
         # For animation
         self.frame_timer = pygame.time.get_ticks()
-        self.FRAME_DELAY = 10
+        self.FRAME_DELAY = 100
         self.rot = 0
 
     def update(self, dt):
@@ -879,7 +880,7 @@ class Sentry(pygame.sprite.Sprite):
 
         self.find_enemy()
         self.shoot()
-
+        
     def shoot(self):
         if self.target != None:
             now = pygame.time.get_ticks()
@@ -903,8 +904,8 @@ class Sentry(pygame.sprite.Sprite):
 
                 rel_x = self.target.rect.x - self.rect.x
                 rel_y = self.target.rect.y - self.rect.y
-                radians = math.atan2(rel_y, rel_x)
-                angle = (180 / math.pi) * -radians - 90
+                radians = -(math.atan2(rel_y, rel_x))
+                angle = (180 / math.pi) * radians - 90
                 #print(angle)
 
                 # Rotate the gun
