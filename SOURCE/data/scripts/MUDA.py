@@ -25,13 +25,29 @@ class Scene():
     def draw(self, window):
         raise NotImplementedError
 
-class SceneManager(object):
+class SceneManager():
     def __init__(self, InitScene):
         self.go_to(InitScene)
 
-    def go_to(self, scene):
-        self.scene = scene
+    def go_to(self, Scene):
+        self.scene = Scene
         self.scene.manager = self
+
+# SPRITE STATE MACHINES
+class SpriteState():
+    def __init__(self):
+        pass
+
+    def update(self, dt):
+        raise NotImplementedError
+
+class SpriteStateManager():
+    def __init__(self, InitState):
+        self.transition(InitState)
+
+    def transition(self, State):
+        self.state = State 
+        self.state.manager = self
 
 # ASSET LOADING / SAVING
 

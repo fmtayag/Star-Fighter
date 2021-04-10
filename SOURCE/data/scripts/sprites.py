@@ -3,6 +3,10 @@ import math
 import random
 import pygame.math
 from data.scripts.defines import *
+from data.scripts.muda import (
+    SpriteState,
+    SpriteStateManager
+)
 
 Vec2 = pygame.math.Vector2
 
@@ -422,9 +426,77 @@ class Fatty(pygame.sprite.Sprite):
             e_bullets_g.add(b)
             all_sprites_g.add(b)
 
+# RAIDER ENEMY ================================
+
+class RaiderSpawnState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.dict_key = "SPAWNING"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+
+        # Change state....
+        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
+            self.manager.transition(RaiderFollowState(self.sprite_))
+
+class RaiderFollowState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.target_acquired = False
+        self.sprite_.dict_key = "NORMAL"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+        self.follow_player()
+        
+        # Update position
+        self.sprite_.position += self.sprite_.velocity * dt
+        self.sprite_.rect.x = self.sprite_.position.x
+        self.sprite_.rect.y = self.sprite_.position.y
+
+        # Change state...
+        if self.target_acquired:
+            self.manager.transition(RaiderDashState(self.sprite_))
+
+    def follow_player(self):
+        # Calculate delta-x
+        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
+        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
+        radians = math.atan2(rel_y, rel_x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
+        if dx > -self.sprite_.DASH_RANGE and dx < self.sprite_.DASH_RANGE:
+            self.target_acquired = True
+
+class RaiderDashState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.dash_x = -2
+        self.sprite_.dict_key = "NORMAL"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+        self.dash()
+
+        # Update position
+        self.sprite_.position += self.sprite_.velocity * dt
+        self.sprite_.rect.x = self.sprite_.position.x
+        self.sprite_.rect.y = self.sprite_.position.y
+    
+    def dash(self):
+        if self.sprite_.velocity.y < self.sprite_.MAX_DASH_SPEED:
+            self.sprite_.velocity.y += math.pow(self.dash_x, 3)
+            self.dash_x += 0.1
+
 class Raider(pygame.sprite.Sprite):
     def __init__(self, images, position, player, g_diff):
-        # TODO - animation
+        # Sprite defines
         super().__init__()
         self.images = images
         self.image = self.images["SPAWNING"][0]
@@ -433,51 +505,33 @@ class Raider(pygame.sprite.Sprite):
         self.rect.y = position.y
         self.position = position
         self.velocity = Vec2(0,0)
+        self.radius = ENEMY_RADIUS
+
+        # Settings
         self.player = player
+        self.health = RAIDER_HEALTH[g_diff]
         self.SPEED = RAIDER_SPEED[g_diff]
         self.DASH_RANGE = RAIDER_DASH_RANGE[g_diff]
         self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[g_diff]
-        self.health = RAIDER_HEALTH[g_diff]
-        self.is_dashing = False
-        self.dash_x = -2
         self.WORTH = SCORE_WORTH["RAIDER"]
-        self.radius = ENEMY_RADIUS
 
-        # State - Values: SPAWNING & NORMAL
-        self._state = "SPAWNING"
+        # State machine
+        self.machine = SpriteStateManager(RaiderSpawnState(self))
 
         # For animation
+        self.dict_key = "SPAWNING"
         self.animate_delay = 100
         self.animate_timer = pygame.time.get_ticks()
         self.current_frame = 0
-        self.MAX_FRAMES = len(self.images["SPAWNING"]) # could be a constant. maybe 4.
+        self.MAX_FRAMES = len(self.images[self.dict_key])
 
     def update(self, dt):
-        if self._state == "NORMAL":
-            self.animate()
+        # Update current state
+        self.machine.state.update(dt)
 
-            # Kill if it goes out of bounds
-            if self.rect.top > WIN_RES["h"]:
-                self.kill()
-
-            if not self.is_dashing:
-                self.follow_player()
-            else:
-                self.dash()
-
-            self.position += self.velocity * dt
-            self.rect.x = self.position.x
-            self.rect.y = self.position.y
-
-            # if DEBUG_MODE:
-            #     pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-  
-        elif self._state == "SPAWNING":
-            self.animate()
-
-            # Change state
-            if self.current_frame == self.MAX_FRAMES - 1:
-                self._state = "NORMAL"
+        # Kill if it goes out of bounds
+        if self.rect.top > WIN_RES["h"]:
+            self.kill()
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -491,28 +545,14 @@ class Raider(pygame.sprite.Sprite):
                 self.current_frame = 0
             
             # Change image
-            self.image = self.images[self._state][self.current_frame]
+            self.image = self.images[self.dict_key][self.current_frame]
 
-
-    def follow_player(self):
-        # Calculate delta-x
-        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
-        dx = math.cos(radians)
-
-        # Add delta-x to velocity
-        self.velocity.x = -(dx * self.SPEED)
-        
-        if dx > -self.DASH_RANGE and dx < self.DASH_RANGE:
-            self.is_dashing = True
-
-    def dash(self):
-        if self.velocity.y < self.MAX_DASH_SPEED:
-            self.velocity.y += math.pow(self.dash_x, 3)
-            self.dash_x += 0.1
+# HELLEYE ENEMY ===============================
 
 class Helleye(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position, player, g_diff):
-        # TODO - animation
+        # TODO - add animations
+        # Sprite defines
         super().__init__()
         self.images = images
         self.image = self.images[0]
@@ -521,11 +561,13 @@ class Helleye(pygame.sprite.Sprite):
         self.rect.y = position.y
         self.position = position
         self.velocity = Vec2(0,0)
-        self.player = player
-        self.SPEED = HELLEYE_SPEED[g_diff]
-        self.health = HELLEYE_HEALTH[g_diff]
-        self.WORTH = SCORE_WORTH["HELLEYE"]
         self.radius = ENEMY_RADIUS
+
+        # Settings
+        self.player = player
+        self.health = HELLEYE_HEALTH[g_diff]
+        self.SPEED = HELLEYE_SPEED[g_diff]
+        self.WORTH = SCORE_WORTH["HELLEYE"]
     
         # For shooting
         self.SHOOT_DELAY = HELLEYE_SHOOT_DELAY[g_diff]
@@ -566,6 +608,8 @@ class Helleye(pygame.sprite.Sprite):
                 )
                 e_bullets_g.add(b)
                 all_sprites_g.add(b)
+
+# SOLTURRET ENEMY =============================
 
 class Solturret(pygame.sprite.Sprite): 
     def __init__(self, images, bullet_img, position, player, g_diff):
