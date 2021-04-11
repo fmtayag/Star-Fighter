@@ -488,29 +488,68 @@ class GameScene(Scene):
         self.par_y += PAR_SPD * dt
 
         # HOSTILES - PLAYER BULLET COLLISION
-        hits = pygame.sprite.groupcollide(hostiles_g, p_bullets_g, False, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            hit.health -= self.player.BULLET_DAMAGE
-            if hit.health <= 0:
-                hit.kill()
+        for bullet in p_bullets_g:
+            hits = pygame.sprite.spritecollide(bullet, hostiles_g, False, pygame.sprite.collide_circle)
+            for hit in hits:
+                # Deduct enemy health
+                hit.health -= self.player.BULLET_DAMAGE
 
-                # Add score
-                self.score += hit.WORTH * self.score_multiplier
+                # Spawn small explosion
+                bullet_x = bullet.rect.centerx
+                bullet_y = bullet.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "SMALL")
 
-                # Spawn powerup
-                spawn_roll = random.randrange(1,100)
-                if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
-                    self.spawner.spawn_powerup(hit.position)
+                # Kill bullet
+                bullet.kill()
+
+                # Logic if enemy is dead
+                if hit.health <= 0:
+                    hit.kill()
+
+                    # Add score
+                    self.score += hit.WORTH * self.score_multiplier
+
+                    # Spawn powerup
+                    spawn_roll = random.randrange(1,100)
+                    if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
+                        self.spawner.spawn_powerup(hit.position)
+
+                    # Spawn big explosion
+                    bullet_x = hit.rect.centerx
+                    bullet_y = hit.rect.centery
+                    bullet_pos = Vec2(bullet_x, bullet_y)
+                    self.spawner.spawn_explosion(bullet_pos, "BIG")
 
         # PLAYER - ENEMY BULLET COLLISION
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
         for hit in hits:
             self.player.health -= hit.DAMAGE
 
+            # Spawn small explosion
+            bullet_x = hit.rect.centerx
+            bullet_y = hit.rect.centery
+            bullet_pos = Vec2(bullet_x, bullet_y)
+            self.spawner.spawn_explosion(bullet_pos, "SMALL")
+
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
         for hit in hits:
             self.player.health -= ENEMY_COLLISION_DAMAGE
+
+            # Spawn big explosion on player
+            bullet_x = self.player.rect.centerx
+            bullet_y = self.player.rect.centery
+            bullet_pos = Vec2(bullet_x, bullet_y)
+            self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+            # Spawn big explosion on hit
+            bullet_x = hit.rect.centerx
+            bullet_y = hit.rect.centery
+            bullet_pos = Vec2(bullet_x, bullet_y)
+            self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+            hit.kill()
 
         # PLAYER - POWERUP COLLISION
         hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
@@ -531,22 +570,54 @@ class GameScene(Scene):
                 self.spawner.spawn_sentry()
 
         # SENTRY - ENEMY COLLISION
-        hits = pygame.sprite.groupcollide(sentries_g, hostiles_g, False, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            hit.health -= ENEMY_COLLISION_DAMAGE
-            if hit.health <= 0:
-                hit.kill() 
+        for sentry in sentries_g:
+            hits = pygame.sprite.spritecollide(sentry, hostiles_g, False, pygame.sprite.collide_circle)
+            for hit in hits:
+                sentry.kill()
+                hit.kill()
+
+                # Spawn big explosion on sentry
+                bullet_x = sentry.rect.centerx
+                bullet_y = sentry.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+                # Spawn big explosion on hit
+                bullet_x = hit.rect.centerx
+                bullet_y = hit.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "BIG")
 
         # SENTRY - ENEMY BULLET COLLISION
         for sentry in sentries_g:
             hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True, pygame.sprite.collide_circle)
             for hit in hits:
+                # Deduct sentry health
                 sentry.health -= hit.DAMAGE
+
+                # Spawn small explosion
+                bullet_x = hit.rect.centerx
+                bullet_y = hit.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "SMALL")
+
                 if sentry.health <= 0:
+                    # Spawn big explosion
+                    bullet_x = sentry.rect.centerx
+                    bullet_y = sentry.rect.centery
+                    bullet_pos = Vec2(bullet_x, bullet_y)
+                    self.spawner.spawn_explosion(bullet_pos, "BIG")
+                    
                     sentry.kill()
 
         # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
         if self.player.health <= 0:
+            # Spawn big explosion on player
+            bullet_x = self.player.rect.centerx
+            bullet_y = self.player.rect.centery
+            bullet_pos = Vec2(bullet_x, bullet_y)
+            self.spawner.spawn_explosion(bullet_pos, "BIG")
+
             self.manager.go_to(GameOverScene(self.score))
 
         self.spawner.update(self.score)

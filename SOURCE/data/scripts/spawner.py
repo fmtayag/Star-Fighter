@@ -158,6 +158,45 @@ class Spawner:
             "BASE": image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
             "GUN": image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True)
         }
+
+        # EXPLPOSION IMAGES ===================
+        EXPLOSION_SPRITESHEET = load_img("explosion_sheet.png", IMG_DIR, SCALE)
+        self.EXPLOSION_IMAGES = {
+            "BIG": {
+                "VAR1": [
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
+                ],
+                "VAR2": [
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+                ],
+                "VAR3": [
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [0,32,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [16,32,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [32,32,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [48,32,16,16]), True)
+                ]
+            },
+            "SMALL": {
+                "VAR1": [
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [0,48,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [16,48,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [32,48,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [48,48,16,16]), True)
+                ],
+                "VAR2": [
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [0,64,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [16,64,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [32,64,16,16]), True),
+                    image_at(EXPLOSION_SPRITESHEET, scale_rect(SCALE, [48,64,16,16]), True)
+                ]
+            }
+        }
     
     def handle_events(self, events):
         for event in events:
@@ -175,6 +214,8 @@ class Spawner:
                         self.spawn_helleye()
                     elif event.key == pygame.K_6:
                         self.spawn_sentry()
+                    elif event.key == pygame.K_7:
+                        self.spawn_explosion()
 
     def update(self, score):
         # Update current game stage
@@ -313,4 +354,14 @@ class Spawner:
         )
         sentries_g.add(s)
         all_sprites_g.add(s)
+
+    def spawn_explosion(self, position=Vec2(32,32), size="SMALL"):
+        # Pick explosion images
+        img_list = self.EXPLOSION_IMAGES[size]
+        variant = random.sample(img_list.keys(), k=1)[0]
+        pick = self.EXPLOSION_IMAGES[size][variant]
+
+        # Create explosion object
+        exp = Explosion(pick, position)
+        all_sprites_g.add(exp)
 

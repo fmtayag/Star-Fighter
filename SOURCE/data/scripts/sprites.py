@@ -1044,3 +1044,42 @@ class SentryBullet(pygame.sprite.Sprite):
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
+
+# EXPLOSION ====================================================================
+
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, images, position):
+        super().__init__()
+        self.images = images
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.centerx = position.x 
+        self.rect.centery = position.y 
+
+        # For animation
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = 4
+
+    def update(self, dt):
+        # Run methods
+        self.animate()
+
+        # Kill sprite when last frame is reached
+        if self.current_frame >= self.MAX_FRAMES - 1:
+            self.kill() 
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now 
+            
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+            
+            # Change image
+            self.image = self.images[self.current_frame]

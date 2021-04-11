@@ -1,5 +1,9 @@
 4-11-2021
 + gui work, exciting stuff!!
++ add explosions
++ add ripple
++ add particles
++ add screenshake
 + add animations to sprites
     + /// add sentry animation 
     + add player animation
