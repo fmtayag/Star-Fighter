@@ -147,9 +147,16 @@ class Spawner:
         }
 
         # SENTRY IMAGES =======================
+        SENTRY_SPRITESHEET = load_img("sentry_sheet.png", IMG_DIR, SCALE)
         self.SENTRY_IMAGES = {
-            "BASE": load_img("sentry_base.png", IMG_DIR, SCALE),
-            "GUN": load_img("sentry_gun.png", IMG_DIR, SCALE)
+            "SPAWNING": [
+                image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+            ],
+            "BASE": image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+            "GUN": image_at(SENTRY_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True)
         }
     
     def handle_events(self, events):

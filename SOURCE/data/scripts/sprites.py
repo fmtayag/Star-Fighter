@@ -886,21 +886,129 @@ class Powerup(pygame.sprite.Sprite):
 
 # SENTRY POWERUP ==============================
 
+class SentrySpawningState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_ 
+
+    def update(self, dt):
+        # Run methods
+        self.animate()
+
+        # Change state....
+        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
+            self.manager.transition(SentryFightingState(self.sprite_))
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.sprite_.animate_timer > self.sprite_.animate_delay:
+            self.sprite_.animate_timer = now
+
+            # Increment frames
+            if self.sprite_.current_frame < self.sprite_.MAX_FRAMES - 1:
+                self.sprite_.current_frame += 1
+            else:
+                self.sprite_.current_frame = 0
+            
+            # Change image
+            self.sprite_.image = self.sprite_.images["SPAWNING"][self.sprite_.current_frame]
+    
+class SentryFightingState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_ 
+        self.sprite_.image = pygame.Surface((32,32)) # This is to stop the "mimicking" bug
+
+    def update(self, dt):
+        # Run methods
+        self.rotate_gun()
+        self.find_enemy()
+        self.shoot()
+
+        # Update surface
+        self.sprite_.image.fill("BLACK")
+        self.sprite_.image.set_colorkey("BLACK")
+        self.sprite_.image.blit(self.sprite_.base_image, (0,0))
+        self.sprite_.image.blit(
+            self.sprite_.gun_image, 
+            (
+                self.sprite_.image.get_width() / 2 - self.sprite_.gun_image.get_width() / 2, 
+                self.sprite_.image.get_height() / 2 - self.sprite_.gun_image.get_height() / 2
+            )
+        )
+
+    def shoot(self):
+        if self.sprite_.target != None:
+            now = pygame.time.get_ticks()
+            if now - self.sprite_.shoot_timer > self.sprite_.shoot_delay:
+                self.sprite_.shoot_timer = now
+                # Calculate radians, delta x, and delta y
+                rel_y = self.sprite_.rect.y - self.sprite_.target.rect.y
+                rel_x = self.sprite_.rect.x - self.sprite_.target.rect.x
+                radians = math.atan2(rel_y, rel_x)
+                dx = -(math.cos(radians) * self.sprite_.BULLET_SPEED)
+                dy = -(math.sin(radians) * self.sprite_.BULLET_SPEED)
+
+                # Create bullet
+                b = SentryBullet(self.sprite_.BULLET_IMG, Vec2(self.sprite_.rect.center), Vec2(dx, dy), self.sprite_.BULLET_DAMAGE)
+                p_bullets_g.add(b)
+                all_sprites_g.add(b)
+
+    def rotate_gun(self):
+        if self.sprite_.target != None:
+            now = pygame.time.get_ticks()
+            if now - self.sprite_.animate_timer > self.sprite_.animate_delay:
+                self.sprite_.animate_timer = now
+
+                # Calculate angle
+                rel_x = self.sprite_.target.rect.x - self.sprite_.rect.x
+                rel_y = self.sprite_.target.rect.y - self.sprite_.rect.y
+                radians = -(math.atan2(rel_y, rel_x))
+                angle = (180 / math.pi) * radians - 90
+
+                # Rotate the gun
+                self.sprite_.gun_image = pygame.transform.rotate(self.sprite_.images["GUN"], int(angle))
+                self.sprite_.gun_image.set_colorkey("BLACK")
+
+    def find_enemy(self):
+        if self.sprite_.target == None:
+            hostiles_list = list(hostiles_g)
+            
+            # Select random enemy
+            if len(hostiles_list) > 0:
+                self.sprite_.target = random.choice(hostiles_list)
+        else:
+            # De-select enemy if enemy is killed
+            if not self.sprite_.target.groups():
+                self.sprite_.target = None
+
 class Sentry(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position):
+        # Sprite defines
         super().__init__()
         self.images = images
         self.image = pygame.Surface((32,32))
+        self.image.set_colorkey("BLACK")
         self.rect = self.image.get_rect()
         self.rect.x = position.x 
         self.rect.y = position.y 
         self.position = position
-        self.health = SENTRY_HEALTH
         self.radius = SENTRY_RADIUS
+
+        # Settings
+        self.health = SENTRY_HEALTH
+        
+        # State machine
+        self.machine = SpriteStateManager(SentrySpawningState(self))
 
         # Images
         self.base_image = self.images["BASE"]
         self.gun_image = self.images["GUN"]
+
+        # For animation
+        self.animate_timer = pygame.time.get_ticks()
+        self.animate_delay = 100
+        self.current_frame = 0
+        self.MAX_FRAMES = 4
+        self.rot = 0
 
         # For shooting
         self.BULLET_SPEED = 500
@@ -910,70 +1018,8 @@ class Sentry(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
         self.BULLET_IMG = bullet_img
 
-        # For animation
-        self.frame_timer = pygame.time.get_ticks()
-        self.FRAME_DELAY = 100
-        self.rot = 0
-
     def update(self, dt):
-
-        # Update surface
-        self.rotate_gun()
-        self.image.fill("BLACK")
-        self.image.set_colorkey("BLACK")
-        self.image.blit(self.base_image, (0,0))
-        self.image.blit(
-            self.gun_image, 
-            (
-                self.image.get_width()/2 - self.gun_image.get_width()/2, 
-                self.image.get_height()/2 - self.gun_image.get_height()/2
-            )
-        )
-
-        self.find_enemy()
-        self.shoot()
-        
-    def shoot(self):
-        if self.target != None:
-            now = pygame.time.get_ticks()
-            if now - self.shoot_timer > self.shoot_delay:
-                self.shoot_timer = now
-                # Calculate radians, delta x, and delta y
-                radians = math.atan2(self.rect.y - self.target.rect.y, self.rect.x - self.target.rect.x)
-                dx = -(math.cos(radians) * self.BULLET_SPEED)
-                dy = -(math.sin(radians) * self.BULLET_SPEED)
-
-                # Create bullet
-                b = SentryBullet(self.BULLET_IMG, Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
-                p_bullets_g.add(b)
-                all_sprites_g.add(b)
-
-    def rotate_gun(self):
-        if self.target != None:
-            now = pygame.time.get_ticks()
-            if now - self.frame_timer > self.FRAME_DELAY:
-                self.frame_timer = now
-
-                rel_x = self.target.rect.x - self.rect.x
-                rel_y = self.target.rect.y - self.rect.y
-                radians = -(math.atan2(rel_y, rel_x))
-                angle = (180 / math.pi) * radians - 90
-                #print(angle)
-
-                # Rotate the gun
-                self.gun_image = pygame.transform.rotozoom(self.images["GUN"], int(angle), 1)
-
-    def find_enemy(self):
-        if self.target == None:
-            hostiles_list = list(hostiles_g)
-            
-            # Select random enemy
-            if len(hostiles_list) > 0:
-                self.target = random.choice(hostiles_list)
-        else:
-            # De-select enemy if enemy is killed
-            if not self.target.groups():
-                self.target = None
+        self.machine.state.update(dt)
             
 class SentryBullet(pygame.sprite.Sprite):
     def __init__(self, image, position, velocity, damage):

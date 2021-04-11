@@ -1,9 +1,9 @@
 4-11-2021
 + gui work, exciting stuff!!
 + add animations to sprites
-    + add sentry animation 
+    + /// add sentry animation 
     + add player animation
-+ implement spritesheets for organization
++ /// implement spritesheets for organization
     + /// add sentry spritesheet
     + /// add powerup spritesheet
 + /// add states to sprites
