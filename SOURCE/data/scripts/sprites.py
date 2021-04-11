@@ -849,17 +849,40 @@ class Powerup(pygame.sprite.Sprite):
         self.SPEED = POWERUP_SPEED[g_diff]
         self.POW_TYPE = pow_type
         self.radius = POWERUP_RADIUS
+        
+        # For animation
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = 4
 
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+        # Run methods
+        self.animate()
 
+        # Kill sprite if it goes out of bounds
         if self.rect.top > WIN_RES["h"]:
             self.kill()
 
+        # Update position
         self.position.y += self.SPEED * dt
         self.rect.x = self.position.x 
-        self.rect.y = self.position.y 
+        self.rect.y = self.position.y
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
+
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+            
+            # Change image
+            self.image = self.images[self.current_frame]
+
 
 # SENTRY POWERUP ==============================
 

@@ -118,11 +118,32 @@ class Spawner:
         self.SENTRY_BULLET_IMAGE = image_at(BULLET_SPRITESHEET, scale_rect(SCALE, [24,0,8,8]), True)
 
         # POWERUP IMAGES ======================
+        POWERUP_SPRITESHEET = load_img("powerup_sheet.png", IMG_DIR, SCALE)
         self.POWERUP_IMAGES = {
-            "GUN": [load_img("powerup_gun.png", IMG_DIR, SCALE)],
-            "HEALTH": [load_img("powerup_health.png", IMG_DIR, SCALE)],
-            "SCORE": [load_img("powerup_score.png", IMG_DIR, SCALE)],
-            "SENTRY": [load_img("powerup_sentry.png", IMG_DIR, SCALE)]
+            "GUN": [
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
+            ],
+            "HEALTH": [
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [0,32,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [16,32,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [32,32,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [48,32,16,16]), True)
+            ],
+            "SCORE": [
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [0,48,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [16,48,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [32,48,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [48,48,16,16]), True)
+            ],
+            "SENTRY": [
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                image_at(POWERUP_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+            ]
         }
 
         # SENTRY IMAGES =======================
@@ -272,6 +293,8 @@ class Spawner:
             pow_type = SUBSTITUTE_POWERUP
         elif pow_type == "HEALTH" and self.player.health >= HEALTH_PICKUP_HP_THRESHOLD:
             pow_type = SUBSTITUTE_POWERUP
+        elif pow_type == "GUN" and self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
+            pow_type == SUBSTITUTE_POWERUP
 
         return pow_type
 

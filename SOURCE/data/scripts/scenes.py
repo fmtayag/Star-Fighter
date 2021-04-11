@@ -513,7 +513,7 @@ class GameScene(Scene):
             self.player.health -= ENEMY_COLLISION_DAMAGE
 
         # PLAYER - POWERUP COLLISION
-        hits = pygame.sprite.spritecollide(self.player, powerups_g, True, pygame.sprite.collide_circle)
+        hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
         for hit in hits:
             if hit.POW_TYPE == "GUN":
                 if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:

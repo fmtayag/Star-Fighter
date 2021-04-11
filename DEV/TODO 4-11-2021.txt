@@ -4,7 +4,9 @@
     + add sentry animation 
     + add player animation
 + implement spritesheets for organization
-    + add sentry spritesheet
-+ // add states to sprites
-    + // add states to hellfighter 
-    + // add states to fatty
+    + /// add sentry spritesheet
+    + /// add powerup spritesheet
++ /// add states to sprites
+    + /// add states to hellfighter 
+    + /// add states to fatty
++ /// substitute the gun powerup with the coin powerup if player's gun level is already maxed.
