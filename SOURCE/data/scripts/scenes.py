@@ -13,7 +13,9 @@ from data.scripts.muda import (
     draw_text,
     shake,
     slice_list,
-    clamp
+    clamp,
+    image_at,
+    scale_rect
 )
 from data.scripts.defines import *
 
@@ -446,7 +448,8 @@ class GameScene(Scene):
             "N": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
             "R": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha()
         }
-        BULLET_IMG = load_img("bullet_player.png", IMG_DIR, SCALE).convert_alpha()
+        BULLET_SPRITESHEET = load_img("bullet_sheet.png", IMG_DIR, SCALE)
+        BULLET_IMG = image_at(BULLET_SPRITESHEET, scale_rect(SCALE, [16,0,8,8]), True)
 
         # BG AND PARALLAX IMAGES & DEFINES 
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)

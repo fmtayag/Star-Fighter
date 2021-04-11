@@ -160,9 +160,6 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.radius = SMALL_BULLET_RADIUS
 
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-
         # Kill if it goes out of bounds
         if (self.rect.top > WIN_RES["h"] or 
             self.rect.bottom < 0 or
@@ -363,6 +360,7 @@ class FattyFightingState(SpriteState):
     def __init__(self, sprite_):
         self.sprite_ = sprite_
         self.sprite_.imgdict_key = "NORMAL"
+        self.bob_y = -2
 
     def update(self, dt):
         # Run methods
@@ -387,8 +385,8 @@ class FattyFightingState(SpriteState):
         self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
 
     def bob(self):
-        self.sprite_.velocity.y = math.sin(self.sprite_.bob_y) * 50
-        self.sprite_.bob_y += 0.1
+        self.sprite_.velocity.y = math.sin(self.bob_y) * 50
+        self.bob_y += 0.1
 
     def shoot(self):
         now = pygame.time.get_ticks()
@@ -421,7 +419,6 @@ class Fatty(pygame.sprite.Sprite):
 
         # Settings
         self.player = player
-        self.bob_y = 0
         self.health = FATTY_HEALTH[g_diff]
         self.SPEED = FATTY_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["FATTY"]

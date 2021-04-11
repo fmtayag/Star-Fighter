@@ -108,9 +108,14 @@ class Spawner:
         }
 
         # BULLET IMAGES =======================
-        self.SMALL_BULLET_IMAGE = load_img("bullet_enemy.png", IMG_DIR, SCALE)
-        self.FATTY_BULLET_IMAGE = load_img("bullet_fatty.png", IMG_DIR, SCALE)
-        self.FATTY_BULLETS_IMAGES = {"LARGE": self.FATTY_BULLET_IMAGE, "SMALL": self.SMALL_BULLET_IMAGE}
+        BULLET_SPRITESHEET = load_img("bullet_sheet.png", IMG_DIR, SCALE)
+        self.LARGE_BULLET_IMAGE = image_at(BULLET_SPRITESHEET, scale_rect(SCALE, [0,0,10,10]), True)
+        self.SMALL_BULLET_IMAGE = image_at(BULLET_SPRITESHEET, scale_rect(SCALE, [8,8,8,8]), True)
+        self.FATTY_BULLETS_IMAGES = {
+            "LARGE": self.LARGE_BULLET_IMAGE, 
+            "SMALL": self.SMALL_BULLET_IMAGE
+        }
+        self.SENTRY_BULLET_IMAGE = image_at(BULLET_SPRITESHEET, scale_rect(SCALE, [24,0,8,8]), True)
 
         # POWERUP IMAGES ======================
         self.POWERUP_IMAGES = {
@@ -125,7 +130,6 @@ class Spawner:
             "BASE": load_img("sentry_base.png", IMG_DIR, SCALE),
             "GUN": load_img("sentry_gun.png", IMG_DIR, SCALE)
         }
-        self.SENTRY_BULLET_IMAGE = load_img("bullet_sentry.png", IMG_DIR, SCALE)
     
     def handle_events(self, events):
         for event in events:
