@@ -89,7 +89,7 @@ MAX_HELLEYE_COUNT = 1
 SCORE_MULTIPLIER = {
     "EASY": 0.50,
     "MEDIUM": 1.00,
-    "HARD": 2.00
+    "HARD": 3.00
 }
 
 SCORE_WORTH = {
@@ -144,8 +144,8 @@ POWERUP_TYPES_WEIGHTS_MID = (
 )
 POWERUP_TYPES_WEIGHTS_LATE = (
     30, # GUN 
-    20, # HEALTH
-    30, # SCORE
+    30, # HEALTH
+    20, # SCORE
     20 # SENTRY
 ) 
 POWERUP_TYPES_WEIGHTS = {
@@ -211,7 +211,7 @@ FATTY_SPEED = {
 FATTY_SHOOT_DELAY = {
     "EASY": 2000,
     "MEDIUM": 1500,
-    "HARD": 1200
+    "HARD": 1300
 }
 FATTY_LARGE_BULLET_SPEED = {
     "EASY": 200,
@@ -224,9 +224,9 @@ FATTY_SMALL_BULLET_SPEED = {
     "HARD": 250
 }
 FATTY_BULLET_DAMAGE = {
-    "EASY": 0.5,
+    "EASY": 0.75,
     "MEDIUM": 1,
-    "HARD": 1.5
+    "HARD": 1.25
 }
 FATTY_BULLET_DIRECTION = (
     Vec2(1,0), # To Right

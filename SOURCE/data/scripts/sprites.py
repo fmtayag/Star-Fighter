@@ -136,9 +136,6 @@ class PlayerBullet(pygame.sprite.Sprite):
         self.radius = PLAYER_BULLET_RADIUS
 
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-
         self.position += self.velocity * dt 
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
@@ -230,7 +227,6 @@ class FattyBullet(pygame.sprite.Sprite):
 
 class Hellfighter(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position, player, g_diff):
-        # TODO - animation
         super().__init__()
         self.images = images
         self.image = self.images["SPAWNING"][0]
@@ -331,9 +327,69 @@ class Hellfighter(pygame.sprite.Sprite):
 
 # FATTY ENEMY =================================
 
+class FattySpawningState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.imgdict_key = "SPAWNING"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+
+        # Change state...
+        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
+            self.manager.transition(FattyFightingState(self.sprite_))
+
+class FattyFightingState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.imgdict_key = "NORMAL"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+        self.follow_player()
+        self.bob()
+        self.shoot() 
+
+        # Update position
+        self.sprite_.position += self.sprite_.velocity * dt 
+        self.sprite_.rect.x = self.sprite_.position.x
+        self.sprite_.rect.y = self.sprite_.position.y
+
+    def follow_player(self):
+        # Calculate delta-x
+        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
+        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
+        radians = math.atan2(rel_y, rel_x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
+
+    def bob(self):
+        self.sprite_.velocity.y = math.sin(self.sprite_.bob_y) * 50
+        self.sprite_.bob_y += 0.1
+
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.sprite_.shoot_timer > self.sprite_.SHOOT_DELAY:
+            self.sprite_.shoot_timer = now
+
+            b = FattyBullet(
+                self.sprite_.LARGE_BULLET_IMAGE,
+                self.sprite_.SMALL_BULLET_IMAGE,
+                Vec2(self.sprite_.rect.centerx, self.sprite_.rect.bottom),
+                Vec2(0,self.sprite_.BULLET_SPEED),
+                self.sprite_.BULLET_DAMAGE,
+                self.sprite_.SMALL_BULLET_SPEED
+            )
+            e_bullets_g.add(b)
+            all_sprites_g.add(b)
+
 class Fatty(pygame.sprite.Sprite):
     def __init__(self, images, bullet_imgs, position, player, g_diff):
-        # TODO - animation
+        # Sprite defines
         super().__init__()
         self.images = images
         self.image = self.images["SPAWNING"][0]
@@ -342,12 +398,24 @@ class Fatty(pygame.sprite.Sprite):
         self.rect.y = position.y
         self.position = position
         self.velocity = Vec2(0,0)
+        self.radius = ENEMY_RADIUS
+
+        # Settings
         self.player = player
-        self.SPEED = FATTY_SPEED[g_diff]
         self.bob_y = 0
         self.health = FATTY_HEALTH[g_diff]
+        self.SPEED = FATTY_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["FATTY"]
-        self.radius = ENEMY_RADIUS
+
+        # State machine
+        self.machine = SpriteStateManager(FattySpawningState(self))
+
+        # For animation
+        self.imgdict_key = "SPAWNING"
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = len(self.images[self.imgdict_key])
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -359,36 +427,9 @@ class Fatty(pygame.sprite.Sprite):
         self.LARGE_BULLET_IMAGE = self.BULLET_IMAGES["LARGE"]
         self.SMALL_BULLET_IMAGE = self.BULLET_IMAGES["SMALL"]
 
-        # State - Values: SPAWNING & NORMAL
-        self._state = "SPAWNING"
-
-        # For animation
-        self.animate_delay = 100
-        self.animate_timer = pygame.time.get_ticks()
-        self.current_frame = 0
-        self.MAX_FRAMES = len(self.images["SPAWNING"]) # could be a constant. maybe 4.
-
     def update(self, dt):
-        if self._state == "NORMAL":
-            self.animate()
-
-            # if DEBUG_MODE:
-            #     pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-
-            self.follow_player()
-            self.bob()
-            self.shoot() 
-
-            self.position += self.velocity * dt 
-            self.rect.x = self.position.x
-            self.rect.y = self.position.y
-        elif self._state == "SPAWNING":
-            self.animate()
-
-            # Change state
-            if self.current_frame == self.MAX_FRAMES - 1:
-                self._state = "NORMAL"
-
+        # Update state
+        self.machine.state.update(dt)
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -402,35 +443,7 @@ class Fatty(pygame.sprite.Sprite):
                 self.current_frame = 0
             
             # Change image
-            self.image = self.images[self._state][self.current_frame]
-
-    def follow_player(self):
-        # Calculate delta-x
-        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
-        dx = math.cos(radians)
-
-        # Add delta-x to velocity
-        self.velocity.x = -(dx * self.SPEED)
-
-    def bob(self):
-        self.velocity.y = math.sin(self.bob_y) * 50
-        self.bob_y += 0.1
-
-    def shoot(self):
-        now = pygame.time.get_ticks()
-        if now - self.shoot_timer > self.SHOOT_DELAY:
-            self.shoot_timer = now
-
-            b = FattyBullet(
-                self.LARGE_BULLET_IMAGE,
-                self.SMALL_BULLET_IMAGE,
-                Vec2(self.rect.centerx, self.rect.bottom),
-                Vec2(0,self.BULLET_SPEED),
-                self.BULLET_DAMAGE,
-                self.SMALL_BULLET_SPEED
-            )
-            e_bullets_g.add(b)
-            all_sprites_g.add(b)
+            self.image = self.images[self.imgdict_key][self.current_frame]
 
 # RAIDER ENEMY ================================
 
@@ -936,9 +949,6 @@ class SentryBullet(pygame.sprite.Sprite):
         self.radius = SENTRY_BULLET_RADIUS
 
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-
         # Kill if it goes out of bounds
         if (self.rect.top > WIN_RES["h"] or 
             self.rect.bottom < 0 or
