@@ -5,6 +5,6 @@
     + add player animation
 + implement spritesheets for organization
     + add sentry spritesheet
-+ add states to sprites
-    + add states to hellfighter 
-    + add states to fatty
++ // add states to sprites
+    + // add states to hellfighter 
+    + // add states to fatty

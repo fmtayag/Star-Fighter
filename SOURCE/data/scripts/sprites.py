@@ -225,8 +225,74 @@ class FattyBullet(pygame.sprite.Sprite):
 
 # HELLFIGHTER ENEMY ===========================
 
+class HellfighterSpawningState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.imgdict_key = "SPAWNING"
+
+    def update(self, dt):
+        self.sprite_.animate()
+
+        # Change state...
+        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
+            self.manager.transition(HellfighterFightingState(self.sprite_))
+
+class HellfighterFightingState(SpriteState):
+    def __init__(self, sprite_):
+        self.sprite_ = sprite_
+        self.sprite_.imgdict_key = "NORMAL"
+
+    def update(self, dt):
+        # Run methods
+        self.sprite_.animate()
+        self.follow_player()
+        self.shoot()
+
+        # Update position
+        self.sprite_.position += self.sprite_.velocity * dt 
+        self.sprite_.rect.x = self.sprite_.position.x
+        self.sprite_.rect.y = self.sprite_.position.y
+
+    def follow_player(self):
+        # Calculate delta-x
+        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
+        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
+        radians = math.atan2(rel_y, rel_x)
+        dx = math.cos(radians)
+
+        # Add delta-x to velocity
+        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
+
+    def shoot(self):
+        # Calculate radians
+        rel_y = self.sprite_.rect.centery - self.sprite_.player.rect.centery
+        rel_x = self.sprite_.rect.centerx - self.sprite_.player.rect.centerx
+        radians = math.atan2(rel_y, rel_x)
+
+        # Calculate x-component
+        x_com = math.cos(radians)
+
+        # Only shoot if in range
+        if x_com > -self.sprite_.RANGE and x_com < self.sprite_.RANGE:
+            now = pygame.time.get_ticks()
+            if now - self.sprite_.shoot_timer > self.sprite_.SHOOT_DELAY:
+                self.sprite_.shoot_timer = now
+
+                # Calculate vertical direction
+                dir_y = -(math.copysign(1, math.sin(radians)))
+
+                b = EnemyBullet(
+                    self.sprite_.BULLET_IMAGE,
+                    Vec2(self.sprite_.rect.center),
+                    Vec2(-x_com * (self.sprite_.BULLET_SPEED / 2), self.sprite_.BULLET_SPEED * dir_y),
+                    self.sprite_.BULLET_DAMAGE
+                )
+                e_bullets_g.add(b)
+                all_sprites_g.add(b)
+
 class Hellfighter(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position, player, g_diff):
+        # Sprite defines
         super().__init__()
         self.images = images
         self.image = self.images["SPAWNING"][0]
@@ -235,11 +301,23 @@ class Hellfighter(pygame.sprite.Sprite):
         self.rect.y = position.y 
         self.position = position
         self.velocity = Vec2(0,0)
-        self.player = player
-        self.SPEED = HELLFIGHTER_SPEED[g_diff]
-        self.health = HELLFIGHTER_HEALTH[g_diff]
-        self.WORTH = SCORE_WORTH["HELLFIGHTER"]
         self.radius = ENEMY_RADIUS
+
+        # Settings
+        self.player = player
+        self.health = HELLFIGHTER_HEALTH[g_diff]
+        self.SPEED = HELLFIGHTER_SPEED[g_diff]
+        self.WORTH = SCORE_WORTH["HELLFIGHTER"]
+
+        # State machine
+        self.machine = SpriteStateManager(HellfighterSpawningState(self))
+        
+        # For animation
+        self.imgdict_key = "SPAWNING"
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = len(self.images["SPAWNING"]) # could be a constant. maybe 4.
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -249,34 +327,8 @@ class Hellfighter(pygame.sprite.Sprite):
         self.BULLET_DAMAGE = HELLFIGHTER_BULLET_DAMAGE[g_diff]
         self.BULLET_IMAGE = bullet_img
 
-        # State - Values: SPAWNING & NORMAL
-        self._state = "SPAWNING"
-
-        # For animation
-        self.animate_delay = 100
-        self.animate_timer = pygame.time.get_ticks()
-        self.current_frame = 0
-        self.MAX_FRAMES = len(self.images["SPAWNING"]) # could be a constant. maybe 4.
-
     def update(self, dt):
-        if self._state == "NORMAL":
-            self.animate()
-
-            # if DEBUG_MODE:
-            #     pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
-
-            self.follow_player()
-            self.shoot()
-            self.position += self.velocity * dt 
-            self.rect.x = self.position.x
-            self.rect.y = self.position.y
-
-        elif self._state == "SPAWNING":
-            self.animate()
-
-            # Change state
-            if self.current_frame == self.MAX_FRAMES - 1:
-                self._state = "NORMAL"
+        self.machine.state.update(dt)
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -290,40 +342,7 @@ class Hellfighter(pygame.sprite.Sprite):
                 self.current_frame = 0
             
             # Change image
-            self.image = self.images[self._state][self.current_frame]
-
-    def follow_player(self):
-        # Calculate delta-x
-        radians = math.atan2(self.rect.y - self.player.rect.y, self.rect.x - self.player.rect.x)
-        dx = math.cos(radians)
-
-        # Add delta-x to velocity
-        self.velocity.x = -(dx * self.SPEED)
-
-    def shoot(self):
-        # Calculate radians
-        radians = math.atan2(self.rect.centery - self.player.rect.centery, self.rect.centerx - self.player.rect.centerx)
-
-        # Calculate x-component
-        x_com = math.cos(radians)
-
-        # Only shoot if in range
-        if x_com > -self.RANGE and x_com < self.RANGE:
-            now = pygame.time.get_ticks()
-            if now - self.shoot_timer > self.SHOOT_DELAY:
-                self.shoot_timer = now
-
-                # Calculate vertical direction
-                dir_y = -(math.copysign(1, math.sin(radians)))
-
-                b = EnemyBullet(
-                    self.BULLET_IMAGE,
-                    Vec2(self.rect.center),
-                    Vec2(-x_com * (self.BULLET_SPEED / 2), self.BULLET_SPEED * dir_y),
-                    self.BULLET_DAMAGE
-                )
-                e_bullets_g.add(b)
-                all_sprites_g.add(b)
+            self.image = self.images[self.imgdict_key][self.current_frame]
 
 # FATTY ENEMY =================================
 
