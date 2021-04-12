@@ -269,7 +269,7 @@ class Hellfighter(pygame.sprite.Sprite):
         if self.state_ == "FIGHTING":
             # Change images dictionary key
             self.imgdict_key = "NORMAL"
-            
+
             # Run methods
             self.animate()
             self.follow_player()
@@ -287,7 +287,6 @@ class Hellfighter(pygame.sprite.Sprite):
 
             # Run methods
             self.animate()
-            self.flash()
 
             # Change state...
             if self.current_frame == self.MAX_FRAMES - 1:
@@ -347,9 +346,9 @@ class Hellfighter(pygame.sprite.Sprite):
     def flash(self):
         if self.is_hurt:
             # Make the image flash
-            flash_image = pygame.Surface((32,32))
-            olist = pygame.mask.from_surface(self.images[self.imgdict_key][self.current_frame]).outline()
-            pygame.draw.polygon(flash_image,"WHITE",olist,0)
+            flash_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+            points = pygame.mask.from_surface(self.images[self.imgdict_key][self.current_frame]).outline()
+            pygame.draw.polygon(flash_image,"WHITE",points,0)
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
 
@@ -359,67 +358,6 @@ class Hellfighter(pygame.sprite.Sprite):
             self.is_hurt = False
 
 # FATTY ENEMY =================================
-
-class FattySpawningState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "SPAWNING"
-
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-
-        # Change state...
-        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(FattyFightingState(self.sprite_))
-
-class FattyFightingState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "NORMAL"
-        self.bob_y = -2
-
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-        self.follow_player()
-        self.bob()
-        self.shoot() 
-
-        # Update position
-        self.sprite_.position += self.sprite_.velocity * dt 
-        self.sprite_.rect.x = self.sprite_.position.x
-        self.sprite_.rect.y = self.sprite_.position.y
-
-    def follow_player(self):
-        # Calculate delta-x
-        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
-        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
-        radians = math.atan2(rel_y, rel_x)
-        dx = math.cos(radians)
-
-        # Add delta-x to velocity
-        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
-
-    def bob(self):
-        self.sprite_.velocity.y = math.sin(self.bob_y) * 50
-        self.bob_y += 0.1
-
-    def shoot(self):
-        now = pygame.time.get_ticks()
-        if now - self.sprite_.shoot_timer > self.sprite_.SHOOT_DELAY:
-            self.sprite_.shoot_timer = now
-
-            b = FattyBullet(
-                self.sprite_.LARGE_BULLET_IMAGE,
-                self.sprite_.SMALL_BULLET_IMAGE,
-                Vec2(self.sprite_.rect.centerx, self.sprite_.rect.bottom),
-                Vec2(0,self.sprite_.BULLET_SPEED),
-                self.sprite_.BULLET_DAMAGE,
-                self.sprite_.SMALL_BULLET_SPEED
-            )
-            e_bullets_g.add(b)
-            all_sprites_g.add(b)
 
 class Fatty(pygame.sprite.Sprite):
     def __init__(self, images, bullet_imgs, position, player, g_diff):
@@ -440,8 +378,9 @@ class Fatty(pygame.sprite.Sprite):
         self.SPEED = FATTY_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["FATTY"]
 
-        # State machine
-        self.machine = SpriteStateManager(FattySpawningState(self))
+        # States
+        self.states_ = ("SPAWNING", "NORMAL")
+        self.state_ = self.states_[0]
 
         # For animation
         self.imgdict_key = "SPAWNING"
@@ -449,6 +388,7 @@ class Fatty(pygame.sprite.Sprite):
         self.animate_timer = pygame.time.get_ticks()
         self.current_frame = 0
         self.MAX_FRAMES = len(self.images[self.imgdict_key])
+        self.bob_y = -2 # For bobbing effect
 
         # For shooting
         self.shoot_timer = pygame.time.get_ticks()
@@ -460,9 +400,38 @@ class Fatty(pygame.sprite.Sprite):
         self.LARGE_BULLET_IMAGE = self.BULLET_IMAGES["LARGE"]
         self.SMALL_BULLET_IMAGE = self.BULLET_IMAGES["SMALL"]
 
+        # For flashing effect
+        self.flash_delay = 50
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
+
     def update(self, dt):
-        # Update state
-        self.machine.state.update(dt)
+        if self.state_ == "NORMAL":
+            # Change images dictionary key
+            self.imgdict_key = "NORMAL"
+
+            # Run methods
+            self.animate()
+            self.follow_player()
+            self.bob()
+            self.shoot()
+            self.flash() 
+
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+
+        elif self.state_ == "SPAWNING":
+            # Change images dictionary key
+            self.imgdict_key = "SPAWNING"
+
+            # Run methods
+            self.animate()
+
+            # Change state...
+            if self.current_frame == self.MAX_FRAMES - 1:
+                self.state_ = self.states_[1]
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -478,73 +447,51 @@ class Fatty(pygame.sprite.Sprite):
             # Change image
             self.image = self.images[self.imgdict_key][self.current_frame]
 
-# RAIDER ENEMY ================================
-
-class RaiderSpawningState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "SPAWNING"
-
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-
-        # Change state....
-        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(RaiderFollowingState(self.sprite_))
-
-class RaiderFollowingState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.target_acquired = False
-        self.sprite_.imgdict_key = "NORMAL"
-
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-        self.follow_player()
-        
-        # Update position
-        self.sprite_.position += self.sprite_.velocity * dt
-        self.sprite_.rect.x = self.sprite_.position.x
-        self.sprite_.rect.y = self.sprite_.position.y
-
-        # Change state...
-        if self.target_acquired:
-            self.manager.transition(RaiderDashingState(self.sprite_))
-
     def follow_player(self):
         # Calculate delta-x
-        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
-        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
+        rel_y = self.rect.y - self.player.rect.y
+        rel_x = self.rect.x - self.player.rect.x
         radians = math.atan2(rel_y, rel_x)
         dx = math.cos(radians)
 
         # Add delta-x to velocity
-        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
-        if dx > -self.sprite_.DASH_RANGE and dx < self.sprite_.DASH_RANGE:
-            self.target_acquired = True
+        self.velocity.x = -(dx * self.SPEED)
 
-class RaiderDashingState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.dash_x = -2
-        self.sprite_.imgdict_key = "NORMAL"
+    def bob(self):
+        self.velocity.y = math.sin(self.bob_y) * 50
+        self.bob_y += 0.1
 
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-        self.dash()
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.shoot_timer > self.SHOOT_DELAY:
+            self.shoot_timer = now
 
-        # Update position
-        self.sprite_.position += self.sprite_.velocity * dt
-        self.sprite_.rect.x = self.sprite_.position.x
-        self.sprite_.rect.y = self.sprite_.position.y
-    
-    def dash(self):
-        if self.sprite_.velocity.y < self.sprite_.MAX_DASH_SPEED:
-            self.sprite_.velocity.y += math.pow(self.dash_x, 3)
-            self.dash_x += 0.1
+            b = FattyBullet(
+                self.LARGE_BULLET_IMAGE,
+                self.SMALL_BULLET_IMAGE,
+                Vec2(self.rect.centerx, self.rect.bottom),
+                Vec2(0,self.BULLET_SPEED),
+                self.BULLET_DAMAGE,
+                self.SMALL_BULLET_SPEED
+            )
+            e_bullets_g.add(b)
+            all_sprites_g.add(b)
+
+    def flash(self):
+        if self.is_hurt:
+            # Make the image flash
+            flash_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+            points = pygame.mask.from_surface(self.images[self.imgdict_key][self.current_frame]).outline()
+            pygame.draw.polygon(flash_image,"WHITE",points,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
+
+        now = pygame.time.get_ticks()
+        if now - self.flash_timer > self.flash_delay:
+            self.flash_timer = now
+            self.is_hurt = False
+
+# RAIDER ENEMY ================================
 
 class Raider(pygame.sprite.Sprite):
     def __init__(self, images, position, player, g_diff):
@@ -567,8 +514,13 @@ class Raider(pygame.sprite.Sprite):
         self.MAX_DASH_SPEED = RAIDER_MAX_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["RAIDER"]
 
-        # State machine
-        self.machine = SpriteStateManager(RaiderSpawningState(self))
+        # For dashing
+        self.target_acquired = False
+        self.dash_x = -2
+
+        # States
+        self.states_ = ("SPAWNING", "NORMAL", "DASHING")
+        self.state_ = self.states_[0]
 
         # For animation
         self.imgdict_key = "SPAWNING"
@@ -577,13 +529,53 @@ class Raider(pygame.sprite.Sprite):
         self.current_frame = 0
         self.MAX_FRAMES = len(self.images[self.imgdict_key])
 
-    def update(self, dt):
-        # Update state
-        self.machine.state.update(dt)
+        # For flashing effect
+        self.flash_delay = 50
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
 
-        # Kill if it goes out of bounds
-        if self.rect.top > WIN_RES["h"]:
-            self.kill()
+    def update(self, dt):
+        if self.state_ == "NORMAL":
+            # Change image dictionary's key
+            self.imgdict_key = "NORMAL"
+
+            # Run methods
+            self.animate()
+            self.follow_player()
+            self.flash()
+        
+            # Change state...
+            if self.target_acquired:
+                self.state_ = self.states_[2]
+
+        elif self.state_ == "DASHING":
+            # Change image dictionary's key
+            self.imgdict_key = "NORMAL"
+
+            # Run methods
+            self.animate()
+            self.dash()
+            self.flash()
+            
+            # Kill if it goes out of bounds
+            if self.rect.top > WIN_RES["h"]:
+                self.kill()
+
+            # Update position
+            self.position += self.velocity * dt
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+
+        elif self.state_ == "SPAWNING":
+            # Change image dictionary's key
+            self.imgdict_key = "SPAWNING"
+
+            # Run methods
+            self.animate()
+
+            # Change state....
+            if self.current_frame == self.MAX_FRAMES - 1:
+                self.state_ = self.states_[1]
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -599,61 +591,38 @@ class Raider(pygame.sprite.Sprite):
             # Change image
             self.image = self.images[self.imgdict_key][self.current_frame]
 
-# HELLEYE ENEMY ===============================
-
-class HelleyeSpawningState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "SPAWNING"
-
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-
-        # Change state....
-        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(HelleyeFightingState(self.sprite_))
-
-class HelleyeFightingState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.sprite_.imgdict_key = "NORMAL"
-
-    def update(self, dt):
-        # Run methods
-        self.sprite_.animate()
-        self.follow_player()
-        self.shoot()
-
-        # Update position
-        self.sprite_.position += self.sprite_.velocity * dt 
-        self.sprite_.rect.x = self.sprite_.position.x
-        self.sprite_.rect.y = self.sprite_.position.y
-
     def follow_player(self):
         # Calculate delta-x
-        rel_y = self.sprite_.rect.y - self.sprite_.player.rect.y
-        rel_x = self.sprite_.rect.x - self.sprite_.player.rect.x
+        rel_x = self.rect.x - self.player.rect.x
+        rel_y = self.rect.y - self.player.rect.y
         radians = math.atan2(rel_y, rel_x)
         dx = math.cos(radians)
 
         # Add delta-x to velocity
-        self.sprite_.velocity.x = -(dx * self.sprite_.SPEED)
+        self.velocity.x = -(dx * self.SPEED)
+        if dx > -self.DASH_RANGE and dx < self.DASH_RANGE:
+            self.target_acquired = True
 
-    def shoot(self):
+    def dash(self):
+        if self.velocity.y < self.MAX_DASH_SPEED:
+            self.velocity.y += math.pow(self.dash_x, 3)
+            self.dash_x += 0.1
+
+    def flash(self):
+        if self.is_hurt:
+            # Make the image flash
+            flash_image = pygame.Surface((32,32))
+            olist = pygame.mask.from_surface(self.images[self.imgdict_key][self.current_frame]).outline()
+            pygame.draw.polygon(flash_image,"WHITE",olist,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
+
         now = pygame.time.get_ticks()
-        if now - self.sprite_.shoot_timer > self.sprite_.SHOOT_DELAY:
-            self.sprite_.shoot_timer = now
+        if now - self.flash_timer > self.flash_delay:
+            self.flash_timer = now
+            self.is_hurt = False
 
-            for i in range(len(HELLEYE_BULLET_DIRECTION)):
-                b = EnemyBullet(
-                    self.sprite_.BULLET_IMAGE,
-                    Vec2(self.sprite_.rect.center),
-                    Vec2(HELLEYE_BULLET_DIRECTION[i] * self.sprite_.BULLET_SPEED),
-                    self.sprite_.BULLET_DAMAGE
-                )
-                e_bullets_g.add(b)
-                all_sprites_g.add(b)
+# HELLEYE ENEMY ===============================
 
 class Helleye(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position, player, g_diff):
@@ -675,7 +644,8 @@ class Helleye(pygame.sprite.Sprite):
         self.WORTH = SCORE_WORTH["HELLEYE"]
 
         # State machine
-        self.machine = SpriteStateManager(HelleyeSpawningState(self))
+        self.states_ = ("SPAWNING", "NORMAL")
+        self.state_ = self.states_[0]
 
         # For animation
         self.imgdict_key = "SPAWNING"
@@ -691,9 +661,37 @@ class Helleye(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
         self.BULLET_IMAGE = bullet_img
     
+        # For flashing effect
+        self.flash_delay = 50
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
+
     def update(self, dt):
-        # Update state
-        self.machine.state.update(dt)
+        if self.state_ == "NORMAL":
+            # Set image dictionary's key
+            self.imgdict_key = "NORMAL"
+
+            # Run methods
+            self.animate()
+            self.follow_player()
+            self.shoot()
+            self.flash()
+
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+
+        elif self.state_ == "SPAWNING":
+            # Set image dictionary's key
+            self.imgdict_key = "SPAWNING"
+
+            # Run methods
+            self.animate()
+
+            # Change state
+            if self.current_frame >= self.MAX_FRAMES - 1:
+                self.state_ = self.states_[1]
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -709,104 +707,51 @@ class Helleye(pygame.sprite.Sprite):
             # Change image
             self.image = self.images[self.imgdict_key][self.current_frame]
 
-# SOLTURRET ENEMY =============================
+    def follow_player(self):
+        # Calculate delta-x
+        rel_y = self.rect.y - self.player.rect.y
+        rel_x = self.rect.x - self.player.rect.x
+        radians = math.atan2(rel_y, rel_x)
+        dx = math.cos(radians)
 
-class SolturretSpawningState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.imgdict_key = "SPAWNING"
-
-    def update(self, dt):
-        # Run methods
-        self.animate()
-
-        # Change state....
-        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(SolturretFightState(self.sprite_))
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.sprite_.animate_timer > self.sprite_.animate_delay:
-            self.sprite_.animate_timer = now
-
-            # Increment frames
-            if self.sprite_.current_frame < self.sprite_.MAX_FRAMES - 1:
-                self.sprite_.current_frame += 1
-            else:
-                self.sprite_.current_frame = 0
-            
-            # Change image
-            self.sprite_.image = self.sprite_.images[self.imgdict_key][self.sprite_.current_frame]
-
-class SolturretFightState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_
-        self.imgdict_key = "NORMAL"
-        self.sprite_.image = pygame.Surface((32,32)) # note: adding this solved the weird "mimicking" bug
-        self.sprite_.image.set_colorkey("BLACK")
-
-    def update(self, dt):
-        # Run methods
-        self.animate()
-        self.shoot()
-
-        # Update image
-        self.sprite_.image.fill("BLACK")
-        self.sprite_.image.set_colorkey("BLACK")
-        self.sprite_.image.blit(self.sprite_.base_image, (0,0))
-        self.sprite_.image.blit(
-            self.sprite_.gun_image, 
-            (
-                self.sprite_.image.get_width() / 2 - self.sprite_.gun_image.get_width() / 2, 
-                self.sprite_.image.get_height() / 2 - self.sprite_.gun_image.get_height() / 2
-            )
-        )
+        # Add delta-x to velocity
+        self.velocity.x = -(dx * self.SPEED)
 
     def shoot(self):
         now = pygame.time.get_ticks()
-        if now - self.sprite_.shoot_timer > self.sprite_.SHOOT_DELAY:
-            self.sprite_.shoot_timer = now
+        if now - self.shoot_timer > self.SHOOT_DELAY:
+            self.shoot_timer = now
 
-            # Calculate delta x, and delta y
-            rel_x = self.sprite_.player.rect.x - self.sprite_.rect.x
-            rel_y = self.sprite_.player.rect.y - self.sprite_.rect.y
-            radians = math.atan2(rel_y, rel_x)
-            dx = (math.cos(radians) * self.sprite_.BULLET_SPEED)
-            dy = (math.sin(radians) * self.sprite_.BULLET_SPEED)
+            for i in range(len(HELLEYE_BULLET_DIRECTION)):
+                b = EnemyBullet(
+                    self.BULLET_IMAGE,
+                    Vec2(self.rect.center),
+                    Vec2(HELLEYE_BULLET_DIRECTION[i] * self.BULLET_SPEED),
+                    self.BULLET_DAMAGE
+                )
+                e_bullets_g.add(b)
+                all_sprites_g.add(b)
 
-            # Create bullet
-            b = EnemyBullet(self.sprite_.BULLET_IMAGE, Vec2(self.sprite_.rect.center), Vec2(dx, dy), self.sprite_.BULLET_DAMAGE)
-            all_sprites_g.add(b)
-            e_bullets_g.add(b)
+    def flash(self):
+        if self.is_hurt:
+            # Make the image flash
+            flash_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+            points = pygame.mask.from_surface(self.images[self.imgdict_key][self.current_frame]).outline()
+            pygame.draw.polygon(flash_image,"WHITE",points,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
 
-    def animate(self):
         now = pygame.time.get_ticks()
-        if now - self.sprite_.animate_timer > self.sprite_.animate_delay:
-            self.sprite_.animate_timer = now
+        if now - self.flash_timer > self.flash_delay:
+            self.flash_timer = now
+            self.is_hurt = False
 
-            # Increment frames
-            if self.sprite_.current_frame < self.sprite_.MAX_FRAMES - 1:
-                self.sprite_.current_frame += 1
-            else:
-                self.sprite_.current_frame = 0
+            # For flashing effect
+        self.flash_delay = 50
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
 
-            # Update Base image ======================
-            self.sprite_.base_image = self.sprite_.images[self.imgdict_key]["BASE"][self.sprite_.current_frame]
-
-            # Update Gun image =======================
-            # Calculate angle
-            rel_x = self.sprite_.player.rect.x - self.sprite_.rect.x
-            rel_y = self.sprite_.player.rect.y - self.sprite_.rect.y
-            radians = -(math.atan2(rel_y, rel_x))
-            #angle = (180 / math.pi) * -radians + 90
-            angle = math.degrees(radians) + 90
-
-            # Rotate the gun
-            self.sprite_.gun_image = pygame.transform.rotate(
-                self.sprite_.images[self.imgdict_key]["GUN"][self.sprite_.current_frame], 
-                int(angle)
-            )
-            self.sprite_.gun_image.set_colorkey("BLACK")
+# SOLTURRET ENEMY =============================
 
 class Solturret(pygame.sprite.Sprite): 
     def __init__(self, images, bullet_img, position, player, g_diff):
@@ -824,14 +769,17 @@ class Solturret(pygame.sprite.Sprite):
         # Images
         self.base_image = self.images["NORMAL"]["BASE"][0]
         self.gun_image = self.images["NORMAL"]["GUN"][0]
+        self.assembled_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+        self.assembled_image.set_colorkey("BLACK")
 
         # Settings
         self.player = player
         self.health = SOLTURRET_HEALTH[g_diff]
         self.WORTH = SCORE_WORTH["SOLTURRET"]
 
-        # State machine
-        self.machine = SpriteStateManager(SolturretSpawningState(self))
+        # States
+        self.states_ = ("SPAWNING", "NORMAL")
+        self.state_ = self.states_[0]
 
         # For animation
         self.imgdict_key = "SPAWNING"
@@ -847,9 +795,130 @@ class Solturret(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
         self.BULLET_IMAGE = bullet_img
 
+        # For flashing effect
+        self.flash_delay = 300
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
+
     def update(self, dt):
-        # Update state
-        self.machine.state.update(dt)
+        if self.state_ == "NORMAL":
+            # Change image dictionary's key
+            self.imgdict_key = "NORMAL"
+            
+            # Run methods
+            self.rotate_gun()
+            self.shoot()
+            self.update_image()
+            self.flash()
+
+        elif self.state_ == "SPAWNING":
+            # Change image dictionary's key
+            self.imgdict_key = "SPAWNING"
+            
+            # Run methods
+            self.spawn_animate()
+
+            # Change state
+            if self.current_frame >= self.MAX_FRAMES - 1:
+                self.state_ = self.states_[1]
+
+    def spawn_animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
+
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+            
+            # Change image
+            self.image = self.images[self.imgdict_key][self.current_frame]
+
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.shoot_timer > self.SHOOT_DELAY:
+            self.shoot_timer = now
+
+            # Calculate delta x, and delta y
+            rel_x = self.player.rect.x - self.rect.x
+            rel_y = self.player.rect.y - self.rect.y
+            radians = math.atan2(rel_y, rel_x)
+            dx = (math.cos(radians) * self.BULLET_SPEED)
+            dy = (math.sin(radians) * self.BULLET_SPEED)
+
+            # Create bullet
+            b = EnemyBullet(self.BULLET_IMAGE, Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
+            all_sprites_g.add(b)
+            e_bullets_g.add(b)
+
+    def rotate_gun(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
+
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+
+            # Update Base image ======================
+            self.base_image = self.images[self.imgdict_key]["BASE"][self.current_frame]
+
+            # Update Gun image =======================
+            # Calculate angle
+            rel_x = self.player.rect.x - self.rect.x
+            rel_y = self.player.rect.y - self.rect.y
+            radians = -(math.atan2(rel_y, rel_x))
+            #angle = (180 / math.pi) * -radians + 90
+            angle = math.degrees(radians) + 90
+
+            # Rotate the gun
+            self.gun_image = pygame.transform.rotate(
+                self.images[self.imgdict_key]["GUN"][self.current_frame], 
+                int(angle)
+            )
+            self.gun_image.set_colorkey("BLACK")
+
+    def update_image(self):
+        # Update image - This one is buggy. Can be deleted.
+        # self.image = pygame.Surface((32,32))
+        # self.image.set_colorkey("BLACK")
+        # self.image.blit(self.base_image, (0,0))
+        # self.image.blit(
+        #     self.gun_image, 
+        #     (
+        #         self.image.get_width() / 2 - self.gun_image.get_width() / 2, 
+        #         self.image.get_height() / 2 - self.gun_image.get_height() / 2
+        #     )
+        # )
+        self.assembled_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+        self.assembled_image.set_colorkey("BLACK")
+        self.assembled_image.blit(self.base_image, (0,0))
+        self.assembled_image.blit(
+            self.gun_image, 
+            (
+                self.image.get_width() / 2 - self.gun_image.get_width() / 2, 
+                self.image.get_height() / 2 - self.gun_image.get_height() / 2
+            )
+        )
+        self.image = self.assembled_image
+
+    def flash(self):
+        if self.is_hurt:
+            # Make the image flash
+            flash_image = pygame.Surface((32,32))
+            points = pygame.mask.from_surface(self.assembled_image).outline()
+            pygame.draw.polygon(flash_image,"WHITE",points,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
+
+        now = pygame.time.get_ticks()
+        if now - self.flash_timer > self.flash_delay:
+            self.flash_timer = now
+            self.is_hurt = False
 
 # POWERUP ======================================================================
 
@@ -902,100 +971,6 @@ class Powerup(pygame.sprite.Sprite):
 
 # SENTRY POWERUP ==============================
 
-class SentrySpawningState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_ 
-
-    def update(self, dt):
-        # Run methods
-        self.animate()
-
-        # Change state....
-        if self.sprite_.current_frame == self.sprite_.MAX_FRAMES - 1:
-            self.manager.transition(SentryFightingState(self.sprite_))
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.sprite_.animate_timer > self.sprite_.animate_delay:
-            self.sprite_.animate_timer = now
-
-            # Increment frames
-            if self.sprite_.current_frame < self.sprite_.MAX_FRAMES - 1:
-                self.sprite_.current_frame += 1
-            else:
-                self.sprite_.current_frame = 0
-            
-            # Change image
-            self.sprite_.image = self.sprite_.images["SPAWNING"][self.sprite_.current_frame]
-    
-class SentryFightingState(SpriteState):
-    def __init__(self, sprite_):
-        self.sprite_ = sprite_ 
-        self.sprite_.image = pygame.Surface((32,32)) # This is to stop the "mimicking" bug
-
-    def update(self, dt):
-        # Run methods
-        self.rotate_gun()
-        self.find_enemy()
-        self.shoot()
-
-        # Update surface
-        self.sprite_.image.fill("BLACK")
-        self.sprite_.image.set_colorkey("BLACK")
-        self.sprite_.image.blit(self.sprite_.base_image, (0,0))
-        self.sprite_.image.blit(
-            self.sprite_.gun_image, 
-            (
-                self.sprite_.image.get_width() / 2 - self.sprite_.gun_image.get_width() / 2, 
-                self.sprite_.image.get_height() / 2 - self.sprite_.gun_image.get_height() / 2
-            )
-        )
-
-    def shoot(self):
-        if self.sprite_.target != None:
-            now = pygame.time.get_ticks()
-            if now - self.sprite_.shoot_timer > self.sprite_.shoot_delay:
-                self.sprite_.shoot_timer = now
-                # Calculate radians, delta x, and delta y
-                rel_y = self.sprite_.rect.y - self.sprite_.target.rect.y
-                rel_x = self.sprite_.rect.x - self.sprite_.target.rect.x
-                radians = math.atan2(rel_y, rel_x)
-                dx = -(math.cos(radians) * self.sprite_.BULLET_SPEED)
-                dy = -(math.sin(radians) * self.sprite_.BULLET_SPEED)
-
-                # Create bullet
-                b = SentryBullet(self.sprite_.BULLET_IMG, Vec2(self.sprite_.rect.center), Vec2(dx, dy), self.sprite_.BULLET_DAMAGE)
-                p_bullets_g.add(b)
-                all_sprites_g.add(b)
-
-    def rotate_gun(self):
-        if self.sprite_.target != None:
-            now = pygame.time.get_ticks()
-            if now - self.sprite_.animate_timer > self.sprite_.animate_delay:
-                self.sprite_.animate_timer = now
-
-                # Calculate angle
-                rel_x = self.sprite_.target.rect.x - self.sprite_.rect.x
-                rel_y = self.sprite_.target.rect.y - self.sprite_.rect.y
-                radians = -(math.atan2(rel_y, rel_x))
-                angle = (180 / math.pi) * radians - 90
-
-                # Rotate the gun
-                self.sprite_.gun_image = pygame.transform.rotate(self.sprite_.images["GUN"], int(angle))
-                self.sprite_.gun_image.set_colorkey("BLACK")
-
-    def find_enemy(self):
-        if self.sprite_.target == None:
-            hostiles_list = list(hostiles_g)
-            
-            # Select random enemy
-            if len(hostiles_list) > 0:
-                self.sprite_.target = random.choice(hostiles_list)
-        else:
-            # De-select enemy if enemy is killed
-            if not self.sprite_.target.groups():
-                self.sprite_.target = None
-
 class Sentry(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position):
         # Sprite defines
@@ -1012,12 +987,15 @@ class Sentry(pygame.sprite.Sprite):
         # Settings
         self.health = SENTRY_HEALTH
         
-        # State machine
-        self.machine = SpriteStateManager(SentrySpawningState(self))
+        # States
+        self.states_ = ("SPAWNING", "NORMAL")
+        self.state_ = self.states_[0]
 
         # Images
         self.base_image = self.images["BASE"]
         self.gun_image = self.images["GUN"]
+        self.assembled_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+        self.assembled_image.set_colorkey("BLACK")
 
         # For animation
         self.animate_timer = pygame.time.get_ticks()
@@ -1034,9 +1012,120 @@ class Sentry(pygame.sprite.Sprite):
         self.shoot_timer = pygame.time.get_ticks()
         self.BULLET_IMG = bullet_img
 
+        # For flashing effect
+        self.flash_delay = 300
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
+
     def update(self, dt):
-        self.machine.state.update(dt)
+        if self.state_ == "NORMAL":
+            # Change image dictionary's key
+            self.imgdict_key = "NORMAL"
+
+            # Run methods
+            self.rotate_gun()
+            self.find_enemy()
+            self.shoot()
+            self.update_image()
+            self.flash()
             
+        elif self.state_ == "SPAWNING":
+            # Change image dictionary's key
+            self.imgdict_key = "SPAWNING"
+            
+            # Run methods
+            self.animate()
+
+            # Change state check
+            if self.current_frame >= self.MAX_FRAMES - 1:
+                self.state_ = self.states_[1]
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
+
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
+            
+            # Change image
+            self.image = self.images["SPAWNING"][self.current_frame]
+
+    def shoot(self):
+        if self.target != None:
+            now = pygame.time.get_ticks()
+            if now - self.shoot_timer > self.shoot_delay:
+                self.shoot_timer = now
+                # Calculate radians, delta x, and delta y
+                rel_y = self.rect.y - self.target.rect.y
+                rel_x = self.rect.x - self.target.rect.x
+                radians = math.atan2(rel_y, rel_x)
+                dx = -(math.cos(radians) * self.BULLET_SPEED)
+                dy = -(math.sin(radians) * self.BULLET_SPEED)
+
+                # Create bullet
+                b = SentryBullet(self.BULLET_IMG, Vec2(self.rect.center), Vec2(dx, dy), self.BULLET_DAMAGE)
+                p_bullets_g.add(b)
+                all_sprites_g.add(b)
+
+    def rotate_gun(self):
+        if self.target != None:
+            now = pygame.time.get_ticks()
+            if now - self.animate_timer > self.animate_delay:
+                self.animate_timer = now
+
+                # Calculate angle
+                rel_x = self.target.rect.x - self.rect.x
+                rel_y = self.target.rect.y - self.rect.y
+                radians = -(math.atan2(rel_y, rel_x))
+                angle = (180 / math.pi) * radians - 90
+
+                # Rotate the gun
+                self.gun_image = pygame.transform.rotate(self.images["GUN"], int(angle))
+                self.gun_image.set_colorkey("BLACK")
+
+    def find_enemy(self):
+        if self.target == None:
+            hostiles_list = list(hostiles_g)
+            
+            # Select random enemy
+            if len(hostiles_list) > 0:
+                self.target = random.choice(hostiles_list)
+        else:
+            # De-select enemy if enemy is killed
+            if not self.target.groups():
+                self.target = None
+
+    def update_image(self):
+        self.assembled_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+        self.assembled_image.set_colorkey("BLACK")
+        self.assembled_image.blit(self.base_image, (0,0))
+        self.assembled_image.blit(
+            self.gun_image, 
+            (
+                self.image.get_width() / 2 - self.gun_image.get_width() / 2, 
+                self.image.get_height() / 2 - self.gun_image.get_height() / 2
+            )
+        )
+        self.image = self.assembled_image
+
+    def flash(self):
+        if self.is_hurt:
+            # Make the image flash
+            flash_image = pygame.Surface((32,32))
+            points = pygame.mask.from_surface(self.assembled_image).outline()
+            pygame.draw.polygon(flash_image,"WHITE",points,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
+
+        now = pygame.time.get_ticks()
+        if now - self.flash_timer > self.flash_delay:
+            self.flash_timer = now
+            self.is_hurt = False
+
 class SentryBullet(pygame.sprite.Sprite):
     def __init__(self, image, position, velocity, damage):
         super().__init__()

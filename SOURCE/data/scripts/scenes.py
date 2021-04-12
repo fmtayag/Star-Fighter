@@ -502,6 +502,7 @@ class GameScene(Scene):
                 bullet_pos = Vec2(bullet_x, bullet_y)
                 self.spawner.spawn_explosion(bullet_pos, "SMALL")
                 
+                # Set boolean to True for flash effect
                 hit.is_hurt = True
 
                 # Kill bullet
@@ -607,6 +608,9 @@ class GameScene(Scene):
             for hit in hits:
                 # Deduct sentry health
                 sentry.health -= hit.DAMAGE
+
+                # Set boolean to True for flash effect
+                sentry.is_hurt = True
 
                 # Spawn small explosion
                 bullet_x = hit.rect.centerx

@@ -5,6 +5,6 @@
 + /// add screenshake
 + add animations to sprites
     + add player animation
-+ idea: add a "hurt" state for the enemies? they flash white? 
++ /// idea: add a "hurt" state for the enemies? they flash white? 
     + /// proof-of-concept done with the hellfighter enemy...on to the next enemies
-+ remove the states, it hurts readability...
++ /// remove the states, it hurts readability...
