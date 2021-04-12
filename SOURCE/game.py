@@ -26,6 +26,9 @@ pygame.init()
 # Game loop ====================================================================
 
 def main():
+    # Play music
+    pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
+    pygame.mixer.music.play(-1)
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"

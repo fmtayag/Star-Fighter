@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, math
 from data.scripts.spawner import Spawner
 from data.scripts.sprites import Player
 from data.scripts.muda import (
@@ -18,6 +18,7 @@ from data.scripts.muda import (
     scale_rect
 )
 from data.scripts.defines import *
+from itertools import repeat
 
 # TITLE SCENE ==================================================================
 
@@ -441,6 +442,7 @@ class GameScene(Scene):
         self.g_diff = DIFFICULTIES[difficulty]
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
+        self.win_offset = repeat((0,0)) 
 
         # PLAYER AND BULLET IMAGES 
         PLAYER_IMGS = { # TODO - change the orientation images
@@ -521,6 +523,9 @@ class GameScene(Scene):
                     bullet_pos = Vec2(bullet_x, bullet_y)
                     self.spawner.spawn_explosion(bullet_pos, "BIG")
 
+                    # Generate screen shake
+                    self.win_offset = shake(10,5)
+
         # PLAYER - ENEMY BULLET COLLISION
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
         for hit in hits:
@@ -531,6 +536,9 @@ class GameScene(Scene):
             bullet_y = hit.rect.centery
             bullet_pos = Vec2(bullet_x, bullet_y)
             self.spawner.spawn_explosion(bullet_pos, "SMALL")
+
+            # Generate screen shake
+            self.win_offset = shake(10,5)
 
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
@@ -548,6 +556,9 @@ class GameScene(Scene):
             bullet_y = hit.rect.centery
             bullet_pos = Vec2(bullet_x, bullet_y)
             self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+            # Generate screen shake
+            self.win_offset = shake(20,5)
 
             hit.kill()
 
@@ -633,6 +644,7 @@ class GameScene(Scene):
         draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
 
         all_sprites_g.draw(window)
+        window.blit(window, next(self.win_offset))
 
 # GAME OVER SCENE ================================================================
 

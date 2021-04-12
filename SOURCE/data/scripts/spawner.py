@@ -342,7 +342,7 @@ class Spawner:
         elif pow_type == "HEALTH" and self.player.health >= HEALTH_PICKUP_HP_THRESHOLD:
             pow_type = SUBSTITUTE_POWERUP
         elif pow_type == "GUN" and self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
-            pow_type == SUBSTITUTE_POWERUP
+            pow_type = SUBSTITUTE_POWERUP
 
         return pow_type
 
@@ -364,4 +364,3 @@ class Spawner:
         # Create explosion object
         exp = Explosion(pick, position)
         all_sprites_g.add(exp)
-

@@ -41,7 +41,7 @@ e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
 
 # ENTITIES' COLLISION RADII ====================================================
-PLAYER_RADIUS = 8
+PLAYER_RADIUS = 14
 PLAYER_BULLET_RADIUS = 8
 SMALL_BULLET_RADIUS = 8
 FATTY_BULLET_RADIUS = 8

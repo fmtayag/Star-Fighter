@@ -161,4 +161,3 @@ def shake(intensity, n):
         shake *= -1
     while True:
         yield (0, 0)
-
