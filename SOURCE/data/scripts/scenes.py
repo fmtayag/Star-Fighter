@@ -501,6 +501,8 @@ class GameScene(Scene):
                 bullet_y = bullet.rect.centery
                 bullet_pos = Vec2(bullet_x, bullet_y)
                 self.spawner.spawn_explosion(bullet_pos, "SMALL")
+                
+                hit.is_hurt = True
 
                 # Kill bullet
                 bullet.kill()

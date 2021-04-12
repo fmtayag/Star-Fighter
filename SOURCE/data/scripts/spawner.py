@@ -227,7 +227,7 @@ class Spawner:
             self.current_stage = GAME_STAGES[0]
 
         # Spawn enemies 
-        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage]:
+        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage] and 0:
             now = pygame.time.get_ticks()
             if now - self.spawn_timer > SPAWN_DELAY[self.current_stage]:
                 self.spawn_timer = now
@@ -277,7 +277,7 @@ class Spawner:
             Vec2(random.randrange(0, WIN_RES["w"]-32), random.randrange(32,WIN_RES["h"]/3)),
             self.player,
             self.g_diff
-        ),
+        )
         hostiles_g.add(e)
         all_sprites_g.add(e)
     

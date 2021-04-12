@@ -6,3 +6,4 @@
 + add animations to sprites
     + add player animation
 + idea: add a "hurt" state for the enemies? they flash white? 
++ remove the states, it hurts readability...
