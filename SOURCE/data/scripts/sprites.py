@@ -267,8 +267,10 @@ class Hellfighter(pygame.sprite.Sprite):
 
     def update(self, dt):
         if self.state_ == "FIGHTING":
-            # Run methods
+            # Change images dictionary key
             self.imgdict_key = "NORMAL"
+            
+            # Run methods
             self.animate()
             self.follow_player()
             self.shoot()
@@ -280,9 +282,12 @@ class Hellfighter(pygame.sprite.Sprite):
             self.rect.y = self.position.y
 
         elif self.state_ == "SPAWNING":
-            # Run methods
+            # Change images dictionary key
             self.imgdict_key = "SPAWNING"
+
+            # Run methods
             self.animate()
+            self.flash()
 
             # Change state...
             if self.current_frame == self.MAX_FRAMES - 1:
@@ -341,11 +346,12 @@ class Hellfighter(pygame.sprite.Sprite):
 
     def flash(self):
         if self.is_hurt:
-            self.flash_image = pygame.Surface((32,32))
-            olist = pygame.mask.from_surface(self.images["NORMAL"][0]).outline()
-            pygame.draw.polygon(self.flash_image,"WHITE",olist,0)
-            self.flash_image.set_colorkey("BLACK")
-            self.image = self.flash_image
+            # Make the image flash
+            flash_image = pygame.Surface((32,32))
+            olist = pygame.mask.from_surface(self.images[self.imgdict_key][self.current_frame]).outline()
+            pygame.draw.polygon(flash_image,"WHITE",olist,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
 
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:
