@@ -430,9 +430,9 @@ class DifficultySelectionScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "SELECT DIFFICULTY", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, "1 - Easy", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 - 64, "WHITE", "centered")
-        draw_text(window, "2 - Medium", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
-        draw_text(window, "3 - Hard", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 + 64, "WHITE", "centered")
+        draw_text(window, "1 - Lenient", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 - 64, "WHITE", "centered")
+        draw_text(window, "2 - Fair", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
+        draw_text(window, "3 - Cruel", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 + 64, "WHITE", "centered")
 
 # GAME SCENE ===================================================================
 
