@@ -444,11 +444,91 @@ class GameScene(Scene):
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
 
-        # PLAYER AND BULLET IMAGES 
-        PLAYER_IMGS = { # TODO - change the orientation images
-            "L": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
-            "N": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha(),
-            "R": load_img("player_level3_n1.png", IMG_DIR, SCALE).convert_alpha()
+        # PLAYER AND BULLET IMAGES - If you are reading this...uhh...good luck lol
+        PLAYER_SPRITESHEET = load_img("player_sheet.png", IMG_DIR, SCALE)
+        PLAYER_IMGS = {
+            "SPAWNING": [
+                image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,144,16,16]), True),
+                image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,144,16,16]), True),
+                image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,144,16,16]), True),
+                image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,144,16,16]), True)
+            ],
+            "NORMAL": {
+                "LV1": {
+                    "FORWARD": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,0,16,16]), True)
+                    ],
+                    "LEFT": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,16,16,16]), True)
+                    ],
+                    "RIGHT": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,32,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,32,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,32,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,32,16,16]), True)
+                    ]
+                },
+                "LV2": {
+                    "FORWARD": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,48,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,48,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,48,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,48,16,16]), True)
+                    ],
+                    "LEFT": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,64,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,64,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,64,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,64,16,16]), True)
+                    ],
+                    "RIGHT": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,80,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,80,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,80,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,80,16,16]), True)
+                    ]
+                },
+                "LV3": {
+                    "FORWARD": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,96,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,96,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,96,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,96,16,16]), True)
+                    ],
+                    "LEFT": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,112,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,112,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,112,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,112,16,16]), True)
+                    ],
+                    "RIGHT": [
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,128,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,128,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,128,16,16]), True),
+                        image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,128,16,16]), True)
+                    ]
+                }
+            },
+            "LEVELUP": {
+                "1-2": [
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,160,16,16]), True),
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,160,16,16]), True),
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,160,16,16]), True),
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,160,16,16]), True)
+                ],
+                "2-3": [
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [0,176,16,16]), True),
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [16,176,16,16]), True),
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [32,176,16,16]), True),
+                    image_at(PLAYER_SPRITESHEET, scale_rect(SCALE, [48,176,16,16]), True)
+                ]
+            }
         }
         BULLET_SPRITESHEET = load_img("bullet_sheet.png", IMG_DIR, SCALE)
         BULLET_IMG = image_at(BULLET_SPRITESHEET, scale_rect(SCALE, [16,0,8,8]), True)
@@ -481,6 +561,8 @@ class GameScene(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(0))
+                if event.key == pygame.K_l:
+                    self.player.gun_level += 1
 
         self.spawner.handle_events(events)
     
@@ -532,6 +614,7 @@ class GameScene(Scene):
         # PLAYER - ENEMY BULLET COLLISION
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
         for hit in hits:
+            # Damage player
             self.player.health -= hit.DAMAGE
 
             # Spawn small explosion
@@ -542,6 +625,9 @@ class GameScene(Scene):
 
             # Generate screen shake
             self.win_offset = shake(10,5)
+
+            # Hurt player
+            self.player.is_hurt = True
 
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)

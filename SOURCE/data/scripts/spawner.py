@@ -227,7 +227,7 @@ class Spawner:
             self.current_stage = GAME_STAGES[0]
 
         # Spawn enemies 
-        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage] and 0:
+        if len(hostiles_g) < MAX_ENEMY_COUNT[self.current_stage]:
             now = pygame.time.get_ticks()
             if now - self.spawn_timer > SPAWN_DELAY[self.current_stage]:
                 self.spawn_timer = now

@@ -87,8 +87,9 @@ def main():
 
         pygame.display.flip()
 
-# Run main
-main()
+if __name__ == "__main__":
+    # Run main
+    main()
 
-# Quit pygame
-pygame.quit()
+    # Quit pygame
+    pygame.quit()

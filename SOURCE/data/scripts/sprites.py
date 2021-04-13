@@ -14,50 +14,162 @@ Vec2 = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, images, bullet_image):
+        # Sprite defines
         super().__init__()
         self.images = images
-        self.image = self.images["N"]
+        self.image = pygame.Surface((32,32))
+        self.image.set_colorkey("BLACK")
         self.rect = self.image.get_rect()
         self.rect.x = WIN_RES["w"]*0.3
         self.rect.y = WIN_RES["h"]*0.9
         self.position = Vec2(self.rect.x,self.rect.y)
         self.velocity = Vec2(0,0)
+        self.radius = PLAYER_RADIUS
+
+        # Settings
         self.speed = PLAYER_SPEED
         self.gun_level = PLAYER_DEFAULT_GUN_LEVEL
+        self.prev_gunlv = PLAYER_DEFAULT_GUN_LEVEL
         self.health = PLAYER_HEALTH
-        self.radius = PLAYER_RADIUS
         
         # For shooting
         self.BULLET_SPEED = PLAYER_BULLET_SPEED
         self.bullet_image = bullet_image
         self.shoot_delay = PLAYER_SHOOT_DELAY
         self.shoot_timer = pygame.time.get_ticks()
-
         self.bullet_increase_delay = PLAYER_INCREASE_BULLET_DELAY
         self.bullet_increase_timer = 0
         self.bullet_increase_tick = PLAYER_INCREASE_BULLET_TICK
-
         self.weak_bullet_delay = PLAYER_WEAK_BULLET_DELAY
         self.weak_bullet_timer = pygame.time.get_ticks()
         self.weak_bullet_tick = PLAYER_WEAK_BULLET_TICK
-
         self.BULLET_DAMAGE = PLAYER_BULLET_DAMAGE
 
+        # States
+        self.states_ = ("SPAWNING", "NORMAL", "LEVELUP")
+        self.state_ = self.states_[0]
+
+        # For animation
+        self.imgdict_key = "SPAWNING"
+        self.lvto = str() # x LEVEL TO y
+        self.animate_delay = 100
+        self.animate_timer = pygame.time.get_ticks()
+        self.current_frame = 0
+        self.MAX_FRAMES = 4
+        self.orientations_ = ("FORWARD", "LEFT", "RIGHT")
+        self.orientation_ = self.orientations_[0]
+
+        # For flashing effect
+        self.flash_delay = 300
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_hurt = False
+        self.prev_hurt = False
+
     def update(self, dt):
-        if DEBUG_MODE:
-            pygame.draw.circle(self.image, "WHITE", (self.image.get_width()/2, self.image.get_height()/2), self.radius, 2)
+        if self.state_ == "NORMAL":
+            # Reset velocity and image
+            self.velocity *= 0
+            self.orientation_ = "FORWARD"
+            if self.gun_level >= PLAYER_MAX_GUN_LEVEL:
+                self.gun_level = PLAYER_MAX_GUN_LEVEL
+            
+            # Run methods
+            keyspressed = pygame.key.get_pressed()
+            self.move(keyspressed)
+            self.shoot(keyspressed)
+            self.animate()
 
-        self.image = self.images["N"]
-        self.velocity *= 0
+            # Update image
+            self.image = self.images[self.imgdict_key][f"LV{self.gun_level}"][self.orientation_][self.current_frame]
+            self.flash()
 
-        keyspressed = pygame.key.get_pressed()
-        self.move(keyspressed)
-        self.shoot(keyspressed)
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+            self.check_bounds()
 
-        self.position += self.velocity * dt 
-        self.rect.x = self.position.x
-        self.rect.y = self.position.y
-        self.check_bounds()
+            # Go to LEVELUP state
+            if self.prev_gunlv != self.gun_level:
+                self.lvto = f"{self.prev_gunlv}-{self.gun_level}"
+                self.prev_gunlv = self.gun_level 
+                self.current_frame = 0
+                self.imgdict_key = "LEVELUP"
+
+                self.state_ = self.states_[2]
+        
+        elif self.state_ == "LEVELUP":
+            # Run methods
+            self.animate()
+
+            # Run methods
+            keyspressed = pygame.key.get_pressed()
+            self.move(keyspressed)
+            self.shoot(keyspressed)
+            self.animate()
+
+            # Update image
+            self.image = self.images[self.imgdict_key][self.lvto][self.current_frame]
+
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+            self.check_bounds()
+
+            # Go back to NORMAL state
+            if self.current_frame == self.MAX_FRAMES - 1:
+                self.current_frame = 0
+                self.imgdict_key = "NORMAL"
+
+                self.state_ = self.states_[1]
+
+        elif self.state_ == "SPAWNING":
+            # Change images dictionary key
+            self.imgdict_key = "SPAWNING"
+
+            # Run methods
+            self.animate()
+
+            # Update image
+            self.image = self.images[self.imgdict_key][self.current_frame]
+
+            # Change state...
+            if self.current_frame == self.MAX_FRAMES - 1:
+                self.current_frame = 0
+                self.imgdict_key = "NORMAL"
+
+                self.state_ = self.states_[1]
+
+    def flash(self):
+        if self.is_hurt:
+            # Make the image flash
+            flash_image = pygame.Surface((self.image.get_width(), self.image.get_height()))
+            points = pygame.mask.from_surface(self.images[self.imgdict_key][f"LV{self.gun_level}"][self.orientation_][self.current_frame]).outline()
+            pygame.draw.polygon(flash_image,"WHITE",points,0)
+            flash_image.set_colorkey("BLACK")
+            self.image = flash_image
+
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
+
+        now = pygame.time.get_ticks()
+        if now - self.flash_timer > self.flash_delay:
+            self.flash_timer = now
+            self.is_hurt = False
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.animate_timer > self.animate_delay:
+            self.animate_timer = now
+
+            # Increment frames
+            if self.current_frame < self.MAX_FRAMES - 1:
+                self.current_frame += 1
+            else:
+                self.current_frame = 0
 
     def move(self, keyspressed):
         if keyspressed[pygame.K_UP]:
@@ -65,10 +177,10 @@ class Player(pygame.sprite.Sprite):
         if keyspressed[pygame.K_DOWN]:
             self.velocity.y = self.speed
         if keyspressed[pygame.K_LEFT]:
-            self.image = self.images["L"]
+            self.orientation_ = self.orientations_[1]
             self.velocity.x = -self.speed
         if keyspressed[pygame.K_RIGHT]:
-            self.image = self.images["R"]
+            self.orientation_ = self.orientations_[2]
             self.velocity.x = self.speed
 
     def check_bounds(self):
@@ -264,6 +376,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.flash_delay = 50
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
+        self.prev_hurt = False
 
     def update(self, dt):
         if self.state_ == "FIGHTING":
@@ -352,6 +465,11 @@ class Hellfighter(pygame.sprite.Sprite):
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
 
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
+
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:
             self.flash_timer = now
@@ -404,6 +522,7 @@ class Fatty(pygame.sprite.Sprite):
         self.flash_delay = 50
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
+        self.prev_hurt = False
 
     def update(self, dt):
         if self.state_ == "NORMAL":
@@ -486,6 +605,11 @@ class Fatty(pygame.sprite.Sprite):
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
 
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
+
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:
             self.flash_timer = now
@@ -530,9 +654,10 @@ class Raider(pygame.sprite.Sprite):
         self.MAX_FRAMES = len(self.images[self.imgdict_key])
 
         # For flashing effect
-        self.flash_delay = 50
+        self.flash_delay = 100
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
+        self.prev_hurt = False
 
     def update(self, dt):
         if self.state_ == "NORMAL":
@@ -617,6 +742,11 @@ class Raider(pygame.sprite.Sprite):
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
 
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
+
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:
             self.flash_timer = now
@@ -665,6 +795,7 @@ class Helleye(pygame.sprite.Sprite):
         self.flash_delay = 50
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
+        self.prev_hurt = False
 
     def update(self, dt):
         if self.state_ == "NORMAL":
@@ -741,15 +872,15 @@ class Helleye(pygame.sprite.Sprite):
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
 
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
+
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:
             self.flash_timer = now
             self.is_hurt = False
-
-            # For flashing effect
-        self.flash_delay = 50
-        self.flash_timer = pygame.time.get_ticks()
-        self.is_hurt = False
 
 # SOLTURRET ENEMY =============================
 
@@ -799,6 +930,7 @@ class Solturret(pygame.sprite.Sprite):
         self.flash_delay = 300
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
+        self.prev_hurt = False
 
     def update(self, dt):
         if self.state_ == "NORMAL":
@@ -915,6 +1047,11 @@ class Solturret(pygame.sprite.Sprite):
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
 
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
+
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:
             self.flash_timer = now
@@ -1016,6 +1153,7 @@ class Sentry(pygame.sprite.Sprite):
         self.flash_delay = 300
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
+        self.prev_hurt = False
 
     def update(self, dt):
         if self.state_ == "NORMAL":
@@ -1120,6 +1258,11 @@ class Sentry(pygame.sprite.Sprite):
             pygame.draw.polygon(flash_image,"WHITE",points,0)
             flash_image.set_colorkey("BLACK")
             self.image = flash_image
+
+        # This is to correct the timing of the flash animation
+        if self.prev_hurt != self.is_hurt:
+            self.prev_hurt = self.is_hurt
+            self.flash_timer = pygame.time.get_ticks()
 
         now = pygame.time.get_ticks()
         if now - self.flash_timer > self.flash_delay:

@@ -1,0 +1,6 @@
+4-13-2021
++ gui work, exciting stuff!! i should probably do this now lmao
++ add ripple
++ add particles
++ /// add animations to sprites
+    + /// add player animation
