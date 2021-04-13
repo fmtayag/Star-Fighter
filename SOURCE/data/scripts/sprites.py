@@ -20,8 +20,8 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface((32,32))
         self.image.set_colorkey("BLACK")
         self.rect = self.image.get_rect()
-        self.rect.x = WIN_RES["w"]*0.3
-        self.rect.y = WIN_RES["h"]*0.9
+        self.rect.centerx = WIN_RES["w"]*0.5
+        self.rect.centery = WIN_RES["h"]*0.7
         self.position = Vec2(self.rect.x,self.rect.y)
         self.velocity = Vec2(0,0)
         self.radius = PLAYER_RADIUS
@@ -963,7 +963,7 @@ class Solturret(pygame.sprite.Sprite):
         self.BULLET_IMAGE = bullet_img
 
         # For flashing effect
-        self.flash_delay = 300
+        self.flash_delay = 100
         self.flash_timer = pygame.time.get_ticks()
         self.is_hurt = False
         self.prev_hurt = False
