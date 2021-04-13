@@ -145,8 +145,8 @@ POWERUP_TYPES_WEIGHTS_MID = (
 POWERUP_TYPES_WEIGHTS_LATE = (
     30, # GUN 
     30, # HEALTH
-    20, # SCORE
-    20 # SENTRY
+    10, # SCORE
+    30 # SENTRY
 ) 
 POWERUP_TYPES_WEIGHTS = {
     "EARLY": POWERUP_TYPES_WEIGHTS_EARLY,
@@ -177,9 +177,9 @@ HELLFIGHTER_SPEED = {
     "HARD": 300
 }
 HELLFIGHTER_SHOOT_DELAY = {
-    "EASY": 600,
-    "MEDIUM": 500,
-    "HARD": 400
+    "EASY": 700,
+    "MEDIUM": 600,
+    "HARD": 500
 }
 HELLFIGHTER_RANGE = {
     "EASY": 0.1,
@@ -204,9 +204,9 @@ HELLFIGHTER_HEALTH = {
 
 # FATTY DEFINES ================================================================
 FATTY_SPEED = {
-    "EASY": 100,
-    "MEDIUM": 150,
-    "HARD": 200
+    "EASY": 50,
+    "MEDIUM": 75,
+    "HARD": 100
 }
 FATTY_SHOOT_DELAY = {
     "EASY": 2000,
@@ -220,8 +220,8 @@ FATTY_LARGE_BULLET_SPEED = {
 }
 FATTY_SMALL_BULLET_SPEED = {
     "EASY": 100,
-    "MEDIUM": 200,
-    "HARD": 250
+    "MEDIUM": 150,
+    "HARD": 200
 }
 FATTY_BULLET_DAMAGE = {
     "EASY": 0.75,

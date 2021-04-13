@@ -479,6 +479,12 @@ class Hellfighter(pygame.sprite.Sprite):
 
 class Fatty(pygame.sprite.Sprite):
     def __init__(self, images, bullet_imgs, position, player, g_diff):
+        # Settings
+        self.player = player
+        self.health = FATTY_HEALTH[g_diff]
+        self.SPEED = FATTY_SPEED[g_diff]
+        self.WORTH = SCORE_WORTH["FATTY"]
+
         # Sprite defines
         super().__init__()
         self.images = images
@@ -487,14 +493,8 @@ class Fatty(pygame.sprite.Sprite):
         self.rect.x = position.x
         self.rect.y = position.y
         self.position = position
-        self.velocity = Vec2(0,0)
+        self.velocity = Vec2(random.choice([-self.SPEED, self.SPEED]),0)
         self.radius = ENEMY_RADIUS
-
-        # Settings
-        self.player = player
-        self.health = FATTY_HEALTH[g_diff]
-        self.SPEED = FATTY_SPEED[g_diff]
-        self.WORTH = SCORE_WORTH["FATTY"]
 
         # States
         self.states_ = ("SPAWNING", "NORMAL")
@@ -531,7 +531,7 @@ class Fatty(pygame.sprite.Sprite):
 
             # Run methods
             self.animate()
-            self.follow_player()
+            self.move()
             self.bob()
             self.shoot()
             self.flash() 
@@ -566,20 +566,16 @@ class Fatty(pygame.sprite.Sprite):
             # Change image
             self.image = self.images[self.imgdict_key][self.current_frame]
 
-    def follow_player(self):
-        # Calculate delta-x
-        rel_y = self.rect.y - self.player.rect.y
-        rel_x = self.rect.x - self.player.rect.x
-        radians = math.atan2(rel_y, rel_x)
-        dx = math.cos(radians)
-
-        # Add delta-x to velocity
-        self.velocity.x = -(dx * self.SPEED)
+    def move(self):
+        if self.rect.left < 0:
+            self.velocity.x = self.SPEED
+        elif self.rect.right > WIN_RES["w"]:
+            self.velocity.x = -self.SPEED
 
     def bob(self):
         self.velocity.y = math.sin(self.bob_y) * 50
         self.bob_y += 0.1
-
+        
     def shoot(self):
         now = pygame.time.get_ticks()
         if now - self.shoot_timer > self.SHOOT_DELAY:
