@@ -279,6 +279,7 @@ class Spawner:
             self.g_diff
         )
         hostiles_g.add(e)
+        hellfighters_g.add(e)
         all_sprites_g.add(e)
     
     def spawn_fatty(self):

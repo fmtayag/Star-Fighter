@@ -548,6 +548,7 @@ class GameScene(Scene):
         powerups_g.empty()
         e_bullets_g.empty()
         sentries_g.empty()
+        hellfighters_g.empty()
 
         # Initialize the player
         self.player = Player(PLAYER_IMGS, BULLET_IMG)
@@ -561,7 +562,7 @@ class GameScene(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(0))
-                if event.key == pygame.K_l:
+                if event.key == pygame.K_l and DEBUG_MODE:
                     self.player.gun_level += 1
 
         self.spawner.handle_events(events)
@@ -729,11 +730,12 @@ class GameScene(Scene):
     def draw(self, window):
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
-
-        draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
-        draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
-        draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
-        draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
+        draw_text(window, f"{int(self.score)}", FONT_SIZE*2, GAME_FONT, window.get_width()/2, 32, "WHITE", "centered")
+        if DEBUG_MODE:
+            draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
+            draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
+            draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
+            draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
 
         all_sprites_g.draw(window)
         window.blit(window, next(self.win_offset))

@@ -336,6 +336,12 @@ class FattyBullet(pygame.sprite.Sprite):
 
 class Hellfighter(pygame.sprite.Sprite):
     def __init__(self, images, bullet_img, position, player, g_diff):
+        # Settings
+        self.player = player
+        self.health = HELLFIGHTER_HEALTH[g_diff]
+        self.SPEED = HELLFIGHTER_SPEED[g_diff]
+        self.WORTH = SCORE_WORTH["HELLFIGHTER"]
+
         # Sprite defines
         super().__init__()
         self.images = images.copy()
@@ -344,14 +350,8 @@ class Hellfighter(pygame.sprite.Sprite):
         self.rect.x = position.x 
         self.rect.y = position.y 
         self.position = position
-        self.velocity = Vec2(0,0)
+        self.velocity = Vec2(random.choice([-self.SPEED/2, self.SPEED/2]),0)
         self.radius = ENEMY_RADIUS
-
-        # Settings
-        self.player = player
-        self.health = HELLFIGHTER_HEALTH[g_diff]
-        self.SPEED = HELLFIGHTER_SPEED[g_diff]
-        self.WORTH = SCORE_WORTH["HELLFIGHTER"]
 
         # State machine
         self.states_ = ("SPAWNING", "FIGHTING")
@@ -378,14 +378,21 @@ class Hellfighter(pygame.sprite.Sprite):
         self.is_hurt = False
         self.prev_hurt = False
 
+        # For behavior changing
+        self.behaviors = ("WAITING", "FOLLOWING")
+        self.behavior = self.behaviors[0]
+        self.ch_behavior_delay = 100
+        self.ch_behavior_timer = pygame.time.get_ticks()
+
     def update(self, dt):
         if self.state_ == "FIGHTING":
-            # Change images dictionary key
-            self.imgdict_key = "NORMAL"
-
             # Run methods
             self.animate()
-            self.follow_player()
+            self.ch_behavior()
+            if self.behavior == self.behaviors[1]:
+                self.follow_player()
+            elif self.behavior == self.behaviors[0]:
+                self.move()
             self.shoot()
             self.flash()
 
@@ -403,7 +410,35 @@ class Hellfighter(pygame.sprite.Sprite):
 
             # Change state...
             if self.current_frame == self.MAX_FRAMES - 1:
+                # Change images dictionary key
+                self.imgdict_key = "NORMAL"
+
                 self.state_ = self.states_[1]
+    
+    def ch_behavior(self):
+        now = pygame.time.get_ticks()
+        if now - self.ch_behavior_timer > self.ch_behavior_delay:
+            self.ch_behavior_timer = now
+            hf_following_exists = False
+
+            for hellfighter in hellfighters_g:
+                # Check if same instance
+                if hellfighter is self:
+                    continue 
+                
+                if hellfighter.behavior == "FOLLOWING":
+                    hf_following_exists = True
+
+            if hf_following_exists:
+                self.behavior = "WAITING"
+            else:
+                self.behavior = "FOLLOWING"
+
+    def move(self):
+        if self.rect.left < 0:
+            self.velocity.x = self.SPEED / 2
+        elif self.rect.right > WIN_RES["w"]:
+            self.velocity.x = -self.SPEED / 2
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -664,6 +699,11 @@ class Raider(pygame.sprite.Sprite):
             self.animate()
             self.follow_player()
             self.flash()
+
+            # Update position
+            self.position += self.velocity * dt
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
         
             # Change state...
             if self.target_acquired:

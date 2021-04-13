@@ -39,6 +39,7 @@ powerups_g = pygame.sprite.Group()
 p_bullets_g = pygame.sprite.Group()
 e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
+hellfighters_g = pygame.sprite.Group()
 
 # ENTITIES' COLLISION RADII ====================================================
 PLAYER_RADIUS = 14
@@ -115,7 +116,7 @@ PLAYER_HEALTH = 20
 PLAYER_MAX_HEALTH = 20
 
 # SENTRY DEFINES ===============================================================
-SENTRY_HEALTH = 10
+SENTRY_HEALTH = 15
 MAX_SENTRY_COUNT = 2
 
 # POWERUP DEFINES ==============================================================
@@ -204,9 +205,9 @@ HELLFIGHTER_HEALTH = {
 
 # FATTY DEFINES ================================================================
 FATTY_SPEED = {
-    "EASY": 50,
-    "MEDIUM": 75,
-    "HARD": 100
+    "EASY": 75,
+    "MEDIUM": 100,
+    "HARD": 125
 }
 FATTY_SHOOT_DELAY = {
     "EASY": 2000,
@@ -219,9 +220,9 @@ FATTY_LARGE_BULLET_SPEED = {
     "HARD": 400
 }
 FATTY_SMALL_BULLET_SPEED = {
-    "EASY": 100,
-    "MEDIUM": 150,
-    "HARD": 200
+    "EASY": 125,
+    "MEDIUM": 175,
+    "HARD": 225
 }
 FATTY_BULLET_DAMAGE = {
     "EASY": 0.75,
