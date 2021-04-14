@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.image.set_colorkey("BLACK")
         self.rect = self.image.get_rect()
         self.rect.centerx = WIN_RES["w"]*0.5
-        self.rect.centery = WIN_RES["h"]*0.7
+        self.rect.centery = WIN_RES["h"]*0.75
         self.position = Vec2(self.rect.x,self.rect.y)
         self.velocity = Vec2(0,0)
         self.radius = PLAYER_RADIUS
@@ -341,6 +341,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.health = HELLFIGHTER_HEALTH[g_diff]
         self.SPEED = HELLFIGHTER_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["HELLFIGHTER"]
+        self.SPEED_WAITING = self.SPEED / 2
 
         # Sprite defines
         super().__init__()
@@ -350,11 +351,11 @@ class Hellfighter(pygame.sprite.Sprite):
         self.rect.x = position.x 
         self.rect.y = position.y 
         self.position = position
-        self.velocity = Vec2(random.choice([-self.SPEED/2, self.SPEED/2]),0)
+        self.velocity = Vec2(random.choice([-self.SPEED_WAITING, self.SPEED_WAITING]),0)
         self.radius = ENEMY_RADIUS
 
         # State machine
-        self.states_ = ("SPAWNING", "FIGHTING")
+        self.states_ = ("SPAWNING", "FIGHTING", "WAITING")
         self.state_ = self.states_[0]
         
         # For animation
@@ -378,9 +379,11 @@ class Hellfighter(pygame.sprite.Sprite):
         self.is_hurt = False
         self.prev_hurt = False
 
-        # For behavior changing
-        self.behaviors = ("WAITING", "FOLLOWING")
-        self.behavior = self.behaviors[0]
+        # For behavior changing. Note: one could make a good argument that I should merge this into the states. 10:20am
+                                # - but i'm too lazy to do it. 10:21am
+                                # - well actually i just implemented it. 10:28am
+        # self.behaviors = ("WAITING", "FOLLOWING")
+        # self.behavior = self.behaviors[0]
         self.ch_behavior_delay = 100
         self.ch_behavior_timer = pygame.time.get_ticks()
 
@@ -388,11 +391,7 @@ class Hellfighter(pygame.sprite.Sprite):
         if self.state_ == "FIGHTING":
             # Run methods
             self.animate()
-            self.ch_behavior()
-            if self.behavior == self.behaviors[1]:
-                self.follow_player()
-            elif self.behavior == self.behaviors[0]:
-                self.move()
+            self.follow_player()
             self.shoot()
             self.flash()
 
@@ -400,6 +399,24 @@ class Hellfighter(pygame.sprite.Sprite):
             self.position += self.velocity * dt 
             self.rect.x = self.position.x
             self.rect.y = self.position.y
+
+            # Change state...
+            self.ch_behavior()
+
+        elif self.state_ == "WAITING":
+            # Run methods
+            self.animate()
+            self.move()
+            self.shoot()
+            self.flash()
+
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+
+            # Change state...
+            self.ch_behavior()
 
         elif self.state_ == "SPAWNING":
             # Change images dictionary key
@@ -412,9 +429,24 @@ class Hellfighter(pygame.sprite.Sprite):
             if self.current_frame == self.MAX_FRAMES - 1:
                 # Change images dictionary key
                 self.imgdict_key = "NORMAL"
-
-                self.state_ = self.states_[1]
+                
+                self.state_ = self.ch_state_behav()
     
+    def ch_state_behav(self):
+        hf_following_exists = False
+        for hellfighter in hellfighters_g:
+            # Check if same instance
+            if hellfighter is self:
+                continue 
+            
+            if hellfighter.state_ == "FIGHTING":
+                hf_following_exists = True
+
+        if hf_following_exists:
+            return "WAITING"
+        else:
+            return "FIGHTING"
+
     def ch_behavior(self):
         now = pygame.time.get_ticks()
         if now - self.ch_behavior_timer > self.ch_behavior_delay:
@@ -426,19 +458,19 @@ class Hellfighter(pygame.sprite.Sprite):
                 if hellfighter is self:
                     continue 
                 
-                if hellfighter.behavior == "FOLLOWING":
+                if hellfighter.state_ == "FIGHTING":
                     hf_following_exists = True
 
             if hf_following_exists:
-                self.behavior = "WAITING"
+                self.state_ = "WAITING"
             else:
-                self.behavior = "FOLLOWING"
+                self.state_ = "FIGHTING"
 
     def move(self):
         if self.rect.left < 0:
-            self.velocity.x = self.SPEED / 2
+            self.velocity.x = self.SPEED_WAITING
         elif self.rect.right > WIN_RES["w"]:
-            self.velocity.x = -self.SPEED / 2
+            self.velocity.x = -self.SPEED_WAITING
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -1329,7 +1361,7 @@ class SentryBullet(pygame.sprite.Sprite):
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
 
-# EXPLOSION ====================================================================
+# EFFECTS ====================================================================
 
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, images, position):
@@ -1367,3 +1399,82 @@ class Explosion(pygame.sprite.Sprite):
             
             # Change image
             self.image = self.images[self.current_frame]
+
+class ExplosionParticle(pygame.sprite.Sprite):
+    def __init__(self, position, color):
+        super().__init__()
+        # The surface
+        self.image = pygame.Surface((32,32))
+        self.image.set_colorkey('black')
+        self.rect = self.image.get_rect()
+        self.rect.centerx = position.x
+        self.rect.centery = position.y
+        self.img_width = self.image.get_width()
+        self.color = color
+
+        self.SPEED = 150
+        self.position = position
+        self.velocity = Vec2(
+            random.randrange(-self.SPEED,self.SPEED),
+            random.randrange(-self.SPEED,self.SPEED)
+        )
+        
+        # The circle
+        self.MIN_RADIUS = 2
+        self.MAX_RADIUS = random.randrange(4,8)
+        self.update_timer = pygame.time.get_ticks()
+        self.update_delay = 10
+        self.radius = 2
+        self.c_width = 5
+        self.expand_amnt = 1
+        self.deflate_amnt = 0.2
+
+        # States 
+        self.states_ = ("EXPANDING", "DEFLATING")
+        self.state_ = self.states_[0]
+
+    def update(self, dt):
+        if self.state_ == "EXPANDING":
+            # Run methods
+            self.expand()
+            self.update_image()
+
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.centerx = self.position.x
+            self.rect.centery = self.position.y
+
+            # Change state...
+            if self.radius >= self.MAX_RADIUS:
+                self.state_ = "DEFLATING"
+
+        elif self.state_ == "DEFLATING":
+            # Run methods
+            self.deflate()
+            self.update_image()
+
+            # Update position
+            self.position += self.velocity * dt 
+            self.rect.centerx = self.position.x
+            self.rect.centery = self.position.y
+
+            # Kill sprite check
+            if self.radius <= self.MIN_RADIUS:
+                self.kill()
+
+    def expand(self):
+        now = pygame.time.get_ticks()
+        if now - self.update_timer > self.update_delay:
+            self.update_timer = now
+            self.radius += self.expand_amnt
+
+    def deflate(self):
+        now = pygame.time.get_ticks()
+        if now - self.update_timer > self.update_delay:
+            self.update_timer = now
+            self.radius -= self.deflate_amnt
+
+    def update_image(self):
+        self.image = pygame.Surface((64,64))
+        self.image.set_colorkey("BLACK")
+        pygame.draw.circle(self.image, self.color, self.image.get_rect().center, self.radius)

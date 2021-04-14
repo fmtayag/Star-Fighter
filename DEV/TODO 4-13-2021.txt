@@ -3,6 +3,8 @@
 + add ripple
 + add particles
 + add sounds
++ add flaming particle trails to the enemies
++ when enemies get shot, they release small particle effects
 + /// add behavior to the hellfighter: "chase" and "waiting"   
     - damn this improved the gameplay quite a lot!
 + /// add animations to sprites

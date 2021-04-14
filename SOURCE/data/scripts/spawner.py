@@ -215,7 +215,7 @@ class Spawner:
                     elif event.key == pygame.K_6:
                         self.spawn_sentry()
                     elif event.key == pygame.K_7:
-                        self.spawn_explosion()
+                        self.spawn_exp_particles()
 
     def update(self, score):
         # Update current game stage
@@ -243,7 +243,16 @@ class Spawner:
                 elif roll_choice == "RAIDER":
                     self.spawn_raider()
                 elif roll_choice == "FATTY":
-                    self.spawn_fatty()
+                    # Count number of fatties
+                    count = 0
+                    for sprite in hostiles_g:
+                        if type(sprite) == Fatty:
+                            count += 1
+                        
+                    if count < MAX_FATTY_COUNT:
+                        self.spawn_fatty()
+                    else:
+                        self.spawn_hellfighter()
                 elif roll_choice == "SOLTURRET":
                     # Count number of solturrets
                     count = 0
@@ -365,3 +374,12 @@ class Spawner:
         # Create explosion object
         exp = Explosion(pick, position)
         all_sprites_g.add(exp)
+
+    def spawn_exp_particles(self, position=Vec2(32,32), colors=list((255,255,255)), amount=10):
+        for i in range(amount):
+            c_color = random.choice(colors)
+            ep = ExplosionParticle(
+                Vec2(position),
+                c_color
+            )
+            all_sprites_g.add(ep)

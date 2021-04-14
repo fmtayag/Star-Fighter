@@ -584,6 +584,13 @@ class GameScene(Scene):
                 bullet_y = bullet.rect.centery
                 bullet_pos = Vec2(bullet_x, bullet_y)
                 self.spawner.spawn_explosion(bullet_pos, "SMALL")
+
+                # Spawn explosion particles
+                self.spawner.spawn_exp_particles(
+                    (hit.rect.centerx, hit.rect.centery),
+                    (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                    3
+                )
                 
                 # Set boolean to True for flash effect
                 hit.is_hurt = True
@@ -609,6 +616,13 @@ class GameScene(Scene):
                     bullet_pos = Vec2(bullet_x, bullet_y)
                     self.spawner.spawn_explosion(bullet_pos, "BIG")
 
+                    # Spawn explosion particles
+                    self.spawner.spawn_exp_particles(
+                        (hit.rect.centerx, hit.rect.centery),
+                        (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                        30
+                    )
+
                     # Generate screen shake
                     self.win_offset = shake(10,5)
 
@@ -623,6 +637,13 @@ class GameScene(Scene):
             bullet_y = hit.rect.centery
             bullet_pos = Vec2(bullet_x, bullet_y)
             self.spawner.spawn_explosion(bullet_pos, "SMALL")
+
+            # Spawn explosion particles
+            self.spawner.spawn_exp_particles(
+                (hit.rect.centerx, hit.rect.centery),
+                (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                5
+            )
 
             # Generate screen shake
             self.win_offset = shake(10,5)
@@ -646,6 +667,13 @@ class GameScene(Scene):
             bullet_y = hit.rect.centery
             bullet_pos = Vec2(bullet_x, bullet_y)
             self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+            # Spawn explosion particles
+            self.spawner.spawn_exp_particles(
+                (hit.rect.centerx, hit.rect.centery),
+                (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                30
+            )
 
             # Generate screen shake
             self.win_offset = shake(20,5)
@@ -689,6 +717,13 @@ class GameScene(Scene):
                 bullet_pos = Vec2(bullet_x, bullet_y)
                 self.spawner.spawn_explosion(bullet_pos, "BIG")
 
+                # Spawn explosion particles
+                self.spawner.spawn_exp_particles(
+                    (hit.rect.centerx, hit.rect.centery),
+                    (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                    30
+                )
+
         # SENTRY - ENEMY BULLET COLLISION
         for sentry in sentries_g:
             hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True, pygame.sprite.collide_circle)
@@ -705,13 +740,27 @@ class GameScene(Scene):
                 bullet_pos = Vec2(bullet_x, bullet_y)
                 self.spawner.spawn_explosion(bullet_pos, "SMALL")
 
+                # Spawn explosion particles
+                self.spawner.spawn_exp_particles(
+                    (hit.rect.centerx, hit.rect.centery),
+                    (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                    5
+                )
+
                 if sentry.health <= 0:
                     # Spawn big explosion
                     bullet_x = sentry.rect.centerx
                     bullet_y = sentry.rect.centery
                     bullet_pos = Vec2(bullet_x, bullet_y)
                     self.spawner.spawn_explosion(bullet_pos, "BIG")
-                    
+
+                    # Spawn explosion particles
+                    self.spawner.spawn_exp_particles(
+                        (sentry.rect.centerx, sentry.rect.centery),
+                        (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                        30
+                    )
+
                     sentry.kill()
 
         # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
@@ -721,6 +770,13 @@ class GameScene(Scene):
             bullet_y = self.player.rect.centery
             bullet_pos = Vec2(bullet_x, bullet_y)
             self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+            # Spawn explosion particles
+            self.spawner.spawn_exp_particles(
+                (self.player.rect.centerx, self.player.rect.centery),
+                (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                30
+            )
 
             self.manager.go_to(GameOverScene(self.score))
 

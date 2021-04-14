@@ -41,6 +41,11 @@ e_bullets_g = pygame.sprite.Group()
 sentries_g = pygame.sprite.Group()
 hellfighters_g = pygame.sprite.Group()
 
+# EFFECTS DEFINES =============================================================
+EP_YELLOW1 = (255,222,18)
+EP_YELLOW2 = (255,205,5)
+EP_YELLOW3 = (255,161,15)
+
 # ENTITIES' COLLISION RADII ====================================================
 PLAYER_RADIUS = 14
 PLAYER_BULLET_RADIUS = 8
@@ -75,22 +80,23 @@ SPAWN_DELAY = { # In ticks
 }
 MID_STAGE_SCORE_TRIGGER = {
     "EASY": 1200,
-    "MEDIUM": 700,
-    "HARD": 1500
+    "MEDIUM": 1000,
+    "HARD": 900
 }
 LATE_STAGE_SCORE_TRIGGER = {
     "EASY": 1600,
     "MEDIUM": 1300,
-    "HARD": 3000
+    "HARD": 2200
 }
 MAX_SOLTURRET_COUNT = 2
 MAX_HELLEYE_COUNT = 1
+MAX_FATTY_COUNT = 2
 
 # SCORE DEFINES ================================================================
 SCORE_MULTIPLIER = {
     "EASY": 0.50,
     "MEDIUM": 1.00,
-    "HARD": 3.00
+    "HARD": 2.00
 }
 
 SCORE_WORTH = {
@@ -221,8 +227,8 @@ FATTY_LARGE_BULLET_SPEED = {
 }
 FATTY_SMALL_BULLET_SPEED = {
     "EASY": 125,
-    "MEDIUM": 175,
-    "HARD": 225
+    "MEDIUM": 150,
+    "HARD": 175
 }
 FATTY_BULLET_DAMAGE = {
     "EASY": 0.75,
@@ -322,9 +328,9 @@ HELLEYE_SPEED = {
     "HARD": 150
 }
 HELLEYE_BULLET_SPEED = {
-    "EASY": 100,
-    "MEDIUM": 150,
-    "HARD": 200
+    "EASY": 150,
+    "MEDIUM": 200,
+    "HARD": 225
 }
 HELLEYE_BULLET_DAMAGE = {
     "EASY": 1.5,
