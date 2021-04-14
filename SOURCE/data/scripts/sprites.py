@@ -431,7 +431,7 @@ class Hellfighter(pygame.sprite.Sprite):
                 self.imgdict_key = "NORMAL"
                 
                 self.state_ = self.ch_state_behav()
-    
+
     def ch_state_behav(self):
         hf_following_exists = False
         for hellfighter in hellfighters_g:
@@ -749,6 +749,8 @@ class Raider(pygame.sprite.Sprite):
             self.animate()
             self.dash()
             self.flash()
+            if self.velocity.y >= 0:
+                self.spawn_gas()
             
             # Kill if it goes out of bounds
             if self.rect.top > WIN_RES["h"]:
@@ -769,6 +771,22 @@ class Raider(pygame.sprite.Sprite):
             # Change state....
             if self.current_frame == self.MAX_FRAMES - 1:
                 self.state_ = self.states_[1]
+
+    def spawn_gas(self):
+        # Spawn gas
+        c_color = random.choice(EP_COLORS)
+        ep = Particle(
+            Vec2(
+                self.position.x,
+                self.position.y
+            ),
+            Vec2(
+                random.randrange(-100,100), 
+                -self.velocity.y / 2
+            ),
+            c_color
+        )
+        all_sprites_g.add(ep)
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -1400,8 +1418,8 @@ class Explosion(pygame.sprite.Sprite):
             # Change image
             self.image = self.images[self.current_frame]
 
-class ExplosionParticle(pygame.sprite.Sprite):
-    def __init__(self, position, color):
+class Particle(pygame.sprite.Sprite):
+    def __init__(self, position, velocity, color):
         super().__init__()
         # The surface
         self.image = pygame.Surface((32,32))
@@ -1412,12 +1430,8 @@ class ExplosionParticle(pygame.sprite.Sprite):
         self.img_width = self.image.get_width()
         self.color = color
 
-        self.SPEED = 150
         self.position = position
-        self.velocity = Vec2(
-            random.randrange(-self.SPEED,self.SPEED),
-            random.randrange(-self.SPEED,self.SPEED)
-        )
+        self.velocity = velocity
         
         # The circle
         self.MIN_RADIUS = 2

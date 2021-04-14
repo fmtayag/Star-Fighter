@@ -45,6 +45,7 @@ hellfighters_g = pygame.sprite.Group()
 EP_YELLOW1 = (255,222,18)
 EP_YELLOW2 = (255,205,5)
 EP_YELLOW3 = (255,161,15)
+EP_COLORS = (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3)
 
 # ENTITIES' COLLISION RADII ====================================================
 PLAYER_RADIUS = 14

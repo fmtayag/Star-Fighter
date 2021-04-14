@@ -376,10 +376,18 @@ class Spawner:
         all_sprites_g.add(exp)
 
     def spawn_exp_particles(self, position=Vec2(32,32), colors=list((255,255,255)), amount=10):
+        # Settings
+        SPEED = 200
+
+        # Spawn explosion particles
         for i in range(amount):
             c_color = random.choice(colors)
-            ep = ExplosionParticle(
+            ep = Particle(
                 Vec2(position),
+                Vec2(
+                    random.randrange(-SPEED,SPEED),
+                    random.randrange(-SPEED,SPEED)
+                ),
                 c_color
             )
             all_sprites_g.add(ep)
