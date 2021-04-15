@@ -3,7 +3,7 @@
 + add sounds
 + finish game over scene 
 + /// finish game UI
-+ option: square health bar or circle health bar
++ /// option: square health bar or circle health bar
 + finish score table
     + design needed 
 + finish credits scene

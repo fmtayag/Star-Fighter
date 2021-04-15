@@ -1,4 +1,5 @@
 import pygame, sys, random, math
+from PIL import Image, ImageDraw
 from data.scripts.spawner import Spawner
 from data.scripts.sprites import Player
 from data.scripts.muda import (
@@ -446,6 +447,7 @@ class GameScene(Scene):
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
+        self.hp_pref = "PIE"
 
         # PLAYER AND BULLET IMAGES - If you are reading this...uhh...good luck lol
         PLAYER_SPRITESHEET = load_img("player_sheet.png", IMG_DIR, SCALE)
@@ -546,7 +548,17 @@ class GameScene(Scene):
 
         # HP Bar Image
         self.hp_surf = pygame.Surface((128,16))
-        self.hp_bar_img = load_img("hp_bar.png", IMG_DIR, SCALE)
+        self.hpbar_outline = load_img("hpbar_outline.png", IMG_DIR, SCALE)
+        self.hpbar_color = load_img("hpbar_color.png", IMG_DIR, SCALE)
+
+        # HP Pie Image
+        PIE_SHEET = load_img("hppie_sheet.png", IMG_DIR, SCALE) # It's not a sheet for hippies
+        self.pie_surf = pygame.Surface((32,32))
+        self.pie_health = image_at(PIE_SHEET, scale_rect(SCALE, [0,0,16,16]), True)
+        self.pie_outline = image_at(PIE_SHEET, scale_rect(SCALE, [16,0,16,16]), True)
+        self.pie_rect = self.pie_surf.get_rect()
+        self.pie_rect.x = WIN_RES["w"] * 0.77
+        self.pie_rect.y = 4
 
         # Difficulty icons
         DIFFICULTY_SPRITESHEET = load_img("difficulty_sheet.png", IMG_DIR, SCALE)
@@ -824,20 +836,38 @@ class GameScene(Scene):
         draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
 
         # Draw hp bar
-        self.hp_surf.fill("BLACK")
-        self.hp_surf.set_colorkey("BLACK")
-        draw_hpbar(self.hp_surf, (4,4,96,8), self.player.health, "WHITE")
-        self.hp_surf.blit(self.hp_bar_img, (0,0))
-        window.blit(self.hp_surf, 
-            (
-                (window.get_width()/2) - 48,
-                10
+        if self.hp_pref == "SQUARE":
+            # Draw square hp bar
+            self.hp_surf.fill("BLACK")
+            self.hp_surf.set_colorkey("BLACK")
+            draw_hpbar(self.hp_surf, (4,4,96,8), self.player.health, "WHITE")
+            self.hp_surf.blit(self.hpbar_outline, (0,0))
+            window.blit(self.hp_surf, 
+                (
+                    (window.get_width()/2) - 32,
+                    10
+                )
             )
-        )
+
+        elif self.hp_pref == "PIE":
+            # Draw pie hp bar
+            semicirc_size = 32
+            semicirc_start = 360 - (self.player.health * (360 / PLAYER_MAX_HEALTH))
+            semicirc = Image.new("RGBA", (semicirc_size, semicirc_size))
+            semicirc_d = ImageDraw.Draw(semicirc)
+            semicirc_d.pieslice((0, 0, semicirc_size-1, semicirc_size-1), 1, semicirc_start + 1, fill="BLACK")
+            semicirc_surf = pygame.image.fromstring(semicirc.tobytes(), semicirc.size, semicirc.mode)
+
+            self.pie_surf.fill("BLACK")
+            self.pie_surf.set_colorkey("BLACK")
+            self.pie_surf.blit(self.pie_health, (0,0))
+            self.pie_surf.blit(semicirc_surf, (0,0))
+            self.pie_surf.blit(self.pie_outline, (0,0))
+            window.blit(self.pie_surf, self.pie_rect)
 
         # Draw difficulty icon
         self.difficulty_icon = self.DIFFICULTY_ICONS[self.g_diff][self.spawner.current_stage]
-        window.blit(self.difficulty_icon, (window.get_width() * 0.825,4))
+        window.blit(self.difficulty_icon, (window.get_width() * 0.885,4))
 
         # Debug mode stats
         if DEBUG_MODE:
