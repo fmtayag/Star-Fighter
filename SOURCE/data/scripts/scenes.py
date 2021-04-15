@@ -711,7 +711,7 @@ class GameScene(Scene):
             # Spawn explosion particles
             self.spawner.spawn_exp_particles(
                 (hit.rect.centerx, hit.rect.centery),
-                (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                EP_COLORS,
                 30
             )
 
@@ -737,6 +737,13 @@ class GameScene(Scene):
                 self.score += POWERUP_SCORE_BASE_WORTH * self.score_multiplier
             elif hit.POW_TYPE == "SENTRY":
                 self.spawner.spawn_sentry()
+
+            # Spawn explosion particles
+            self.spawner.spawn_exp_particles(
+                (hit.rect.centerx, hit.rect.centery),
+                P_COLORS,
+                30
+            )
 
         # SENTRY - ENEMY COLLISION
         for sentry in sentries_g:

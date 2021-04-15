@@ -4,6 +4,7 @@
 + finish game over scene 
 + /// finish game UI
 + /// option: square health bar or circle health bar
++ /// add particle effects for powerup pickup
 + finish score table
     + design needed 
 + finish credits scene
