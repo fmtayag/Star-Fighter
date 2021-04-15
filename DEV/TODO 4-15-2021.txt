@@ -1,0 +1,9 @@
+4-15-2021
++ gui work, exciting stuff!! i should probably do this now lmao
++ add sounds
++ finish game over scene 
++ /// finish game UI
++ option: square health bar or circle health bar
++ finish score table
+    + design needed 
++ finish credits scene

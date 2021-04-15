@@ -19,7 +19,7 @@ GAME_FONT = os.path.join(FONT_DIR, "04B_03__.TTF")
 
 # LOOP DEFINES =================================================================
 FPS = 60
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # BG AND PARALLAX DEFINES ======================================================
 BG_SPD = 25
@@ -85,9 +85,9 @@ MID_STAGE_SCORE_TRIGGER = {
     "HARD": 900
 }
 LATE_STAGE_SCORE_TRIGGER = {
-    "EASY": 1600,
-    "MEDIUM": 1300,
-    "HARD": 2200
+    "EASY": 2200,
+    "MEDIUM": 2000,
+    "HARD": 2800
 }
 MAX_SOLTURRET_COUNT = 2
 MAX_HELLEYE_COUNT = 1
@@ -151,9 +151,9 @@ POWERUP_TYPES_WEIGHTS_MID = (
     5 # SENTRY
 )
 POWERUP_TYPES_WEIGHTS_LATE = (
-    30, # GUN 
-    30, # HEALTH
-    10, # SCORE
+    25, # GUN 
+    40, # HEALTH
+    5, # SCORE
     30 # SENTRY
 ) 
 POWERUP_TYPES_WEIGHTS = {
@@ -182,7 +182,7 @@ ENEMY_COLLISION_DAMAGE = 10
 HELLFIGHTER_SPEED = {
     "EASY": 150,
     "MEDIUM": 200,
-    "HARD": 300
+    "HARD": 250
 }
 HELLFIGHTER_SHOOT_DELAY = {
     "EASY": 700,
@@ -212,9 +212,9 @@ HELLFIGHTER_HEALTH = {
 
 # FATTY DEFINES ================================================================
 FATTY_SPEED = {
-    "EASY": 75,
-    "MEDIUM": 100,
-    "HARD": 125
+    "EASY": 50,
+    "MEDIUM": 75,
+    "HARD": 100
 }
 FATTY_SHOOT_DELAY = {
     "EASY": 2000,
@@ -259,8 +259,8 @@ FATTY_BULLET_SPEED_Y = (
 )
 FATTY_HEALTH = {
     "EASY": 4,
-    "MEDIUM": 6,
-    "HARD": 8
+    "MEDIUM": 5,
+    "HARD": 6
 }
 
 # RAIDER DEFINES ===============================================================
@@ -293,8 +293,8 @@ SOLTURRET_SHOOT_DELAY = {
 }
 SOLTURRET_BULLET_SPEED = {
     "EASY": 200,
-    "MEDIUM": 300,
-    "HARD": 350
+    "MEDIUM": 250,
+    "HARD": 300
 }
 SOLTURRET_BULLET_DAMAGE = {
     "EASY": 1.5,

@@ -264,7 +264,7 @@ class Spawner:
                     if count < MAX_SOLTURRET_COUNT:
                         self.spawn_solturret()
                     else:
-                        self.spawn_hellfighter()
+                        self.spawn_raider()
 
                 elif roll_choice == "HELLEYE":
                     # Count number of helleye

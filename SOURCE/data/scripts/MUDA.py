@@ -77,7 +77,7 @@ def load_img(file, directory, scale, convert_alpha=False):
         return s
 
 def image_at(spritesheet, rectangle, convert_alpha=False):
-    # Code stolen from the pygame wiki and modified for personal use. I love open source!
+    # Code stolen from the pygame wiki and modified for personal use. The boons of open source!
     rect = pygame.Rect(rectangle)
     if not convert_alpha:
         image = pygame.Surface(rect.size).convert()
@@ -150,6 +150,31 @@ def draw_text(surf, text, size, font, x, y, color, align="normal"):
         text_rect.y = y
     surf.blit(text_surface, (text_rect.x, text_rect.y))
 
+def draw_text2(surf, text, font, font_size, position, color, align="normal", italic=False):
+    # Just a function with slightly better argument formatting and functionalities
+    
+    # Create Font object
+    font = pygame.font.Font(font, font_size)
+
+    # Italic settings
+    if italic:
+        font.italic = True
+    
+    # Create surface
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+
+    # Alignment settings
+    if align == "centered":
+        text_rect.centerx = position[0]
+        text_rect.centery = position[1]
+    elif align == "normal":
+        text_rect.x = position[0]
+        text_rect.y = position[1]
+
+    # Display text on surface
+    surf.blit(text_surface, (text_rect.x, text_rect.y))
+
 def shake(intensity, n):
     # Code from Sloth from StackOverflow
     shake = -1
@@ -161,3 +186,14 @@ def shake(intensity, n):
         shake *= -1
     while True:
         yield (0, 0)
+
+def draw_hpbar(surf, rect, hp_amnt, color):
+    if hp_amnt < 0:
+        hp_amnt = 0
+    x = rect[0]
+    y = rect[1]
+    w = (hp_amnt * rect[2]) / 16
+    h = rect[3] 
+    img = pygame.Surface((w,h))
+    img.fill(color)
+    surf.blit(img, (x, y))

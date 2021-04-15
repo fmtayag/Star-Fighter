@@ -341,7 +341,7 @@ class Hellfighter(pygame.sprite.Sprite):
         self.health = HELLFIGHTER_HEALTH[g_diff]
         self.SPEED = HELLFIGHTER_SPEED[g_diff]
         self.WORTH = SCORE_WORTH["HELLFIGHTER"]
-        self.SPEED_WAITING = self.SPEED / 2
+        self.SPEED_WAITING = self.SPEED * 0.65
 
         # Sprite defines
         super().__init__()

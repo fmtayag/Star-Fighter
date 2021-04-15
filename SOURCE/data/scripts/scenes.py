@@ -15,7 +15,9 @@ from data.scripts.muda import (
     slice_list,
     clamp,
     image_at,
-    scale_rect
+    scale_rect,
+    draw_hpbar,
+    draw_text2
 )
 from data.scripts.defines import *
 from itertools import repeat
@@ -126,6 +128,7 @@ class TitleScene(Scene):
 
         # Draw menu
         self.title_menu.draw(window)
+        draw_text(window, "(Test Build v.Whatever)", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, 30, "WHITE", "centered")
         draw_text(window, "Copydown", FONT_SIZE, GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-(FONT_SIZE/2)*2, "WHITE", "centered")
 
 # SCORES SCENE =================================================================
@@ -541,6 +544,31 @@ class GameScene(Scene):
         self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
 
+        # HP Bar Image
+        self.hp_surf = pygame.Surface((128,16))
+        self.hp_bar_img = load_img("hp_bar.png", IMG_DIR, SCALE)
+
+        # Difficulty icons
+        DIFFICULTY_SPRITESHEET = load_img("difficulty_sheet.png", IMG_DIR, SCALE)
+        self.DIFFICULTY_ICONS = {
+            "EASY": {
+                "EARLY": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [0,0,16,16]), True),
+                "MID": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [16,0,16,16]), True),
+                "LATE": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [32,0,16,16]), True)
+            },
+            "MEDIUM": {
+                "EARLY": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [0,16,16,16]), True),
+                "MID": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [16,16,16,16]), True),
+                "LATE": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [32,16,16,16]), True)
+            },
+            "HARD": {
+                "EARLY": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [0,32,16,16]), True),
+                "MID": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [16,32,16,16]), True),
+                "LATE": image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE, [32,32,16,16]), True)
+            }
+        }
+        self.difficulty_icon = pygame.Surface((32,32))
+
         # Clear the sprite groups
         all_sprites_g.empty()
         hostiles_g.empty()
@@ -784,16 +812,40 @@ class GameScene(Scene):
         all_sprites_g.update(dt)
 
     def draw(self, window):
+        # Draw background
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
-        draw_text(window, f"{int(self.score)}", FONT_SIZE*2, GAME_FONT, window.get_width()/2, 32, "WHITE", "centered")
+
+        # Draw sprites
+        all_sprites_g.draw(window)
+
+        # Draw score
+        cur_score = str(int(self.score)).zfill(6)
+        draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
+
+        # Draw hp bar
+        self.hp_surf.fill("BLACK")
+        self.hp_surf.set_colorkey("BLACK")
+        draw_hpbar(self.hp_surf, (4,4,96,8), self.player.health, "WHITE")
+        self.hp_surf.blit(self.hp_bar_img, (0,0))
+        window.blit(self.hp_surf, 
+            (
+                (window.get_width()/2) - 48,
+                10
+            )
+        )
+
+        # Draw difficulty icon
+        self.difficulty_icon = self.DIFFICULTY_ICONS[self.g_diff][self.spawner.current_stage]
+        window.blit(self.difficulty_icon, (window.get_width() * 0.825,4))
+
+        # Debug mode stats
         if DEBUG_MODE:
             draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
             draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
             draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
             draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
 
-        all_sprites_g.draw(window)
         window.blit(window, next(self.win_offset))
 
 # GAME OVER SCENE ================================================================
