@@ -723,25 +723,36 @@ class GameScene(Scene):
         # PLAYER - POWERUP COLLISION
         hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
         for hit in hits:
+            particles_color = ((255,255,255)) # Default case
             if hit.POW_TYPE == "GUN":
                 if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
                     self.player.gun_level = 3
                 else:
                     self.player.gun_level += 1
+                # Set particle colors
+                particles_color = GP_COLORS
+
             elif hit.POW_TYPE == "HEALTH":
                 self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
                 if self.player.health >= PLAYER_MAX_HEALTH:
                     self.player.health = PLAYER_MAX_HEALTH
+                # Set particle colors
+                particles_color = HP_COLORS
                     
             elif hit.POW_TYPE == "SCORE":
                 self.score += POWERUP_SCORE_BASE_WORTH * self.score_multiplier
+                # Set particle colors
+                particles_color = SCR_COLORS
+
             elif hit.POW_TYPE == "SENTRY":
                 self.spawner.spawn_sentry()
+                # Set particle colors
+                particles_color = SP_COLORS
 
             # Spawn explosion particles
             self.spawner.spawn_exp_particles(
                 (hit.rect.centerx, hit.rect.centery),
-                P_COLORS,
+                particles_color,
                 30
             )
 
