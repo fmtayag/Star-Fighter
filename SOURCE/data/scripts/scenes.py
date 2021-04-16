@@ -448,6 +448,9 @@ class GameScene(Scene):
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
         self.hp_pref = "PIE"
+        self.gg_timer = pygame.time.get_ticks()
+        self.gg_delay = 3000
+        self.is_gg = False
 
         # PLAYER AND BULLET IMAGES - If you are reading this...uhh...good luck lol
         PLAYER_SPRITESHEET = load_img("player_sheet.png", IMG_DIR, SCALE)
@@ -611,186 +614,68 @@ class GameScene(Scene):
         # Update parallax and background
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+        
+        # Handle collisions
+        if not self.is_gg:
+            # HOSTILES - PLAYER BULLET COLLISION
+            for bullet in p_bullets_g:
+                hits = pygame.sprite.spritecollide(bullet, hostiles_g, False, pygame.sprite.collide_circle)
+                for hit in hits:
+                    # Deduct enemy health
+                    hit.health -= self.player.BULLET_DAMAGE
 
-        # HOSTILES - PLAYER BULLET COLLISION
-        for bullet in p_bullets_g:
-            hits = pygame.sprite.spritecollide(bullet, hostiles_g, False, pygame.sprite.collide_circle)
-            for hit in hits:
-                # Deduct enemy health
-                hit.health -= self.player.BULLET_DAMAGE
-
-                # Spawn small explosion
-                bullet_x = bullet.rect.centerx
-                bullet_y = bullet.rect.centery
-                bullet_pos = Vec2(bullet_x, bullet_y)
-                self.spawner.spawn_explosion(bullet_pos, "SMALL")
-
-                # Spawn explosion particles
-                self.spawner.spawn_exp_particles(
-                    (hit.rect.centerx, hit.rect.centery),
-                    (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
-                    3
-                )
-                
-                # Set boolean to True for flash effect
-                hit.is_hurt = True
-
-                # Kill bullet
-                bullet.kill()
-
-                # Logic if enemy is dead
-                if hit.health <= 0:
-                    hit.kill()
-
-                    # Add score
-                    self.score += hit.WORTH * self.score_multiplier
-
-                    # Spawn powerup
-                    spawn_roll = random.randrange(1,100)
-                    if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
-                        self.spawner.spawn_powerup(hit.position)
-
-                    # Spawn big explosion
-                    bullet_x = hit.rect.centerx
-                    bullet_y = hit.rect.centery
+                    # Spawn small explosion
+                    bullet_x = bullet.rect.centerx
+                    bullet_y = bullet.rect.centery
                     bullet_pos = Vec2(bullet_x, bullet_y)
-                    self.spawner.spawn_explosion(bullet_pos, "BIG")
+                    self.spawner.spawn_explosion(bullet_pos, "SMALL")
 
                     # Spawn explosion particles
                     self.spawner.spawn_exp_particles(
                         (hit.rect.centerx, hit.rect.centery),
                         (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
-                        30
+                        3
                     )
-
-                    # Generate screen shake
-                    self.win_offset = shake(10,5)
-
-        # PLAYER - ENEMY BULLET COLLISION
-        hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            # Damage player
-            self.player.health -= hit.DAMAGE
-
-            # Spawn small explosion
-            bullet_x = hit.rect.centerx
-            bullet_y = hit.rect.centery
-            bullet_pos = Vec2(bullet_x, bullet_y)
-            self.spawner.spawn_explosion(bullet_pos, "SMALL")
-
-            # Spawn explosion particles
-            self.spawner.spawn_exp_particles(
-                (hit.rect.centerx, hit.rect.centery),
-                (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
-                5
-            )
-
-            # Generate screen shake
-            self.win_offset = shake(10,5)
-
-            # Hurt player
-            self.player.is_hurt = True
-
-        # PLAYER - ENEMY COLLISION
-        hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
-        for hit in hits:
-            self.player.health -= ENEMY_COLLISION_DAMAGE
-
-            # Spawn big explosion on player
-            bullet_x = self.player.rect.centerx
-            bullet_y = self.player.rect.centery
-            bullet_pos = Vec2(bullet_x, bullet_y)
-            self.spawner.spawn_explosion(bullet_pos, "BIG")
-
-            # Spawn big explosion on hit
-            bullet_x = hit.rect.centerx
-            bullet_y = hit.rect.centery
-            bullet_pos = Vec2(bullet_x, bullet_y)
-            self.spawner.spawn_explosion(bullet_pos, "BIG")
-
-            # Spawn explosion particles
-            self.spawner.spawn_exp_particles(
-                (hit.rect.centerx, hit.rect.centery),
-                EP_COLORS,
-                30
-            )
-
-            # Generate screen shake
-            self.win_offset = shake(20,5)
-
-            hit.kill()
-
-        # PLAYER - POWERUP COLLISION
-        hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
-        for hit in hits:
-            particles_color = ((255,255,255)) # Default case
-            if hit.POW_TYPE == "GUN":
-                if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
-                    self.player.gun_level = 3
-                else:
-                    self.player.gun_level += 1
-                # Set particle colors
-                particles_color = GP_COLORS
-
-            elif hit.POW_TYPE == "HEALTH":
-                self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
-                if self.player.health >= PLAYER_MAX_HEALTH:
-                    self.player.health = PLAYER_MAX_HEALTH
-                # Set particle colors
-                particles_color = HP_COLORS
                     
-            elif hit.POW_TYPE == "SCORE":
-                self.score += POWERUP_SCORE_BASE_WORTH * self.score_multiplier
-                # Set particle colors
-                particles_color = SCR_COLORS
+                    # Set boolean to True for flash effect
+                    hit.is_hurt = True
 
-            elif hit.POW_TYPE == "SENTRY":
-                self.spawner.spawn_sentry()
-                # Set particle colors
-                particles_color = SP_COLORS
+                    # Kill bullet
+                    bullet.kill()
 
-            # Spawn explosion particles
-            self.spawner.spawn_exp_particles(
-                (hit.rect.centerx, hit.rect.centery),
-                particles_color,
-                30
-            )
+                    # Logic if enemy is dead
+                    if hit.health <= 0:
+                        hit.kill()
 
-        # SENTRY - ENEMY COLLISION
-        for sentry in sentries_g:
-            hits = pygame.sprite.spritecollide(sentry, hostiles_g, False, pygame.sprite.collide_circle)
+                        # Add score
+                        self.score += hit.WORTH * self.score_multiplier
+
+                        # Spawn powerup
+                        spawn_roll = random.randrange(1,100)
+                        if spawn_roll <= POWERUP_ROLL_CHANCE[self.g_diff]:
+                            self.spawner.spawn_powerup(hit.position)
+
+                        # Spawn big explosion
+                        bullet_x = hit.rect.centerx
+                        bullet_y = hit.rect.centery
+                        bullet_pos = Vec2(bullet_x, bullet_y)
+                        self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+                        # Spawn explosion particles
+                        self.spawner.spawn_exp_particles(
+                            (hit.rect.centerx, hit.rect.centery),
+                            (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                            30
+                        )
+
+                        # Generate screen shake
+                        self.win_offset = shake(10,5)
+
+            # PLAYER - ENEMY BULLET COLLISION
+            hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
             for hit in hits:
-                sentry.kill()
-                hit.kill()
-
-                # Spawn big explosion on sentry
-                bullet_x = sentry.rect.centerx
-                bullet_y = sentry.rect.centery
-                bullet_pos = Vec2(bullet_x, bullet_y)
-                self.spawner.spawn_explosion(bullet_pos, "BIG")
-
-                # Spawn big explosion on hit
-                bullet_x = hit.rect.centerx
-                bullet_y = hit.rect.centery
-                bullet_pos = Vec2(bullet_x, bullet_y)
-                self.spawner.spawn_explosion(bullet_pos, "BIG")
-
-                # Spawn explosion particles
-                self.spawner.spawn_exp_particles(
-                    (hit.rect.centerx, hit.rect.centery),
-                    (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
-                    30
-                )
-
-        # SENTRY - ENEMY BULLET COLLISION
-        for sentry in sentries_g:
-            hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True, pygame.sprite.collide_circle)
-            for hit in hits:
-                # Deduct sentry health
-                sentry.health -= hit.DAMAGE
-
-                # Set boolean to True for flash effect
-                sentry.is_hurt = True
+                # Damage player
+                self.player.health -= hit.DAMAGE
 
                 # Spawn small explosion
                 bullet_x = hit.rect.centerx
@@ -805,24 +690,144 @@ class GameScene(Scene):
                     5
                 )
 
-                if sentry.health <= 0:
-                    # Spawn big explosion
+                # Generate screen shake
+                self.win_offset = shake(10,5)
+
+                # Hurt player
+                self.player.is_hurt = True
+
+            # PLAYER - ENEMY COLLISION
+            hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
+            for hit in hits:
+                self.player.health -= ENEMY_COLLISION_DAMAGE
+
+                # Spawn big explosion on player
+                bullet_x = self.player.rect.centerx
+                bullet_y = self.player.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+                # Spawn big explosion on hit
+                bullet_x = hit.rect.centerx
+                bullet_y = hit.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+                # Spawn explosion particles
+                self.spawner.spawn_exp_particles(
+                    (hit.rect.centerx, hit.rect.centery),
+                    EP_COLORS,
+                    30
+                )
+
+                # Generate screen shake
+                self.win_offset = shake(20,5)
+
+                hit.kill()
+
+            # PLAYER - POWERUP COLLISION
+            hits = pygame.sprite.spritecollide(self.player, powerups_g, True)
+            for hit in hits:
+                particles_color = ((255,255,255)) # Default case
+                if hit.POW_TYPE == "GUN":
+                    if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
+                        self.player.gun_level = 3
+                    else:
+                        self.player.gun_level += 1
+                    # Set particle colors
+                    particles_color = GP_COLORS
+
+                elif hit.POW_TYPE == "HEALTH":
+                    self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
+                    if self.player.health >= PLAYER_MAX_HEALTH:
+                        self.player.health = PLAYER_MAX_HEALTH
+                    # Set particle colors
+                    particles_color = HP_COLORS
+                        
+                elif hit.POW_TYPE == "SCORE":
+                    self.score += POWERUP_SCORE_BASE_WORTH * self.score_multiplier
+                    # Set particle colors
+                    particles_color = SCR_COLORS
+
+                elif hit.POW_TYPE == "SENTRY":
+                    self.spawner.spawn_sentry()
+                    # Set particle colors
+                    particles_color = SP_COLORS
+
+                # Spawn explosion particles
+                self.spawner.spawn_exp_particles(
+                    (hit.rect.centerx, hit.rect.centery),
+                    particles_color,
+                    30
+                )
+
+            # SENTRY - ENEMY COLLISION
+            for sentry in sentries_g:
+                hits = pygame.sprite.spritecollide(sentry, hostiles_g, False, pygame.sprite.collide_circle)
+                for hit in hits:
+                    sentry.kill()
+                    hit.kill()
+
+                    # Spawn big explosion on sentry
                     bullet_x = sentry.rect.centerx
                     bullet_y = sentry.rect.centery
                     bullet_pos = Vec2(bullet_x, bullet_y)
                     self.spawner.spawn_explosion(bullet_pos, "BIG")
 
+                    # Spawn big explosion on hit
+                    bullet_x = hit.rect.centerx
+                    bullet_y = hit.rect.centery
+                    bullet_pos = Vec2(bullet_x, bullet_y)
+                    self.spawner.spawn_explosion(bullet_pos, "BIG")
+
                     # Spawn explosion particles
                     self.spawner.spawn_exp_particles(
-                        (sentry.rect.centerx, sentry.rect.centery),
+                        (hit.rect.centerx, hit.rect.centery),
                         (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
                         30
                     )
 
-                    sentry.kill()
+            # SENTRY - ENEMY BULLET COLLISION
+            for sentry in sentries_g:
+                hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True, pygame.sprite.collide_circle)
+                for hit in hits:
+                    # Deduct sentry health
+                    sentry.health -= hit.DAMAGE
+
+                    # Set boolean to True for flash effect
+                    sentry.is_hurt = True
+
+                    # Spawn small explosion
+                    bullet_x = hit.rect.centerx
+                    bullet_y = hit.rect.centery
+                    bullet_pos = Vec2(bullet_x, bullet_y)
+                    self.spawner.spawn_explosion(bullet_pos, "SMALL")
+
+                    # Spawn explosion particles
+                    self.spawner.spawn_exp_particles(
+                        (hit.rect.centerx, hit.rect.centery),
+                        (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                        5
+                    )
+
+                    if sentry.health <= 0:
+                        # Spawn big explosion
+                        bullet_x = sentry.rect.centerx
+                        bullet_y = sentry.rect.centery
+                        bullet_pos = Vec2(bullet_x, bullet_y)
+                        self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+                        # Spawn explosion particles
+                        self.spawner.spawn_exp_particles(
+                            (sentry.rect.centerx, sentry.rect.centery),
+                            (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                            30
+                        )
+
+                        sentry.kill()
 
         # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
-        if self.player.health <= 0:
+        if self.player.health <= 0 and not self.is_gg:
             # Spawn big explosion on player
             bullet_x = self.player.rect.centerx
             bullet_y = self.player.rect.centery
@@ -833,10 +838,22 @@ class GameScene(Scene):
             self.spawner.spawn_exp_particles(
                 (self.player.rect.centerx, self.player.rect.centery),
                 (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
-                30
-            )
+                100
+            )   
 
-            self.manager.go_to(GameOverScene(self.score))
+            # Generate screen shake
+            self.win_offset = shake(30,5)
+
+            # Set to game over
+            self.player.kill()
+            self.is_gg = True
+            self.gg_timer = pygame.time.get_ticks()
+
+        # Transition to game over scene
+        if self.is_gg:
+            now = pygame.time.get_ticks()
+            if now - self.gg_timer > self.gg_delay:
+                self.manager.go_to(GameOverScene(self.score))
 
         self.spawner.update(self.score)
         all_sprites_g.update(dt)
@@ -893,6 +910,18 @@ class GameScene(Scene):
         self.difficulty_icon = self.DIFFICULTY_ICONS[self.g_diff][self.spawner.current_stage]
         window.blit(self.difficulty_icon, (window.get_width() * 0.885,4))
 
+        if self.is_gg:
+            draw_text2(
+                window, 
+                "GAME OVER", 
+                GAME_FONT, 
+                int(FONT_SIZE*3), 
+                (window.get_width()/2, window.get_height()/2), 
+                "WHITE", 
+                italic=True, 
+                align="center"
+            )
+
         # Debug mode stats
         if DEBUG_MODE:
             draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
@@ -905,9 +934,13 @@ class GameScene(Scene):
 # GAME OVER SCENE ================================================================
 
 class GameOverScene(Scene):
-    def __init__(self, score):
+    def __init__(self, score=0):
         # Scene variables
         self.score = score
+        self.name = str()
+        self.bckspace_timer = pygame.time.get_ticks()
+        self.bckspace_delay = 200
+        self.MAX_CHAR = 3
 
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
@@ -916,21 +949,77 @@ class GameOverScene(Scene):
         self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
         self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
+
+        # Enter button
+        self.enter_button = pygame.Surface((128,32))
+        self.enter_button.fill("WHITE")
+
+        # # Enter image
+        # ENTER_SPRITESHEET = load_img("enter_sheet.png", IMG_DIR, SCALE)
+        # self.ENTER_IMG = [
+        #     image_at(ENTER_SPRITESHEET, scale_rect(SCALE, [0,0,32,16]), True),
+        #     image_at(ENTER_SPRITESHEET, scale_rect(SCALE, [32,0,32,16]), True)
+        # ]
+        # self.frame_timer = pygame.time.get_ticks()
+        # self.frame_delay = 400
+        # self.current_frame = 0
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_x:
-                    self.manager.go_to(TitleScene(0))
-    
+                if str(event.unicode).isalpha() and len(self.name) < self.MAX_CHAR:
+                    self.name += event.unicode
+                elif event.key == pygame.K_RETURN and len(self.name) == self.MAX_CHAR:
+                    self.manager.go_to(TitleScene())
+        
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_BACKSPACE]:
+            now = pygame.time.get_ticks()
+            if now - self.bckspace_timer > self.bckspace_delay:
+                self.bckspace_timer = now
+                self.name = self.name[:-1]
+
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+
+        # # Update frame of enter button
+        # now = pygame.time.get_ticks()
+        # if now - self.frame_timer > self.frame_delay:
+        #     self.frame_timer = now
+        #     self.current_frame = 1 - self.current_frame
 
     def draw(self, window):
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        draw_text(window, "GAME OVER", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, f"{self.score}", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
-        draw_text(window, "X to Exit", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, 256, "WHITE", "centered")
+        draw_text(window, "GAME OVER!", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        draw_text(window, f"{self.score}", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
+        
+        if len(self.name) == 0:
+            draw_text2(window, "ENTER NAME", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]/2), "GRAY", align="center")
+        else:
+            draw_text2(window, f"{self.name.upper()}", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]/2), "WHITE", align="center")
+        
+        if len(self.name) == self.MAX_CHAR:
+            draw_text2(
+                self.enter_button, 
+                "ENTER", 
+                GAME_FONT, 
+                FONT_SIZE, 
+                (self.enter_button.get_width()/2, (self.enter_button.get_height()/2) - FONT_SIZE / 2), 
+                "BLACK", 
+                align="center"
+            )
+            self.enter_button.set_colorkey("BLACK")
+            window.blit(
+                self.enter_button,
+                (
+                    window.get_width()/2 - self.enter_button.get_width()/2,
+                    WIN_RES["h"]*0.7
+                )
+            )
+        
+        # if len(self.name) == self.MAX_CHAR:
+        #     window.blit(self.ENTER_IMG[self.current_frame], (WIN_RES["w"]/2 - self.ENTER_IMG[self.current_frame].get_width()/2, WIN_RES["h"]*0.6))
+            

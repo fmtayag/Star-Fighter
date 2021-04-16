@@ -162,18 +162,18 @@ def draw_text2(surf, text, font, font_size, position, color, align="normal", ita
     
     # Create surface
     text_surface = font.render(text, True, color)
-    text_rect = text_surface.get_rect()
-
-    # Alignment settings
-    if align == "centered":
-        text_rect.centerx = position[0]
-        text_rect.centery = position[1]
-    elif align == "normal":
-        text_rect.x = position[0]
-        text_rect.y = position[1]
+    
+    # Find dest
+    dest = [0,0]
+    if align == "normal":
+        dest[0] = position[0]
+        dest[1] = position[1]
+    elif align == "center":
+        dest[0] = surf.get_width() / 2 - text_surface.get_width() / 2
+        dest[1] = position[1]
 
     # Display text on surface
-    surf.blit(text_surface, (text_rect.x, text_rect.y))
+    surf.blit(text_surface, dest)
 
 def shake(intensity, n):
     # Code from Sloth from StackOverflow
