@@ -851,6 +851,7 @@ class GameScene(Scene):
 
         # Draw score
         cur_score = str(int(self.score)).zfill(6)
+        draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 10), HP_RED2, italic=True)
         draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
 
         # Draw hp bar
@@ -858,11 +859,11 @@ class GameScene(Scene):
             # Draw square hp bar
             self.hp_surf.fill("BLACK")
             self.hp_surf.set_colorkey("BLACK")
-            draw_hpbar(self.hp_surf, (4,4,96,8), self.player.health, "WHITE")
+            draw_hpbar(self.hp_surf, self.hpbar_color, (4,4,96,8), self.player.health, "WHITE")
             self.hp_surf.blit(self.hpbar_outline, (0,0))
             window.blit(self.hp_surf, 
                 (
-                    (window.get_width()/2) - 32,
+                    (window.get_width()/2) - 38,
                     10
                 )
             )
@@ -881,7 +882,12 @@ class GameScene(Scene):
             self.pie_surf.blit(self.pie_health, (0,0))
             self.pie_surf.blit(semicirc_surf, (0,0))
             self.pie_surf.blit(self.pie_outline, (0,0))
-            window.blit(self.pie_surf, self.pie_rect)
+            window.blit(self.pie_surf, 
+                (
+                    window.get_width()/2,
+                    4
+                )
+            )
 
         # Draw difficulty icon
         self.difficulty_icon = self.DIFFICULTY_ICONS[self.g_diff][self.spawner.current_stage]

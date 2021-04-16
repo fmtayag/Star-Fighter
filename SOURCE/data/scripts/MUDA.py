@@ -187,7 +187,7 @@ def shake(intensity, n):
     while True:
         yield (0, 0)
 
-def draw_hpbar(surf, rect, hp_amnt, color):
+def draw_hpbar(surf, bar_image, rect, hp_amnt, color):
     if hp_amnt < 0:
         hp_amnt = 0
     x = rect[0]
@@ -195,5 +195,5 @@ def draw_hpbar(surf, rect, hp_amnt, color):
     w = (hp_amnt * rect[2]) / 16
     h = rect[3] 
     img = pygame.Surface((w,h))
-    img.fill(color)
+    img.blit(bar_image, (0,0))
     surf.blit(img, (x, y))
