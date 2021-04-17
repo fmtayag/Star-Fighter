@@ -2,10 +2,18 @@
 + /// gui work, exciting stuff!! i should probably do this now lmao
 + add sounds
 + add functionality to score table
-+ finish credits scene
++ /// finish credits scene
 + /// finish game difficulty selection scene
 + data saving and loading
++ add options
+    + controls
+    + video settings
+    + hp bar preference
++ back button on difficulty selection scene
 
 polishing ideas
 + snarky commentary about the player's score
 + add an "exit progress" when exiting the game scene
+
+4/17/2021
+im using this todo list from now on and not making any more todo files

@@ -369,11 +369,20 @@ class CreditsScene(Scene):
         self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
         self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
+
+        # Button
+        self.back_button = pygame.Surface((128,32))
+        self.back_button.fill("WHITE")
+
+        # Devs' pictures
+        DEVS_SHEET = load_img("devs_sheet.png", IMG_DIR, SCALE)
+        self.zye_icon = image_at(DEVS_SHEET, scale_rect(SCALE, [0,0,16,16]), True)
+        self.rio_icon = image_at(DEVS_SHEET, scale_rect(SCALE, [16,0,16,16]), True)
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_x:
+                if event.key == pygame.K_x or event.key == pygame.K_z:
                     self.manager.go_to(TitleScene(3))
     
     def update(self, dt):
@@ -385,7 +394,29 @@ class CreditsScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "CREDITS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
+        window.blit(self.zye_icon, (WIN_RES["w"]/2 - self.zye_icon.get_width()/2, WIN_RES["h"]*0.20))
+        draw_text2(window, "zyenapz", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.270), "YELLOW", align="center")
+        draw_text2(window, "code,art,sfx", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.300), "WHITE", align="center")
+
+        window.blit(self.rio_icon, (WIN_RES["w"]/2 - self.rio_icon.get_width()/2, WIN_RES["h"]*0.350))
+        draw_text2(window, "YoItsRion", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.430), "YELLOW", align="center")
+        draw_text2(window, "music", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.460), "WHITE", align="center")
+
+        draw_text2(window, "Special thanks", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.560), "WHITE", align="center")
+        draw_text2(window, "@ooshkei,", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.600), "WHITE", align="center")
+        draw_text2(window, "the pygame community,", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.630), "WHITE", align="center")
+        draw_text2(window, "and you!", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.665), "WHITE", align="center")
+
+        draw_text2(
+            self.back_button, 
+            "BACK", 
+            GAME_FONT, 
+            FONT_SIZE, 
+            (self.back_button.get_width()/2 - FONT_SIZE, self.back_button.get_height()/2 - FONT_SIZE/2), 
+            "BLACK", 
+            align="center"
+        )
+        window.blit(self.back_button, (window.get_width()/2 - self.back_button.get_width()/2,window.get_rect().height*0.8))
 
 # DIFFICULTY SELECTION SCENE ================================================================
 class DifficultyMenuWidget:
@@ -1061,7 +1092,7 @@ class GameOverScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "GAME OVER!", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, f"{self.score}", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
+        draw_text(window, f"{int(self.score)}", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
         
         if len(self.name) == 0:
             draw_text2(window, "ENTER NAME", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.485), "GRAY", align="center")
