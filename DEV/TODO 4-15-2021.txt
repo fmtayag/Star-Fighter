@@ -6,8 +6,10 @@
 + /// option: square health bar or circle health bar
 + /// add particle effects for powerup pickup
 + finish score table
-    + design needed 
+    + SCRAPPED design needed 
 + finish credits scene
++ data saving and loading
 
 polishing ideas
 + snarky commentary about the player's score
++ add an "exit progress" when exiting the game scene

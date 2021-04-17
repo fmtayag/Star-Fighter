@@ -32,7 +32,7 @@ def main():
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
-    window = pygame.display.set_mode((int(WIN_RES["w"]), int(WIN_RES["h"])))
+    window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
     #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
@@ -42,7 +42,7 @@ def main():
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
 
     # Create a scene manager
-    manager = SceneManager(GameOverScene())
+    manager = SceneManager(TitleScene())
 
     # Loop variables
     clock = pygame.time.Clock()

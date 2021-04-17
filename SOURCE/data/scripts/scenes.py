@@ -244,24 +244,7 @@ class ScoresTableWidget():
         
         # Scores - TODO: Just an example. No sorting yet.
         self.scores = [
-            ["MAN", 1000],
-            ["WMN", 2100],
-            ["LOL", 102],
-            ["XMS", 106],
-            ["EBL", 107],
-            ["LOL", 102],
-            ["XMS", 106],
-            ["EBL", 107],
-            ["LOL", 102],
-            ["XMS", 106],
-            ["EBL", 107],
-            ["LOL", 102],
-            ["XMS", 106],
-            ["LOL", 102],
-            ["XMS", 106],
-            ["EBL", 107],
-            ["LOL", 102],
-            ["XMS", 106]
+            ("ZYE", "231", "HARD")
         ]
         self.splice_n = 5
         self.scores = slice_list(self.scores, self.splice_n)
@@ -274,13 +257,16 @@ class ScoresTableWidget():
         self.table_surf.fill("black")
         self.table_surf.set_colorkey("black")
 
-        for i in range(len(self.scores[self.cur_tbl])):
-            draw_text(self.table_surf, f"{(i+1)+(self.cur_tbl*self.splice_n)}.", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.5 + len(str(i)), FONT_SIZE*(i+1) + self.spacing*(i+1), "YELLOW")
-            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][0]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.8, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
-            draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][1]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 1.3, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
-
-        # TODO - this is just a placeholder
-        draw_text(window, f"PAGE {self.cur_tbl+1} OF {len(self.scores)}", FONT_SIZE, GAME_FONT, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
+        if len(self.scores) != 0:
+            for i in range(len(self.scores[self.cur_tbl])):
+                draw_text(self.table_surf, f"{(i+1)+(self.cur_tbl*self.splice_n)}.", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.35 + len(str(i)), FONT_SIZE*(i+1) + self.spacing*(i+1), "YELLOW")
+                draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][0]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.6, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
+                draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][1]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 1.0, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
+                draw_text2(self.table_surf, f"{self.scores[self.cur_tbl][i][2]}", GAME_FONT, FONT_SIZE, (self.table_rect.centerx * 1.4, FONT_SIZE*(i+1) + self.spacing*(i+1)), "WHITE")
+                draw_text(window, f"PAGE {self.cur_tbl+1} OF {len(self.scores)}", FONT_SIZE, GAME_FONT, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
+        else:
+            draw_text2(self.table_surf, "No scores yet...", GAME_FONT, FONT_SIZE, (self.table_rect.centerx, 64), "WHITE", align="center")
+            draw_text2(self.table_surf, "Go play the game!", GAME_FONT, FONT_SIZE, (self.table_rect.centerx, 96), "WHITE", align="center")
 
         window.blit(self.table_surf,(0,WIN_RES["h"]/2 - 128))
 
@@ -402,6 +388,60 @@ class CreditsScene(Scene):
         draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
 
 # DIFFICULTY SELECTION SCENE ================================================================
+class DifficultyMenuWidget:
+    def __init__(self, init_selected):
+        # Surface
+        # Warning - options may go beyond the surface and will be not rendered
+        self.surface = pygame.Surface((WIN_RES["w"], 350))
+        self.surf_rect = self.surface.get_rect()
+        
+        self.spacing = FONT_SIZE 
+
+        # Menu
+        self.options = ("LENIENT", "FAIR", "CRUEL")
+        self.act_opt = [0 for i in range(len(self.options))] # Active options
+        self.act_opt[init_selected] = 1
+        self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
+
+        # Selector
+        self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
+        self.selector.fill("white")
+        self.sel_y = FONT_SIZE + self.spacing
+        self.sel_i = init_selected # index
+
+    def update(self):
+        self.sel_y = FONT_SIZE*(self.sel_i+1) + self.spacing*(self.sel_i+1)
+
+    def draw(self, window):
+        self.surface.fill("black")
+        self.surface.set_colorkey("black")
+        self.surface.blit(self.selector, (0,self.sel_y-3))
+        for i in range(len(self.options)):
+            draw_text(self.surface, self.options[i], FONT_SIZE, GAME_FONT, self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
+        window.blit(self.surface, (0,window.get_height()/2 - 32))
+
+    def select_up(self):
+        if  self.sel_i > 0:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i -= 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = len(self.options) - 1
+            self.act_opt[self.sel_i] = 1
+
+    def select_down(self):
+        if self.sel_i < len(self.options) - 1:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i += 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = 0
+            self.act_opt[self.sel_i] = 1
+
+    def get_selected(self):
+        return self.sel_i
 
 class DifficultySelectionScene(Scene):
     def __init__(self):
@@ -412,31 +452,58 @@ class DifficultySelectionScene(Scene):
         self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
         self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
+
+        # Difficulty Menu widget
+        DEFAULT_SELECTED = 1
+        self.w_diffmenu = DifficultyMenuWidget(DEFAULT_SELECTED)
+        self.selected_diff = DEFAULT_SELECTED
+
+        # Difficulty icons
+        DIFFICULTY_SPRITESHEET = load_img("difficulty_sheet.png", IMG_DIR, SCALE*2)
+        self.DIFFICULTY_ICONS = {
+            0: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE*2, [0,0,16,16]), True),
+            1: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE*2, [0,16,16,16]), True),
+            2: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE*2, [0,32,16,16]), True)
+        }
+
+        # # Description box
+        # self.desc_surf = pygame.Surface((WIN_RES["w"]*0.75, 64))
+        # self.desc_surf.fill("WHITE")
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_x:
+                if event.key == pygame.K_UP:
+                    self.w_diffmenu.select_up()
+                    self.selected_diff = self.w_diffmenu.get_selected()
+                elif event.key == pygame.K_DOWN:
+                    self.w_diffmenu.select_down()
+                    self.selected_diff = self.w_diffmenu.get_selected()
+                elif event.key == pygame.K_z:
+                    self.manager.go_to(GameScene(self.selected_diff))
+                elif event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(0))
-                elif event.key == pygame.K_1:
-                    self.manager.go_to(GameScene(0))
-                elif event.key == pygame.K_2:
-                    self.manager.go_to(GameScene(1))
-                elif event.key == pygame.K_3:
-                    self.manager.go_to(GameScene(2))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+
+        self.w_diffmenu.update()
 
     def draw(self, window):
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "SELECT DIFFICULTY", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, "1 - Lenient", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 - 64, "WHITE", "centered")
-        draw_text(window, "2 - Fair", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
-        draw_text(window, "3 - Cruel", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2 + 64, "WHITE", "centered")
+        window.blit(
+            self.DIFFICULTY_ICONS[self.selected_diff], 
+            (window.get_width()/2 - self.DIFFICULTY_ICONS[self.selected_diff].get_width() / 2, window.get_height()*0.30)
+        )
+        self.w_diffmenu.draw(window)
+        # window.blit(
+        #     self.desc_surf,
+        #     (window.get_width()/2 - self.desc_surf.get_width()/2,window.get_height()*0.8)
+        # )
 
 # GAME SCENE ===================================================================
 
@@ -447,7 +514,7 @@ class GameScene(Scene):
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
-        self.hp_pref = "PIE"
+        self.hp_pref = "SQUARE"
         self.gg_timer = pygame.time.get_ticks()
         self.gg_delay = 3000
         self.is_gg = False
@@ -916,7 +983,7 @@ class GameScene(Scene):
                 "GAME OVER", 
                 GAME_FONT, 
                 int(FONT_SIZE*3), 
-                (window.get_width()/2, window.get_height()/2), 
+                (window.get_width()/2, window.get_height()*0.4), 
                 "WHITE", 
                 italic=True, 
                 align="center"
@@ -997,9 +1064,9 @@ class GameOverScene(Scene):
         draw_text(window, f"{self.score}", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
         
         if len(self.name) == 0:
-            draw_text2(window, "ENTER NAME", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]/2), "GRAY", align="center")
+            draw_text2(window, "ENTER NAME", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.485), "GRAY", align="center")
         else:
-            draw_text2(window, f"{self.name.upper()}", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]/2), "WHITE", align="center")
+            draw_text2(window, f"> {self.name.upper()} <", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.485), "WHITE", align="center")
         
         if len(self.name) == self.MAX_CHAR:
             draw_text2(

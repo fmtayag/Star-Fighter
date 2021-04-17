@@ -1,0 +1,11 @@
+4-16-2012
++ /// gui work, exciting stuff!! i should probably do this now lmao
++ add sounds
++ add functionality to score table
++ finish credits scene
++ /// finish game difficulty selection scene
++ data saving and loading
+
+polishing ideas
++ snarky commentary about the player's score
++ add an "exit progress" when exiting the game scene
