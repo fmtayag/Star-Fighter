@@ -129,8 +129,11 @@ class TitleScene(Scene):
 
         # Draw menu
         self.title_menu.draw(window)
-        draw_text(window, "(Test Build v.Whatever)", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, 30, "WHITE", "centered")
-        draw_text(window, "Copydown", FONT_SIZE, GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-(FONT_SIZE/2)*2, "WHITE", "centered")
+        #draw_text(window, "(Test Build v.Whatever)", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, 30, "WHITE", "centered")
+        draw_text(window, "v1.1.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-32, "WHITE", "centered")
+        draw_text(window, "Pygame version 2.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-24, "WHITE", "centered")
+        draw_text(window, "(c) 2020-2021 zyenapz", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-16, "WHITE", "centered")
+        draw_text(window, "All rights reserved.", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-8, "WHITE", "centered")
 
 # SCORES SCENE =================================================================
 
@@ -892,6 +895,11 @@ class GameScene(Scene):
                     30
                 )
 
+                # Produce a flashing effect
+                # The player is not really hurt, the variable is just named that way because I was stupid
+                # enough not to foresee other uses...now im too lazy to change it.
+                self.player.is_hurt = True
+
             # SENTRY - ENEMY COLLISION
             for sentry in sentries_g:
                 hits = pygame.sprite.spritecollide(sentry, hostiles_g, False, pygame.sprite.collide_circle)
@@ -1064,6 +1072,22 @@ class GameScene(Scene):
 
 # GAME OVER SCENE ================================================================
 
+def get_comment(score):
+    if score < 0:
+        return "bugged"
+    elif score == 0:
+        return "recruit"
+    elif score < 1000:
+        return "ensign"
+    elif score >= 1000 and score < 3000:
+        return "lieutenant"
+    elif score >= 3000 and score < 6000:
+        return "commander"
+    elif score >= 6000 and score < 9000:
+        return "captain"
+    elif score >= 9000:
+        return "admiral"
+
 class GameOverScene(Scene):
     def __init__(self, score=0):
         # Scene variables
@@ -1072,6 +1096,8 @@ class GameOverScene(Scene):
         self.bckspace_timer = pygame.time.get_ticks()
         self.bckspace_delay = 200
         self.MAX_CHAR = 3
+        self.score_comment = get_comment(score)
+        print(self.score_comment)
 
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
@@ -1085,15 +1111,17 @@ class GameOverScene(Scene):
         self.enter_button = pygame.Surface((128,32))
         self.enter_button.fill("WHITE")
 
-        # # Enter image
-        # ENTER_SPRITESHEET = load_img("enter_sheet.png", IMG_DIR, SCALE)
-        # self.ENTER_IMG = [
-        #     image_at(ENTER_SPRITESHEET, scale_rect(SCALE, [0,0,32,16]), True),
-        #     image_at(ENTER_SPRITESHEET, scale_rect(SCALE, [32,0,32,16]), True)
-        # ]
-        # self.frame_timer = pygame.time.get_ticks()
-        # self.frame_delay = 400
-        # self.current_frame = 0
+        # Ranks
+        RANKS_SHEET = load_img("ranks_sheet.png", IMG_DIR, SCALE*2)
+        self.RANKS_IMGS = {
+            "RECRUIT": image_at(RANKS_SHEET, scale_rect(SCALE*2, [0,0,16,16]), True),
+            "ENSIGN": image_at(RANKS_SHEET, scale_rect(SCALE*2, [16,0,16,16]), True),
+            "LIEUTENANT": image_at(RANKS_SHEET, scale_rect(SCALE*2, [32,0,16,16]), True),
+            "COMMANDER": image_at(RANKS_SHEET, scale_rect(SCALE*2, [48,0,16,16]), True),
+            "CAPTAIN": image_at(RANKS_SHEET, scale_rect(SCALE*2, [64,0,16,16]), True),
+            "ADMIRAL": image_at(RANKS_SHEET, scale_rect(SCALE*2, [80,0,16,16]), True)
+        }
+        self.rank = self.score_comment.upper()
     
     def handle_events(self, events):
         for event in events:
@@ -1114,24 +1142,33 @@ class GameOverScene(Scene):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
 
-        # # Update frame of enter button
-        # now = pygame.time.get_ticks()
-        # if now - self.frame_timer > self.frame_delay:
-        #     self.frame_timer = now
-        #     self.current_frame = 1 - self.current_frame
-
     def draw(self, window):
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
+        # Draw game over and score
         draw_text(window, "GAME OVER!", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, f"{int(self.score)}", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 128, "WHITE", "centered")
-        
+        draw_text(window, f"{int(self.score)}", FONT_SIZE*4, GAME_FONT, WIN_RES["w"]/2, 104, HP_RED1, "centered")
+        draw_text(window, f"{int(self.score)}", FONT_SIZE*4, GAME_FONT, WIN_RES["w"]/2, 100, "WHITE", "centered")
+
+        # Draw rank and image
+        #draw_text2(window, "Your Rank", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.35), "WHITE", align="center")
+        try:
+            window.blit(
+                self.RANKS_IMGS[self.rank], 
+                (window.get_width()/2 - self.RANKS_IMGS[self.rank].get_width()/2, window.get_height()*0.35)
+            )
+        except:
+            pass
+        draw_text2(window, f"Rank: {self.score_comment.capitalize()}", GAME_FONT, int(FONT_SIZE), (WIN_RES["w"]/2, WIN_RES["h"]*0.5), "WHITE", align="center")
+
+        # Draw  textbox
         if len(self.name) == 0:
-            draw_text2(window, "ENTER NAME", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.485), "GRAY", align="center")
+            draw_text2(window, "ENTER NAME", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.645), "GRAY", align="center")
         else:
-            draw_text2(window, f"> {self.name.upper()} <", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.485), "WHITE", align="center")
+            draw_text2(window, f"> {self.name.upper()} <", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.645), "WHITE", align="center")
         
+        # Draw enter button
         if len(self.name) == self.MAX_CHAR:
             draw_text2(
                 self.enter_button, 
@@ -1147,10 +1184,6 @@ class GameOverScene(Scene):
                 self.enter_button,
                 (
                     window.get_width()/2 - self.enter_button.get_width()/2,
-                    WIN_RES["h"]*0.7
+                    WIN_RES["h"]*0.75
                 )
             )
-        
-        # if len(self.name) == self.MAX_CHAR:
-        #     window.blit(self.ENTER_IMG[self.current_frame], (WIN_RES["w"]/2 - self.ENTER_IMG[self.current_frame].get_width()/2, WIN_RES["h"]*0.6))
-            
