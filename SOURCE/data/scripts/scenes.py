@@ -734,13 +734,29 @@ class GameScene(Scene):
         # Create a spawner
         self.spawner = Spawner(self.player, self.g_diff)
 
+        # Exit progress bar
+        self.exit_bar = pygame.Surface((32,32))
+        self.exit_timer = pygame.time.get_ticks()
+        self.exit_delay = 2000
+        self.is_exiting = False
+        self.timer_resetted = False
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_x:
-                    self.manager.go_to(TitleScene(0))
                 if event.key == pygame.K_l and DEBUG_MODE:
                     self.player.gun_level += 1
+        
+        if not self.is_gg:
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_x]:
+                self.is_exiting = True
+                if self.timer_resetted == False:
+                    self.exit_timer = pygame.time.get_ticks()
+                    self.timer_resetted = True
+            else:
+                self.is_exiting = False
+                self.timer_resetted = False
 
         self.spawner.handle_events(events)
     
@@ -748,6 +764,14 @@ class GameScene(Scene):
         # Update parallax and background
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+
+        # Exit progress
+        if self.is_exiting:
+            now = pygame.time.get_ticks()
+            if now - self.exit_timer > self.exit_delay:
+                self.player.health -= PLAYER_HEALTH * 999
+                self.win_offset = shake(30,5)
+                self.is_exiting = False
         
         # Handle collisions
         if not self.is_gg:
@@ -1005,11 +1029,31 @@ class GameScene(Scene):
         # Draw sprites
         all_sprites_g.draw(window)
 
+        # Draw exit progress
+        if self.is_exiting:
+            now = pygame.time.get_ticks()
+            bar_length = (now - self.exit_timer) / 10
+            self.exit_bar = pygame.Surface((bar_length,16))
+            self.exit_bar.fill("WHITE")
+            draw_text2(
+                self.exit_bar,
+                "EXITING",
+                GAME_FONT,
+                FONT_SIZE,
+                (self.exit_bar.get_width()/2, 0),
+                "BLACK",
+                align="center"
+            )
+            window.blit(
+                self.exit_bar,
+                (window.get_width()/2 - self.exit_bar.get_width()/2, window.get_height()/2)
+            )
+
         # Draw score
         cur_score = str(int(self.score)).zfill(6)
         draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 10), HP_RED2, italic=True)
         draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
-
+        
         # Draw hp bar
         if self.hp_pref == "SQUARE":
             # Draw square hp bar

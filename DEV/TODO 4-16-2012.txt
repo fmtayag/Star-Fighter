@@ -13,7 +13,7 @@
 
 polishing ideas
 + /// (not) snarky commentary about the player's score
-+ add an "exit progress" when exiting the game scene
++ /// add an "exit progress" when exiting the game scene
 + kill feed
     - use a queue data structure for this
 
