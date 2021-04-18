@@ -737,7 +737,7 @@ class GameScene(Scene):
         # Exit progress bar
         self.exit_bar = pygame.Surface((32,32))
         self.exit_timer = pygame.time.get_ticks()
-        self.exit_delay = 2000
+        self.exit_delay = 3000
         self.is_exiting = False
         self.timer_resetted = False
 
@@ -1032,9 +1032,12 @@ class GameScene(Scene):
         # Draw exit progress
         if self.is_exiting:
             now = pygame.time.get_ticks()
-            bar_length = (now - self.exit_timer) / 10
+            bar_length = int((now - self.exit_timer) / 10)
+            bar_color = "WHITE"
+            if now - self.exit_timer > self.exit_delay / 2:
+                bar_color = HP_RED1
             self.exit_bar = pygame.Surface((bar_length,16))
-            self.exit_bar.fill("WHITE")
+            self.exit_bar.fill(bar_color)
             draw_text2(
                 self.exit_bar,
                 "EXITING",
@@ -1205,6 +1208,9 @@ class GameOverScene(Scene):
         except:
             pass
         draw_text2(window, f"Rank: {self.score_comment.capitalize()}", GAME_FONT, int(FONT_SIZE), (WIN_RES["w"]/2, WIN_RES["h"]*0.5), "WHITE", align="center")
+
+        # if self.score_comment.upper() == "RECRUIT":
+        #     draw_text2(window, f"You don't deserve symmetry", GAME_FONT, int(FONT_SIZE), (WIN_RES["w"]/2, WIN_RES["h"]*0.), "WHITE", align="center")
 
         # Draw  textbox
         if len(self.name) == 0:
