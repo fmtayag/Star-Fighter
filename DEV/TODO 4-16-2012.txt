@@ -9,7 +9,7 @@
     + controls
     + video settings
     + hp bar preference
-+ back button on difficulty selection scene
++ /// back button on difficulty selection scene
 
 polishing ideas
 + snarky commentary about the player's score

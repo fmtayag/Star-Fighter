@@ -42,7 +42,7 @@ def main():
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
 
     # Create a scene manager
-    manager = SceneManager(TitleScene())
+    manager = SceneManager(DifficultySelectionScene())
 
     # Loop variables
     clock = pygame.time.Clock()

@@ -429,7 +429,7 @@ class DifficultyMenuWidget:
         self.spacing = FONT_SIZE 
 
         # Menu
-        self.options = ("LENIENT", "FAIR", "CRUEL")
+        self.options = ("LENIENT", "FAIR", "CRUEL", "BACK")
         self.act_opt = [0 for i in range(len(self.options))] # Active options
         self.act_opt[init_selected] = 1
         self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
@@ -440,15 +440,43 @@ class DifficultyMenuWidget:
         self.sel_y = FONT_SIZE + self.spacing
         self.sel_i = init_selected # index
 
+        # Back button
+        self.back_button = pygame.Surface((128,32))
+
     def update(self):
         self.sel_y = FONT_SIZE*(self.sel_i+1) + self.spacing*(self.sel_i+1)
 
     def draw(self, window):
         self.surface.fill("black")
         self.surface.set_colorkey("black")
-        self.surface.blit(self.selector, (0,self.sel_y-3))
+
+        # Change selector size and draw
+        if self.options[self.sel_i] != "BACK":
+            self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
+            self.selector.fill("white")
+            self.surface.blit(self.selector, (0,self.sel_y-3))
+        else:
+            self.selector = pygame.Surface((128,32))
+            self.selector.fill("white")
+            self.surface.blit(
+                self.selector, 
+                (self.surf_rect.centerx - self.selector.get_width()/2, FONT_SIZE*(4+1) + self.spacing*(4+1) * 1.30)
+            )
+
+        # Draw menu
         for i in range(len(self.options)):
-            draw_text(self.surface, self.options[i], FONT_SIZE, GAME_FONT, self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
+            if self.options[i] != "BACK":
+                draw_text(self.surface, self.options[i], FONT_SIZE, GAME_FONT, self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
+            else:
+                draw_text2(
+                    self.surface, 
+                    "BACK", 
+                    GAME_FONT, 
+                    FONT_SIZE, 
+                    (self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1) * 2), 
+                    self.colors[self.act_opt[i]], 
+                    align="center"
+                )
         window.blit(self.surface, (0,window.get_height()/2 - 32))
 
     def select_up(self):
@@ -473,6 +501,9 @@ class DifficultyMenuWidget:
 
     def get_selected(self):
         return self.sel_i
+
+    def get_selected_str(self):
+        return self.options[self.sel_i]
 
 class DifficultySelectionScene(Scene):
     def __init__(self):
@@ -511,7 +542,10 @@ class DifficultySelectionScene(Scene):
                     self.w_diffmenu.select_down()
                     self.selected_diff = self.w_diffmenu.get_selected()
                 elif event.key == pygame.K_z:
-                    self.manager.go_to(GameScene(self.selected_diff))
+                    if self.w_diffmenu.get_selected_str() != "BACK":
+                        self.manager.go_to(GameScene(self.selected_diff))
+                    elif self.w_diffmenu.get_selected_str() == "BACK":
+                        self.manager.go_to(TitleScene())
                 elif event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(0))
     
@@ -526,15 +560,14 @@ class DifficultySelectionScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "SELECT DIFFICULTY", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        window.blit(
-            self.DIFFICULTY_ICONS[self.selected_diff], 
-            (window.get_width()/2 - self.DIFFICULTY_ICONS[self.selected_diff].get_width() / 2, window.get_height()*0.30)
-        )
+        try:
+            window.blit(
+                self.DIFFICULTY_ICONS[self.selected_diff], 
+                (window.get_width()/2 - self.DIFFICULTY_ICONS[self.selected_diff].get_width() / 2, window.get_height()*0.30)
+            )
+        except:
+            pass
         self.w_diffmenu.draw(window)
-        # window.blit(
-        #     self.desc_surf,
-        #     (window.get_width()/2 - self.desc_surf.get_width()/2,window.get_height()*0.8)
-        # )
 
 # GAME SCENE ===================================================================
 
