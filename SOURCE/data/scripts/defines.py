@@ -104,12 +104,12 @@ SPAWN_DELAY = { # In ticks
     "LATE": 800
 }
 MID_STAGE_SCORE_TRIGGER = {
-    "EASY": 1200,
+    "EASY": 500,
     "MEDIUM": 1000,
     "HARD": 900
 }
 LATE_STAGE_SCORE_TRIGGER = {
-    "EASY": 2200,
+    "EASY": 1200,
     "MEDIUM": 2000,
     "HARD": 2800
 }

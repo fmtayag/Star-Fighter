@@ -737,7 +737,7 @@ class GameScene(Scene):
         # Exit progress bar
         self.exit_bar = pygame.Surface((32,32))
         self.exit_timer = pygame.time.get_ticks()
-        self.exit_delay = 3000
+        self.exit_delay = 2000
         self.is_exiting = False
         self.timer_resetted = False
 
@@ -749,7 +749,7 @@ class GameScene(Scene):
         
         if not self.is_gg:
             pressed = pygame.key.get_pressed()
-            if pressed[pygame.K_x]:
+            if pressed[pygame.K_x] or pressed[pygame.K_ESCAPE]:
                 self.is_exiting = True
                 if self.timer_resetted == False:
                     self.exit_timer = pygame.time.get_ticks()
