@@ -581,7 +581,7 @@ class GameScene(Scene):
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
-        self.hp_pref = "SQUARE"
+        self.hp_pref = "PIE"
         self.gg_timer = pygame.time.get_ticks()
         self.gg_delay = 3000
         self.is_gg = False
@@ -1074,10 +1074,10 @@ class GameScene(Scene):
         elif self.hp_pref == "PIE":
             # Draw pie hp bar
             semicirc_size = 32
-            semicirc_start = 360 - (self.player.health * (360 / PLAYER_MAX_HEALTH))
+            semicirc_end = 360 - (self.player.health * (360 / PLAYER_MAX_HEALTH)) + 270
             semicirc = Image.new("RGBA", (semicirc_size, semicirc_size))
             semicirc_d = ImageDraw.Draw(semicirc)
-            semicirc_d.pieslice((0, 0, semicirc_size-1, semicirc_size-1), 1, semicirc_start + 1, fill="BLACK")
+            semicirc_d.pieslice((0, 0, semicirc_size-1, semicirc_size-1), 271, semicirc_end + 1, fill="BLACK")
             semicirc_surf = pygame.image.fromstring(semicirc.tobytes(), semicirc.size, semicirc.mode)
 
             self.pie_surf.fill("BLACK")
@@ -1144,7 +1144,7 @@ class GameOverScene(Scene):
         self.bckspace_delay = 200
         self.MAX_CHAR = 3
         self.score_comment = get_comment(score)
-        print(self.score_comment)
+        #print(self.score_comment)
 
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
