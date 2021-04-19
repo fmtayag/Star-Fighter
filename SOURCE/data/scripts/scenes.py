@@ -130,8 +130,8 @@ class TitleScene(Scene):
         # Draw menu
         self.title_menu.draw(window)
         #draw_text(window, "(Test Build v.Whatever)", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, 30, "WHITE", "centered")
-        draw_text(window, "v1.1.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-32, "WHITE", "centered")
-        draw_text(window, "Pygame version 2.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-24, "WHITE", "centered")
+        draw_text(window, "Game v1.1.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-32, "WHITE", "centered")
+        draw_text(window, "Pygame v2.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-24, "WHITE", "centered")
         draw_text(window, "(c) 2020-2021 zyenapz", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-16, "WHITE", "centered")
         draw_text(window, "All rights reserved.", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-8, "WHITE", "centered")
 
