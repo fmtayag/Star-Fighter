@@ -125,7 +125,7 @@ class TitleScene(Scene):
     def draw(self, window):
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
-        window.blit(self.logo_img, (WIN_RES["w"]/2 - self.logo_hw, -32))
+        #window.blit(self.logo_img, (WIN_RES["w"]/2 - self.logo_hw, -32))
 
         # Draw menu
         self.title_menu.draw(window)

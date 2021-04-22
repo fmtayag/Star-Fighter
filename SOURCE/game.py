@@ -28,7 +28,7 @@ pygame.init()
 def main():
     # Play music
     pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
-    pygame.mixer.music.play(-1)
+    #pygame.mixer.music.play(-1)
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -42,7 +42,7 @@ def main():
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
 
     # Create a scene manager
-    manager = SceneManager(GameScene())
+    manager = SceneManager(TitleScene())
 
     # Loop variables
     clock = pygame.time.Clock()
