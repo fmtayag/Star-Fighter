@@ -91,12 +91,16 @@ class TitleScene(Scene):
         self.par_y = 0
 
         # Images
-        self.logo_img = load_img("logo.png", IMG_DIR, 4, convert_alpha=True)
+        self.logo_img = load_img("logo_notilt.png", IMG_DIR, 4, convert_alpha=False)
         self.logo_rect = self.logo_img.get_rect()
         self.logo_hw = self.logo_rect.width / 2
 
         # Menu object
         self.title_menu = TitleMenuWidget(init_selected)
+
+        # Logo bob
+        self.bob_timer = pygame.time.get_ticks()
+        self.bob_m = 0
 
     def handle_events(self, events):
         for event in events:
@@ -123,15 +127,20 @@ class TitleScene(Scene):
         self.title_menu.update()
 
     def draw(self, window):
+        now = pygame.time.get_ticks()
+        if now - self.bob_timer > 500:
+            self.bob_timer = now 
+            self.bob_m = 1 - self.bob_m
+
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
-        #window.blit(self.logo_img, (WIN_RES["w"]/2 - self.logo_hw, -32))
+        window.blit(self.logo_img, (WIN_RES["w"]/2 - self.logo_hw, -64 + (2*self.bob_m)))
 
         # Draw menu
         self.title_menu.draw(window)
         #draw_text(window, "(Test Build v.Whatever)", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, 30, "WHITE", "centered")
         draw_text(window, "Game v1.1.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-32, "WHITE", "centered")
-        draw_text(window, "Pygame v2.0", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-24, "WHITE", "centered")
+        draw_text(window, "Pygame v2.0.1", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-24, "WHITE", "centered")
         draw_text(window, "(c) 2020-2021 zyenapz", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-16, "WHITE", "centered")
         draw_text(window, "All rights reserved.", int(FONT_SIZE/2), GAME_FONT, window.get_rect().centerx, window.get_rect().bottom-8, "WHITE", "centered")
 
@@ -767,6 +776,18 @@ class GameScene(Scene):
         }
         self.difficulty_icon = pygame.Surface((32,32))
 
+        # Sounds
+        self.sfx_explosions = [
+            load_sound("sfx_explosion1.wav", SFX_DIR, 1),
+            load_sound("sfx_explosion2.wav", SFX_DIR, 1),
+            load_sound("sfx_explosion3.wav", SFX_DIR, 1)
+        ]
+        self.sfx_hit = [
+            load_sound("sfx_hit.wav", SFX_DIR, 1)
+        ]
+        self.channel0 = pygame.mixer.Channel(0)
+        self.channel1 = pygame.mixer.Channel(1)
+
         # Clear the sprite groups
         all_sprites_g.empty()
         hostiles_g.empty()
@@ -831,6 +852,9 @@ class GameScene(Scene):
             for bullet in p_bullets_g:
                 hits = pygame.sprite.spritecollide(bullet, hostiles_g, False, pygame.sprite.collide_circle)
                 for hit in hits:
+                    # Play sound
+                    self.channel0.play(random.choice(self.sfx_hit))
+
                     # Deduct enemy health
                     hit.health -= self.player.BULLET_DAMAGE
 
@@ -855,6 +879,10 @@ class GameScene(Scene):
 
                     # Logic if enemy is dead
                     if hit.health <= 0:
+                        # Play explosion sound
+                        self.channel1.play(random.choice(self.sfx_explosions))
+
+                        # Kill sprite
                         hit.kill()
 
                         # Add score

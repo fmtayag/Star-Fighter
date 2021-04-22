@@ -22,18 +22,19 @@ from data.scripts.muda import (
 )
 
 pygame.init()
+pygame.mixer.init()
 
 # Game loop ====================================================================
 
 def main():
     # Play music
     pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
-    pygame.mixer.music.play(-1)
+    #pygame.mixer.music.play(-1)
 
     # Initialize the window
     os.environ["SDL_VIDEO_CENTERED"] = "1"
-    #window = pygame.display.set_mode((int(WIN_RES["w"]), int(WIN_RES["h"])))
-    window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
+    window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
+    #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)
@@ -82,8 +83,8 @@ def main():
         targety = int(WIN_RES["h"] * yscale)
 
         window.fill((15,15,30))
-        window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
-        #window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
+        #window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
+        window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
         pygame.display.flip()
 
