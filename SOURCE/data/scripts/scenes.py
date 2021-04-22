@@ -574,6 +574,55 @@ class DifficultySelectionScene(Scene):
 
 # GAME SCENE ===================================================================
 
+class Scorefeed():
+    def __init__(self):
+        self.feed = list()
+        self.MAX_SIZE = 3
+
+        # Surface
+        self.feed_surf = pygame.Surface((96,128))
+
+        # Delete timer
+        self.delete_timer = pygame.time.get_ticks()
+        self.delete_delay = 2000
+        self.is_empty = False
+
+    def update(self):
+        if len(self.feed) > 0:
+            self.is_empty = False
+        else:
+            self.is_empty = True
+
+        if not self.is_empty:
+            now = pygame.time.get_ticks()
+            if now - self.delete_timer > self.delete_delay:
+                self.delete_timer = now
+
+                if len(self.feed) > 0:
+                    self.feed.pop()
+        else:
+            self.delete_timer = pygame.time.get_ticks()
+
+    def draw(self, window):
+        self.feed_surf.fill("BLACK")
+        self.feed_surf.set_colorkey("BLACK")
+        for i in range(len(self.feed)):
+            draw_text2(
+                self.feed_surf, 
+                f"+{int(self.feed[i])} pts", 
+                GAME_FONT, FONT_SIZE, 
+                (4, FONT_SIZE*(i)),
+                "WHITE"
+            )
+        window.blit(self.feed_surf, (8,32))
+
+    def add(self, item):
+        if len(self.feed) >= self.MAX_SIZE:
+            self.feed.pop()
+            self.feed.insert(0, item)
+        else:
+            self.feed.insert(0, item)
+
 class GameScene(Scene):
     def __init__(self, difficulty=1):
         # SCENE DEFINES 
@@ -741,6 +790,9 @@ class GameScene(Scene):
         self.is_exiting = False
         self.timer_resetted = False
 
+        # Killfeed
+        self.scorefeed = Scorefeed()
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -773,7 +825,7 @@ class GameScene(Scene):
                 self.win_offset = shake(30,5)
                 self.is_exiting = False
         
-        # Handle collisions
+        # Handle collisions - someone could refactor this.
         if not self.is_gg:
             # HOSTILES - PLAYER BULLET COLLISION
             for bullet in p_bullets_g:
@@ -828,6 +880,9 @@ class GameScene(Scene):
 
                         # Generate screen shake
                         self.win_offset = shake(10,5)
+
+                        # Add score into the scorefeed
+                        self.scorefeed.add(hit.WORTH)
 
             # PLAYER - ENEMY BULLET COLLISION
             hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
@@ -903,9 +958,13 @@ class GameScene(Scene):
                     particles_color = HP_COLORS
                         
                 elif hit.POW_TYPE == "SCORE":
-                    self.score += POWERUP_SCORE_BASE_WORTH * self.score_multiplier
+                    p_score = POWERUP_SCORE_BASE_WORTH * self.score_multiplier
+                    self.score += p_score
                     # Set particle colors
                     particles_color = SCR_COLORS
+
+                    # Add score into the score feed
+                    self.scorefeed.add(p_score)
 
                 elif hit.POW_TYPE == "SENTRY":
                     self.spawner.spawn_sentry()
@@ -1019,6 +1078,7 @@ class GameScene(Scene):
                 self.manager.go_to(GameOverScene(self.score))
 
         self.spawner.update(self.score)
+        self.scorefeed.update()
         all_sprites_g.update(dt)
 
     def draw(self, window):
@@ -1028,6 +1088,9 @@ class GameScene(Scene):
 
         # Draw sprites
         all_sprites_g.draw(window)
+        
+        # Draw score feed
+        self.scorefeed.draw(window)
 
         # Draw exit progress
         if self.is_exiting:

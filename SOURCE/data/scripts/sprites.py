@@ -468,9 +468,9 @@ class Hellfighter(pygame.sprite.Sprite):
 
     def move(self):
         if self.rect.left < 0:
-            self.velocity.x = self.SPEED_WAITING
+            self.velocity.x += self.SPEED_WAITING
         elif self.rect.right > WIN_RES["w"]:
-            self.velocity.x = -self.SPEED_WAITING
+            self.velocity.x += -self.SPEED_WAITING
 
     def animate(self):
         now = pygame.time.get_ticks()
