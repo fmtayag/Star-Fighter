@@ -858,7 +858,9 @@ class GameScene(Scene):
                         hit.kill()
 
                         # Add score
-                        self.score += hit.WORTH * self.score_multiplier
+                        score_worth = hit.WORTH * self.score_multiplier
+                        self.score += score_worth
+                        self.scorefeed.add(score_worth)
 
                         # Spawn powerup
                         spawn_roll = random.randrange(1,100)
@@ -880,9 +882,6 @@ class GameScene(Scene):
 
                         # Generate screen shake
                         self.win_offset = shake(10,5)
-
-                        # Add score into the scorefeed
-                        self.scorefeed.add(hit.WORTH)
 
             # PLAYER - ENEMY BULLET COLLISION
             hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
@@ -958,13 +957,13 @@ class GameScene(Scene):
                     particles_color = HP_COLORS
                         
                 elif hit.POW_TYPE == "SCORE":
+                    # Add score
                     p_score = POWERUP_SCORE_BASE_WORTH * self.score_multiplier
                     self.score += p_score
+                    self.scorefeed.add(p_score)
+
                     # Set particle colors
                     particles_color = SCR_COLORS
-
-                    # Add score into the score feed
-                    self.scorefeed.add(p_score)
 
                 elif hit.POW_TYPE == "SENTRY":
                     self.spawner.spawn_sentry()
