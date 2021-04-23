@@ -11,6 +11,7 @@
 
 import pygame, os, random, math, time
 from pygame.locals import *
+from pygame._sdl2.video import Window
 from data.scripts.scenes import *
 from data.scripts.defines import FPS, WIN_RES, TITLE
 from data.scripts.muda import (
@@ -20,6 +21,8 @@ from data.scripts.muda import (
     write_savedata,
     SceneManager
 )
+from data.scripts.m_PlayerPrefs import PlayerPrefs
+os.environ["SDL_VIDEO_CENTERED"] = "1"
 
 pygame.init()
 pygame.mixer.init()
@@ -27,23 +30,29 @@ pygame.mixer.init()
 # Game loop ====================================================================
 
 def main():
+    # Create PlayerPrefs object
+    P_Prefs = PlayerPrefs()
+
     # Play music
     pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
     pygame.mixer.music.play(-1)
 
     # Initialize the window
-    os.environ["SDL_VIDEO_CENTERED"] = "1"
-    window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
-    #window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
+    window = None
+    if P_Prefs.is_fullscreen:
+        window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
+    else:
+        window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
+
+    # Create a scene manager
+    manager = SceneManager(TitleScene(P_Prefs))
+
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)
 
-    # Render target
+    # Create Render target
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
-
-    # Create a scene manager
-    manager = SceneManager(GameScene())
 
     # Loop variables
     clock = pygame.time.Clock()
@@ -63,28 +72,33 @@ def main():
 
         if pygame.event.get(QUIT):
             running = False
+        if pygame.event.get(VIDEORESIZE):
+            print('derp')
 
         manager.scene.handle_events(pygame.event.get())
         manager.scene.update(dt)
         manager.scene.draw(render_target)   
 
-        # TODO - render target for multiple resolutions
+        # Draw screen
 
-        xscale = window.get_rect().width / WIN_RES["w"]
-        yscale = window.get_rect().height / WIN_RES["h"]
-        if xscale < 1 and yscale < 1:
-            scale = max(xscale, yscale)
-        elif xscale > 1 and yscale > 1:
-            scale = min(xscale, yscale)
+        if P_Prefs.is_fullscreen:
+            xscale = window.get_rect().width / WIN_RES["w"]
+            yscale = window.get_rect().height / WIN_RES["h"]
+            if xscale < 1 and yscale < 1:
+                scale = max(xscale, yscale)
+            elif xscale > 1 and yscale > 1:
+                scale = min(xscale, yscale)
+            else:
+                scale = 1.0
+            #print(xscale, yscale)
+            targetx = int(WIN_RES["w"] * xscale)
+            targety = int(WIN_RES["h"] * yscale)
+
+            window.fill("BLACK")
+            window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
+            
         else:
-            scale = 1.0
-        #print(xscale, yscale)
-        targetx = int(WIN_RES["w"] * xscale)
-        targety = int(WIN_RES["h"] * yscale)
-
-        window.fill((15,15,30))
-        #window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
-        window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
+            window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
         pygame.display.flip()
 

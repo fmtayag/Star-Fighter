@@ -81,7 +81,10 @@ class TitleMenuWidget:
         return self.sel_i
 
 class TitleScene(Scene):
-    def __init__(self, init_selected=0):
+    def __init__(self, P_Prefs):
+        # Player preferences
+        self.P_Prefs = P_Prefs
+
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.BG_IMG.get_rect()
@@ -96,7 +99,7 @@ class TitleScene(Scene):
         self.logo_hw = self.logo_rect.width / 2
 
         # Menu object
-        self.title_menu = TitleMenuWidget(init_selected)
+        self.title_menu = TitleMenuWidget(self.P_Prefs.title_selected)
 
         # Logo bob
         self.bob_timer = pygame.time.get_ticks()
@@ -111,13 +114,21 @@ class TitleScene(Scene):
                     self.title_menu.select_down()
                 elif event.key == pygame.K_z:
                     if self.title_menu.get_selected() == 0:
-                        self.manager.go_to(DifficultySelectionScene())
+                        self.P_Prefs.title_selected = 0
+                        self.manager.go_to(DifficultySelectionScene(self.P_Prefs))
+
                     elif self.title_menu.get_selected() == 1:
-                        self.manager.go_to(ScoresScene())
+                        self.P_Prefs.title_selected = 1
+                        self.manager.go_to(ScoresScene(self.P_Prefs))
+
                     elif self.title_menu.get_selected() == 2:
-                        self.manager.go_to(OptionsScene())
+                        self.P_Prefs.title_selected = 2
+                        self.manager.go_to(OptionsScene(self.P_Prefs))
+
                     elif self.title_menu.get_selected() == 3:
-                        self.manager.go_to(CreditsScene())
+                        self.P_Prefs.title_selected = 3
+                        self.manager.go_to(CreditsScene(self.P_Prefs))
+
                     elif self.title_menu.get_selected() == 4:
                         sys.exit()
 
@@ -291,7 +302,10 @@ class ScoresTableWidget():
             self.cur_tbl -= 1
 
 class ScoresScene(Scene):
-    def __init__(self):
+    def __init__(self, P_Prefs):
+        # Player preferences
+        self.P_Prefs = P_Prefs
+        
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.BG_IMG.get_rect()
@@ -325,9 +339,10 @@ class ScoresScene(Scene):
                         elif self.control_widget.get_dp_selected_option() == "NEXT":
                             self.scores_table.next_table()
                     elif self.control_widget.get_active_panel() == "BACK":
-                        self.manager.go_to(TitleScene(1))
+                        self.manager.go_to(TitleScene(self.P_Prefs))
+
                 elif event.key == pygame.K_x:
-                    self.manager.go_to(TitleScene(1))
+                    self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
@@ -344,7 +359,9 @@ class ScoresScene(Scene):
 # OPTIONS SCENE ================================================================
 
 class OptionsScene(Scene):
-    def __init__(self):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+        
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.BG_IMG.get_rect()
@@ -357,7 +374,7 @@ class OptionsScene(Scene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
-                    self.manager.go_to(TitleScene(2))
+                    self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
@@ -373,7 +390,10 @@ class OptionsScene(Scene):
 # CREDITS SCENE ================================================================
 
 class CreditsScene(Scene):
-    def __init__(self):
+    def __init__(self, P_Prefs):
+        # Player preferences
+        self.P_Prefs = P_Prefs
+
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.BG_IMG.get_rect()
@@ -395,7 +415,7 @@ class CreditsScene(Scene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x or event.key == pygame.K_z:
-                    self.manager.go_to(TitleScene(3))
+                    self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
@@ -518,7 +538,10 @@ class DifficultyMenuWidget:
         return self.options[self.sel_i]
 
 class DifficultySelectionScene(Scene):
-    def __init__(self):
+    def __init__(self, P_Prefs):
+        # Player preferences
+        self.P_Prefs = P_Prefs
+
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.BG_IMG.get_rect()
@@ -555,11 +578,12 @@ class DifficultySelectionScene(Scene):
                     self.selected_diff = self.w_diffmenu.get_selected()
                 elif event.key == pygame.K_z:
                     if self.w_diffmenu.get_selected_str() != "BACK":
-                        self.manager.go_to(GameScene(self.selected_diff))
+                        self.P_Prefs.game_difficulty = self.selected_diff
+                        self.manager.go_to(GameScene(self.P_Prefs))
                     elif self.w_diffmenu.get_selected_str() == "BACK":
-                        self.manager.go_to(TitleScene())
+                        self.manager.go_to(TitleScene(self.P_Prefs))
                 elif event.key == pygame.K_x:
-                    self.manager.go_to(TitleScene(0))
+                    self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
@@ -633,9 +657,12 @@ class Scorefeed():
             self.feed.insert(0, item)
 
 class GameScene(Scene):
-    def __init__(self, difficulty=1):
+    def __init__(self, P_Prefs):
+        # Player Preferences
+        self.P_Prefs = P_Prefs
+
         # SCENE DEFINES 
-        self.g_diff = DIFFICULTIES[difficulty]
+        self.g_diff = DIFFICULTIES[self.P_Prefs.game_difficulty]
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
@@ -879,7 +906,8 @@ class GameScene(Scene):
         if self.is_gg:
             now = pygame.time.get_ticks()
             if now - self.gg_timer > self.gg_delay:
-                self.manager.go_to(GameOverScene(self.score))
+                self.P_Prefs.score = self.score
+                self.manager.go_to(GameOverScene(self.P_Prefs))
 
         self.spawner.update(self.score)
         self.scorefeed.update()
@@ -1246,14 +1274,17 @@ def get_comment(score):
         return "admiral"
 
 class GameOverScene(Scene):
-    def __init__(self, score=0):
+    def __init__(self, P_Prefs):
+        # Player preferences 
+        self.P_Prefs = P_Prefs
+
         # Scene variables
-        self.score = score
+        self.score = self.P_Prefs.score
         self.name = str()
         self.bckspace_timer = pygame.time.get_ticks()
         self.bckspace_delay = 200
         self.MAX_CHAR = 3
-        self.score_comment = get_comment(score)
+        self.score_comment = get_comment(self.score)
         #print(self.score_comment)
 
         # Background
@@ -1286,7 +1317,7 @@ class GameOverScene(Scene):
                 if str(event.unicode).isalpha() and len(self.name) < self.MAX_CHAR:
                     self.name += event.unicode
                 elif event.key == pygame.K_RETURN and len(self.name) == self.MAX_CHAR:
-                    self.manager.go_to(TitleScene())
+                    self.manager.go_to(TitleScene(self.P_Prefs))
         
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_BACKSPACE]:
