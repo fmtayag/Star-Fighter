@@ -5,7 +5,8 @@ import pygame.math
 from data.scripts.defines import *
 from data.scripts.muda import (
     SpriteState,
-    SpriteStateManager
+    SpriteStateManager,
+    load_sound
 )
 
 Vec2 = pygame.math.Vector2
