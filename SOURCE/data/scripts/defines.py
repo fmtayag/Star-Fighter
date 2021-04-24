@@ -8,6 +8,10 @@ TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
 VERSION = "1.1.0"
 
+# GAME OPTIONS =================================================================
+HP_OPTIONS = ("CIRCLE", "SQUARE")
+YESNO_OPTIONS = ("NO", "YES")
+
 # DIRECTORIES ==================================================================
 GAME_DIR = os.path.dirname("..") # This works apparently...what the fuck?
 DATA_DIR = os.path.join(GAME_DIR, "data")

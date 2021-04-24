@@ -422,6 +422,7 @@ class OptionsMenuWidget:
                     (window.get_width()/2 - self.back_button.get_width()/2, window.get_height()*0.8)
                 )
 
+        # Draw the menu widget surface
         window.blit(self.surface, (0,window.get_height()*0.3))
 
     def select_up(self):
@@ -483,6 +484,7 @@ class OptionsScene(Scene):
                         self.manager.go_to(GameOptionsScene(self.P_Prefs))
 
                     elif self.menu_widget.get_selected_str() == "BACK":
+                        self.P_Prefs.options_scene_selected = 0
                         self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
@@ -499,12 +501,13 @@ class OptionsScene(Scene):
         self.menu_widget.draw(window)
 
 class TextSelector:
-    def __init__(self):
-        self.options = ("PIE", "SQUARE", "NECKDEEP")
+    def __init__(self, options, position, alignment="LEFT", active=False):
+        self.options = options
+        self.alignment = alignment
         self.index = 0
         self.ts_surf = pygame.Surface((64,32))
-        self.position = (32,32)
-        self.active = True
+        self.position = position
+        self.active = active
 
         # Arrow animations
         self.jut_m = 0 # Jut multiplier for the arrows
@@ -519,8 +522,9 @@ class TextSelector:
 
     def draw(self, surface):
         # Automatically resize surface depending on text size
-        text_length = len(self.options[self.index]) * (FONT_SIZE) + 16
-        self.ts_surf = pygame.Surface((text_length, 32))
+        text_length = len(self.options[self.index])
+        surf_length = (text_length+2) * FONT_SIZE
+        self.ts_surf = pygame.Surface((surf_length, 32))
 
         self.ts_surf.fill("BLACK")
         self.ts_surf.set_colorkey("BLACK")
@@ -563,10 +567,21 @@ class TextSelector:
         )
         
         # Draw selector to surface
-        surface.blit(
-            self.ts_surf, 
-            (surface.get_width()/2 - self.ts_surf.get_width()/2, 32)
-        )
+        if self.alignment == "CENTER":
+            surface.blit(
+                self.ts_surf, 
+                (surface.get_width()/2 - self.ts_surf.get_width()/2 + self.position[0], self.position[1])
+            )
+        # elif self.alignment == "LEFT":
+        #     surface.blit(
+        #         self.ts_surf, 
+        #         (self.position[0], self.position[1])
+        #     )
+        # elif self.alignment == "RIGHT":
+        #     surface.blit(
+        #         self.ts_surf, 
+        #         (surface.get_width() - self.ts_surf.get_width() - self.position[0], self.position[1])
+        #     )
 
     def go_left(self):
         if self.index <= 0:
@@ -580,28 +595,139 @@ class TextSelector:
         else:
             self.index += 1
 
+    def get_selected(self):
+        return self.index
+
+    def activate(self):
+        self.active = True
+
+    def deactivate(self):
+        self.active = False
+
+class Button:
+    def __init__(self, text, size, position):
+        self.image = pygame.Surface(size)
+        self.text = text 
+        self.position = position
+        self.active = False
+        self.text_color = "WHITE"
+        self.surface_color = "BLACK"
+
+    def update(self):
+        pass
+
+    def draw(self, surface):
+        self.image.fill(self.surface_color)
+        self.image.set_colorkey("BLACK")
+
+        # Draw text
+        draw_text2(
+            self.image,
+            self.text,
+            GAME_FONT,
+            FONT_SIZE,
+            (self.image.get_width()/2 , self.image.get_height()/2 - FONT_SIZE/2),
+            self.text_color,
+            align="center"
+        )
+        surface.blit(self.image, self.position)
+
+    def activate(self):
+        self.text_color = "BLACK"
+        self.surface_color = "WHITE"
+        self.active = True
+
+    def deactivate(self):
+        self.text_color = "WHITE"
+        self.surface_color = "BLACK"
+        self.active = False
+
 class GameOptionsSceneMenuWidget:
     def __init__(self):
-        self.image = pygame.Surface((WIN_RES["w"], 256))
+        self.image = pygame.Surface((WIN_RES["w"], 350))
+        x_alignment = self.image.get_width()*0.30
+        btn_x_size = 128
 
-        # Text selectors
-        self.ts_hp = TextSelector()
+        # Options
+        self.ts_hp_y = 16
+        self.ts_canpause_y = 64
+        self.ts_hp = TextSelector(HP_OPTIONS, (x_alignment,self.ts_hp_y), alignment="CENTER", active=True)
+        self.ts_canpause = TextSelector(YESNO_OPTIONS, (x_alignment, self.ts_canpause_y), alignment="CENTER")
+        self.btn_back = Button(
+            "BACK", 
+            (btn_x_size,32), 
+            (self.image.get_width()/2 - btn_x_size/2,self.image.get_height()*0.7)
+        )
+        
+        # Options list
+        self.options = (
+            self.ts_hp,
+            self.ts_canpause,
+            self.btn_back
+        )
+        self.MAX_OPTIONS = len(self.options) 
+        self.index = 0
 
-    def update(self): 
-        self.ts_hp.update()
+    def update(self):
+        for option in self.options:
+            option.update()
 
     def draw(self, window):
         self.image.fill("BLACK")
         self.image.set_colorkey("BLACK")
-        self.ts_hp.draw(self.image)
+
+        # Draw Labels
+        draw_text2(self.image, "HP BAR STYLE", GAME_FONT, FONT_SIZE, (32, self.ts_hp_y + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "CAN PAUSE", GAME_FONT, FONT_SIZE, (32, self.ts_canpause_y + FONT_SIZE/2), "WHITE")
+
+        # Draw text selectors
+        for option in self.options:
+            option.draw(self.image)
+
+        # Draw the widget to the screen
         window.blit(self.image, (0,window.get_height()*0.3))
 
-    # TODO - these are hardcoded, find a way to make it work with multiple text selectors. maybe use something similar to an FSM?
+    def select_up(self):
+        # Deactivate current text selector
+        selected_option = self.options[self.index]
+        selected_option.deactivate()
+
+        # Move current text selector 
+        if self.index <= 0:
+            self.index = self.MAX_OPTIONS - 1
+        else:
+            self.index -= 1
+
+        # Activate current text selector
+        selected_option = self.options[self.index]
+        selected_option.activate()
+
+    def select_down(self):
+        # Deactivate current text selector
+        selected_option = self.options[self.index]
+        selected_option.deactivate()
+
+        # Move current text selector 
+        if self.index >= self.MAX_OPTIONS - 1:
+            self.index = 0
+        else:
+            self.index += 1
+
+        # Activate current text selector
+        selected_option = self.options[self.index]
+        selected_option.activate()
+
     def select_left(self):
-        self.ts_hp.go_left()
+        selected_option = self.options[self.index]
+        option_type = type(selected_option)
+        if option_type == TextSelector:
+            selected_option.go_left()
 
     def select_right(self):
-        self.ts_hp.go_right()
+        selected_option = self.options[self.index]
+        option_type = type(selected_option)
+        if option_type == TextSelector:
+            selected_option.go_right()
 
 class GameOptionsScene(Scene):
     def __init__(self, P_Prefs):
@@ -625,9 +751,13 @@ class GameOptionsScene(Scene):
                     self.manager.go_to(OptionsScene(self.P_Prefs))
 
                 # Testing
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_UP:
+                    self.menu_widget.select_up()
+                if event.key == pygame.K_DOWN:
+                    self.menu_widget.select_down()
+                if event.key == pygame.K_LEFT:
                     self.menu_widget.select_left()
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_RIGHT:
                     self.menu_widget.select_right()
 
     def update(self, dt):
