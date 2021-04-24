@@ -463,19 +463,26 @@ class OptionsScene(Scene):
         self.par_y = 0
 
         # Menu widget
-        self.menu_widget = OptionsMenuWidget()
+        self.menu_widget = OptionsMenuWidget(self.P_Prefs.options_scene_selected)
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(self.P_Prefs))
+
                 elif event.key == pygame.K_UP:
                     self.menu_widget.select_up()
+
                 elif event.key == pygame.K_DOWN:
                     self.menu_widget.select_down()
+
                 elif event.key == pygame.K_z:
-                    if self.menu_widget.get_selected_str() == "BACK":
+                    if self.menu_widget.get_selected_str() == "GAME":
+                        self.P_Prefs.options_scene_selected = 2
+                        self.manager.go_to(GameOptionsScene(self.P_Prefs))
+
+                    elif self.menu_widget.get_selected_str() == "BACK":
                         self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
@@ -489,6 +496,151 @@ class OptionsScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        self.menu_widget.draw(window)
+
+class TextSelector:
+    def __init__(self):
+        self.options = ("PIE", "SQUARE", "NECKDEEP")
+        self.index = 0
+        self.ts_surf = pygame.Surface((64,32))
+        self.position = (32,32)
+        self.active = True
+
+        # Arrow animations
+        self.jut_m = 0 # Jut multiplier for the arrows
+        self.jut_timer = pygame.time.get_ticks()
+        self.jut_delay = 500
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.jut_timer > self.jut_delay:
+            self.jut_timer = now
+            self.jut_m = 1 - self.jut_m # Toggle between 0 and 1. Neat, huh?
+
+    def draw(self, surface):
+        # Automatically resize surface depending on text size
+        text_length = len(self.options[self.index]) * (FONT_SIZE) + 16
+        self.ts_surf = pygame.Surface((text_length, 32))
+
+        self.ts_surf.fill("BLACK")
+        self.ts_surf.set_colorkey("BLACK")
+
+        if self.active:
+            # Draw the arrows. There has to be a better way to do this...
+            # But it will work for now (narrator: it will work this way forever)
+            draw_text2(
+                self.ts_surf, 
+                "<", 
+                GAME_FONT, 
+                FONT_SIZE, 
+                (
+                    FONT_SIZE/2 - (2*self.jut_m),
+                    self.ts_surf.get_height()/2 - FONT_SIZE/2
+                ),
+                "WHITE"
+            )
+            draw_text2(
+                self.ts_surf, 
+                ">", 
+                GAME_FONT, 
+                FONT_SIZE, 
+                (
+                    self.ts_surf.get_width() - FONT_SIZE + (2*self.jut_m),
+                    self.ts_surf.get_height()/2 - FONT_SIZE/2
+                ),
+                "WHITE"
+            )
+
+        # Draw text
+        draw_text2(
+            self.ts_surf, 
+            self.options[self.index], 
+            GAME_FONT, 
+            FONT_SIZE, 
+            (0,self.ts_surf.get_height()/2 - FONT_SIZE/2),
+            "WHITE",
+            align="center"
+        )
+        
+        # Draw selector to surface
+        surface.blit(
+            self.ts_surf, 
+            (surface.get_width()/2 - self.ts_surf.get_width()/2, 32)
+        )
+
+    def go_left(self):
+        if self.index <= 0:
+            self.index = len(self.options)-1
+        else:
+            self.index -= 1
+
+    def go_right(self):
+        if self.index >= len(self.options)-1:
+            self.index = 0
+        else:
+            self.index += 1
+
+class GameOptionsSceneMenuWidget:
+    def __init__(self):
+        self.image = pygame.Surface((WIN_RES["w"], 256))
+
+        # Text selectors
+        self.ts_hp = TextSelector()
+
+    def update(self): 
+        self.ts_hp.update()
+
+    def draw(self, window):
+        self.image.fill("BLACK")
+        self.image.set_colorkey("BLACK")
+        self.ts_hp.draw(self.image)
+        window.blit(self.image, (0,window.get_height()*0.3))
+
+    # TODO - these are hardcoded, find a way to make it work with multiple text selectors. maybe use something similar to an FSM?
+    def select_left(self):
+        self.ts_hp.go_left()
+
+    def select_right(self):
+        self.ts_hp.go_right()
+
+class GameOptionsScene(Scene):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+
+        # Background
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
+        # Menu widget
+        self.menu_widget = GameOptionsSceneMenuWidget()
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.manager.go_to(OptionsScene(self.P_Prefs))
+
+                # Testing
+                if event.key == pygame.K_a:
+                    self.menu_widget.select_left()
+                if event.key == pygame.K_d:
+                    self.menu_widget.select_right()
+
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+        self.menu_widget.update()
+
+    def draw(self, window):
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+
+        draw_text(window, "GAME OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         self.menu_widget.draw(window)
 
 # CREDITS SCENE ================================================================
@@ -583,6 +735,8 @@ class DifficultyMenuWidget:
         self.sel_y = FONT_SIZE*(self.sel_i+1) + self.spacing*(self.sel_i+1)
 
     def draw(self, window):
+        self.back_button.fill("BLACK")
+        self.back_button.set_colorkey("BLACK")
         self.surface.fill("black")
         self.surface.set_colorkey("black")
 
@@ -594,9 +748,9 @@ class DifficultyMenuWidget:
         else:
             self.selector = pygame.Surface((128,32))
             self.selector.fill("white")
-            self.surface.blit(
+            self.back_button.blit(
                 self.selector, 
-                (self.surf_rect.centerx - self.selector.get_width()/2, FONT_SIZE*(4+1) + self.spacing*(4+1) * 1.30)
+                (0,0)
             )
 
         # Draw menu
@@ -605,14 +759,19 @@ class DifficultyMenuWidget:
                 draw_text(self.surface, self.options[i], FONT_SIZE, GAME_FONT, self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
             else:
                 draw_text2(
-                    self.surface, 
+                    self.back_button, 
                     "BACK", 
                     GAME_FONT, 
                     FONT_SIZE, 
-                    (self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1) * 2), 
+                    (self.back_button.get_width()/2, self.back_button.get_height()/2 - FONT_SIZE/2), 
                     self.colors[self.act_opt[i]], 
                     align="center"
                 )
+                window.blit(
+                    self.back_button, 
+                    (window.get_width()/2 - self.back_button.get_width()/2, window.get_height()*0.8)
+                )
+
         window.blit(self.surface, (0,window.get_height()/2 - 32))
 
     def select_up(self):
@@ -770,7 +929,7 @@ class GameScene(Scene):
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
-        self.hp_pref = "PIE"
+        self.hp_pref = self.P_Prefs.hp_pref
         self.gg_timer = pygame.time.get_ticks()
         self.gg_delay = 3000
         self.is_gg = False

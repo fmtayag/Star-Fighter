@@ -35,7 +35,7 @@ def main():
 
     # Play music
     pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
-    pygame.mixer.music.play(-1)
+    #pygame.mixer.music.play(-1)
 
     # Initialize the window
     window = None
@@ -45,7 +45,7 @@ def main():
         window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
 
     # Create a scene manager
-    manager = SceneManager(OptionsScene(P_Prefs))
+    manager = SceneManager(GameOptionsScene(P_Prefs))
 
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))

@@ -99,8 +99,8 @@ MAX_ENEMY_COUNT = {
     "LATE": 5
 }
 SPAWN_DELAY = { # In ticks
-    "EARLY": 1500,
-    "MID": 1200,
+    "EARLY": 1300,
+    "MID": 1000,
     "LATE": 800
 }
 MID_STAGE_SCORE_TRIGGER = {
