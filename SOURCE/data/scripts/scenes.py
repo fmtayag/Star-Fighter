@@ -357,6 +357,98 @@ class ScoresScene(Scene):
         self.control_widget.draw(window)
 
 # OPTIONS SCENE ================================================================
+class OptionsMenuWidget:
+    def __init__(self, init_selected=0):
+        # Surface
+        # Warning - options may go beyond the surface and will be not rendered
+        self.surface = pygame.Surface((WIN_RES["w"], 350))
+        self.surf_rect = self.surface.get_rect()
+        
+        self.spacing = FONT_SIZE 
+
+        # Menu
+        self.options = ("VIDEO", "SOUND", "GAME", "CONTROLS", "BACK")
+        self.act_opt = [0 for i in range(len(self.options))] # Active options
+        self.act_opt[init_selected] = 1
+        self.colors = {0: "white", 1: "black"} # Colors for active/inactive menu
+
+        # Selector
+        self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
+        self.selector.fill("white")
+        self.sel_y = FONT_SIZE + self.spacing
+        self.sel_i = init_selected # index
+
+        # Back button
+        self.back_button = pygame.Surface((128,32))
+
+    def update(self):
+        self.sel_y = FONT_SIZE*(self.sel_i+1) + self.spacing*(self.sel_i+1)
+
+    def draw(self, window):
+        self.back_button.fill("BLACK")
+        self.back_button.set_colorkey("BLACK")
+        self.surface.fill("black")
+        self.surface.set_colorkey("black")
+
+        # Change selector size and draw
+        if self.options[self.sel_i] != "BACK":
+            self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
+            self.selector.fill("white")
+            self.surface.blit(self.selector, (0,self.sel_y-3))
+        else:
+            self.selector = pygame.Surface((128,32))
+            self.selector.fill("white")
+            self.back_button.blit(
+                self.selector, 
+                (0,0)
+            )
+
+        # Draw menu
+        for i in range(len(self.options)):
+            if self.options[i] != "BACK":
+                draw_text(self.surface, self.options[i], FONT_SIZE, GAME_FONT, self.surf_rect.centerx, FONT_SIZE*(i+1) + self.spacing*(i+1), self.colors[self.act_opt[i]], "centered")
+            else:
+                draw_text2(
+                    self.back_button, 
+                    "BACK", 
+                    GAME_FONT, 
+                    FONT_SIZE, 
+                    (self.back_button.get_width()/2, self.back_button.get_height()/2 - FONT_SIZE/2), 
+                    self.colors[self.act_opt[i]], 
+                    align="center"
+                )
+                window.blit(
+                    self.back_button, 
+                    (window.get_width()/2 - self.back_button.get_width()/2, window.get_height()*0.8)
+                )
+
+        window.blit(self.surface, (0,window.get_height()*0.3))
+
+    def select_up(self):
+        if  self.sel_i > 0:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i -= 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = len(self.options) - 1
+            self.act_opt[self.sel_i] = 1
+
+    def select_down(self):
+        if self.sel_i < len(self.options) - 1:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i += 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = 0
+            self.act_opt[self.sel_i] = 1
+
+    def get_selected(self):
+        return self.sel_i
+
+    def get_selected_str(self):
+        return self.options[self.sel_i]
 
 class OptionsScene(Scene):
     def __init__(self, P_Prefs):
@@ -369,23 +461,35 @@ class OptionsScene(Scene):
         self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
         self.par_rect = self.BG_IMG.get_rect()
         self.par_y = 0
+
+        # Menu widget
+        self.menu_widget = OptionsMenuWidget()
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
                     self.manager.go_to(TitleScene(self.P_Prefs))
+                elif event.key == pygame.K_UP:
+                    self.menu_widget.select_up()
+                elif event.key == pygame.K_DOWN:
+                    self.menu_widget.select_down()
+                elif event.key == pygame.K_z:
+                    if self.menu_widget.get_selected_str() == "BACK":
+                        self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+
+        self.menu_widget.update()
 
     def draw(self, window):
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
-        draw_text(window, "DEV: Not yet done.", FONT_SIZE, GAME_FONT, WIN_RES["w"]/2, WIN_RES["h"]/2, "WHITE", "centered")
+        self.menu_widget.draw(window)
 
 # CREDITS SCENE ================================================================
 

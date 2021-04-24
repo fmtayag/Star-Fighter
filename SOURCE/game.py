@@ -45,7 +45,7 @@ def main():
         window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
 
     # Create a scene manager
-    manager = SceneManager(TitleScene(P_Prefs))
+    manager = SceneManager(OptionsScene(P_Prefs))
 
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
