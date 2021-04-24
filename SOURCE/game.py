@@ -40,9 +40,9 @@ def main():
     # Initialize the window
     window = None
     if P_Prefs.is_fullscreen:
-        window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN)
+        window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN, NOFRAME)
     else:
-        window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)))
+        window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)), NOFRAME)
 
     # Create a scene manager
     manager = SceneManager(TitleScene(P_Prefs))
