@@ -42,10 +42,10 @@ def main():
     if P_Prefs.is_fullscreen:
         window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN, NOFRAME)
     else:
-        window = pygame.display.set_mode((int(WIN_RES["w"]*2), int(WIN_RES["h"]*2)), NOFRAME)
+        window = pygame.display.set_mode((int(WIN_RES["w"]), int(WIN_RES["h"])), NOFRAME)
 
     # Create a scene manager
-    manager = SceneManager(TitleScene(P_Prefs))
+    manager = SceneManager(SoundOptionsScene(P_Prefs))
 
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))

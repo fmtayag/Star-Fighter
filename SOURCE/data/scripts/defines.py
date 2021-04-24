@@ -11,6 +11,8 @@ VERSION = "1.1.0"
 # GAME OPTIONS =================================================================
 HP_OPTIONS = ("CIRCLE", "SQUARE")
 YESNO_OPTIONS = ("NO", "YES")
+SFX_RANGE = (0,100)
+MUSIC_RANGE = (0,100)
 
 # DIRECTORIES ==================================================================
 GAME_DIR = os.path.dirname("..") # This works apparently...what the fuck?

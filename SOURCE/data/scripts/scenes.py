@@ -173,7 +173,7 @@ class OptionsScene(Scene):
         self.par_y = 0
 
         # Menu widget
-        self.menu_widget = OptionsMenuWidget(self.P_Prefs.options_scene_selected)
+        self.menu_widget = OptionsSceneMenuWidget(self.P_Prefs.options_scene_selected)
     
     def handle_events(self, events):
         for event in events:
@@ -189,9 +189,21 @@ class OptionsScene(Scene):
                     self.menu_widget.select_down()
 
                 elif event.key == pygame.K_z:
-                    if self.menu_widget.get_selected_str() == "GAME":
+                    if self.menu_widget.get_selected_str() == "VIDEO":
+                        self.P_Prefs.options_scene_selected = 0
+                        self.manager.go_to(VideoOptionsScene(self.P_Prefs))
+
+                    elif self.menu_widget.get_selected_str() == "SOUND":
+                        self.P_Prefs.options_scene_selected = 1
+                        self.manager.go_to(SoundOptionsScene(self.P_Prefs))
+
+                    elif self.menu_widget.get_selected_str() == "GAME":
                         self.P_Prefs.options_scene_selected = 2
                         self.manager.go_to(GameOptionsScene(self.P_Prefs))
+
+                    elif self.menu_widget.get_selected_str() == "CONTROLS":
+                        self.P_Prefs.options_scene_selected = 3
+                        self.manager.go_to(ControlsOptionsScene(self.P_Prefs))
 
                     elif self.menu_widget.get_selected_str() == "BACK":
                         self.P_Prefs.options_scene_selected = 0
@@ -208,6 +220,109 @@ class OptionsScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        self.menu_widget.draw(window)
+
+class VideoOptionsScene(Scene):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+
+        # Background
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
+        # Menu widget
+        self.menu_widget = VideoOptionsSceneMenuWidget()
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
+                        self.manager.go_to(OptionsScene(self.P_Prefs))
+                if event.key == pygame.K_x:
+                    self.manager.go_to(OptionsScene(self.P_Prefs))
+
+                # Testing
+                if event.key == pygame.K_UP:
+                    self.menu_widget.select_up()
+                if event.key == pygame.K_DOWN:
+                    self.menu_widget.select_down()
+                if event.key == pygame.K_LEFT:
+                    self.menu_widget.select_left()
+                if event.key == pygame.K_RIGHT:
+                    self.menu_widget.select_right()
+
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+        self.menu_widget.update()
+
+    def draw(self, window):
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+
+        draw_text(window, "VIDEO OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        self.menu_widget.draw(window)
+
+class SoundOptionsScene(Scene):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+
+        # Background
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
+        # Menu widget
+        self.menu_widget = SoundOptionsSceneMenuWidget(self.P_Prefs)
+
+        # Key press delay
+        self.press_timer = pygame.time.get_ticks()
+        self.press_delay = 75
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
+                        self.manager.go_to(OptionsScene(self.P_Prefs))
+                if event.key == pygame.K_x:
+                    self.manager.go_to(OptionsScene(self.P_Prefs))
+
+                if event.key == pygame.K_UP:
+                    self.menu_widget.select_up()
+                if event.key == pygame.K_DOWN:
+                    self.menu_widget.select_down()
+
+        now = pygame.time.get_ticks()
+        if now - self.press_timer > self.press_delay:
+            self.press_timer = now
+
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_LEFT]:
+                self.menu_widget.select_left()
+            elif pressed[pygame.K_RIGHT]:
+                self.menu_widget.select_right()
+
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+        self.menu_widget.update()
+
+    def draw(self, window):
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+
+        draw_text(window, "SOUND OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         self.menu_widget.draw(window)
 
 class GameOptionsScene(Scene):
@@ -255,6 +370,53 @@ class GameOptionsScene(Scene):
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
         draw_text(window, "GAME OPTIONS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        self.menu_widget.draw(window)
+
+class ControlsOptionsScene(Scene):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+
+        # Background
+        self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_img("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
+        # Menu widget
+        self.menu_widget = GameOptionsSceneMenuWidget()
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
+                        self.manager.go_to(OptionsScene(self.P_Prefs))
+                if event.key == pygame.K_x:
+                    self.manager.go_to(OptionsScene(self.P_Prefs))
+
+                # Testing
+                if event.key == pygame.K_UP:
+                    self.menu_widget.select_up()
+                if event.key == pygame.K_DOWN:
+                    self.menu_widget.select_down()
+                if event.key == pygame.K_LEFT:
+                    self.menu_widget.select_left()
+                if event.key == pygame.K_RIGHT:
+                    self.menu_widget.select_right()
+
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+        self.menu_widget.update()
+
+    def draw(self, window):
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+
+        draw_text(window, "CONTROLS", FONT_SIZE*2, GAME_FONT, WIN_RES["w"]/2, 64, "WHITE", "centered")
         self.menu_widget.draw(window)
 
 # CREDITS SCENE ================================================================

@@ -2,7 +2,7 @@ class PlayerPrefs:
     def __init__(self):
         self.is_fullscreen = False
         self.music_vol = 1.0
-        self.sfx_vol = 1.0
+        self.sfx_vol = 0.5
         self.game_difficulty = 0
         self.hp_pref = "SQUARE" # Turn this to an index number instead. Store the preferences to defines.py
         self.can_pause = False # For game options
