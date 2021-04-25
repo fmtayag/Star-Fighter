@@ -5,11 +5,12 @@
 + /// finish credits scene
 + /// finish game difficulty selection scene
 + data saving and loading
-+ add options
-    + controls
-    + video settings
-    + hp bar preference
++ /// add options
+    + // controls
+    + // video settings
+    + // hp bar preference
 + /// back button on difficulty selection scene
++ implement pause option
 
 polishing ideas
 + replace the "exit progress" with a pause menu. exiting the pause menu should take at least 3 seconds to prevent pause scumming (is that even a word?)
