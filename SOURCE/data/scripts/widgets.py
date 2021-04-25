@@ -328,7 +328,7 @@ class RangeSelector:
 
     def draw(self, surface):
         # Automatically resize surface depending on text size
-        text_length = len(str(self.value))
+        text_length = len(str(int(self.value)))
         surf_length = (text_length+2) * FONT_SIZE
         self.ts_surf = pygame.Surface((surf_length, 32))
 
@@ -336,30 +336,32 @@ class RangeSelector:
         self.ts_surf.set_colorkey("BLACK")
 
         if self.active:
-            # Draw the arrows. There has to be a better way to do this...
-            # But it will work for now (narrator: it will work this way forever)
-            draw_text2(
-                self.ts_surf, 
-                "<", 
-                GAME_FONT, 
-                FONT_SIZE, 
-                (
-                    FONT_SIZE/2 - (2*self.jut_m),
-                    self.ts_surf.get_height()/2 - FONT_SIZE/2
-                ),
-                "WHITE"
-            )
-            draw_text2(
-                self.ts_surf, 
-                ">", 
-                GAME_FONT, 
-                FONT_SIZE, 
-                (
-                    self.ts_surf.get_width() - FONT_SIZE + (2*self.jut_m),
-                    self.ts_surf.get_height()/2 - FONT_SIZE/2
-                ),
-                "WHITE"
-            )
+            # Draw the arrows.
+            if self.value > 0:
+                draw_text2(
+                    self.ts_surf, 
+                    "<", 
+                    GAME_FONT, 
+                    FONT_SIZE, 
+                    (
+                        FONT_SIZE/2 - (2*self.jut_m),
+                        self.ts_surf.get_height()/2 - FONT_SIZE/2
+                    ),
+                    "WHITE"
+                )
+
+            if self.value < self.max_:
+                draw_text2(
+                    self.ts_surf, 
+                    ">", 
+                    GAME_FONT, 
+                    FONT_SIZE, 
+                    (
+                        self.ts_surf.get_width() - FONT_SIZE + (2*self.jut_m),
+                        self.ts_surf.get_height()/2 - FONT_SIZE/2
+                    ),
+                    "WHITE"
+                )
 
         # Draw text
         draw_text2(
@@ -381,13 +383,13 @@ class RangeSelector:
 
     def decrease(self):
         if self.value <= self.min_:
-            self.value = self.max_
+            self.value = 0
         else:
             self.value -= 1 
 
     def increase(self):
         if self.value >= self.max_:
-            self.value = self.min_
+            self.value = self.max_
         else:
             self.value += 1
 
