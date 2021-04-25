@@ -60,7 +60,7 @@ class TitleScene(Scene):
                     self.title_menu.select_up()
                 elif event.key == self.P_Prefs.key_down:
                     self.title_menu.select_down()
-                elif event.key == self.P_Prefs.key_fire:
+                elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.title_menu.get_selected() == 0:
                         self.P_Prefs.title_selected = 0
                         self.manager.go_to(DifficultySelectionScene(self.P_Prefs))
@@ -144,7 +144,7 @@ class ScoresScene(Scene):
                 elif event.key == self.P_Prefs.key_down:
                     self.control_widget.move_down()
 
-                elif event.key == self.P_Prefs.key_fire:
+                elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.control_widget.get_active_panel() == "DIRECTION":
                         if self.control_widget.get_dp_selected_option() == "PREV":
                             self.scores_table.prev_table()
@@ -198,7 +198,7 @@ class OptionsScene(Scene):
                 elif event.key == self.P_Prefs.key_down:
                     self.menu_widget.select_down()
 
-                elif event.key == self.P_Prefs.key_fire:
+                elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.menu_widget.get_selected_str() == "VIDEO":
                         self.P_Prefs.options_scene_selected = 0
                         self.manager.go_to(VideoOptionsScene(self.P_Prefs))
@@ -250,7 +250,7 @@ class VideoOptionsScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == self.P_Prefs.key_fire:
+                if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
                         self.manager.go_to(OptionsScene(self.P_Prefs))
                 if event.key == self.P_Prefs.key_back:
@@ -301,7 +301,7 @@ class SoundOptionsScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == self.P_Prefs.key_fire:
+                if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
                         self.manager.go_to(OptionsScene(self.P_Prefs))
                 if event.key == self.P_Prefs.key_back:
@@ -353,7 +353,7 @@ class GameOptionsScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == self.P_Prefs.key_fire:
+                if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
                         self.manager.go_to(OptionsScene(self.P_Prefs))
                 if event.key == self.P_Prefs.key_back:
@@ -467,7 +467,7 @@ class CreditsScene(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == self.P_Prefs.key_back or event.key == self.P_Prefs.key_fire:
+                if event.key == self.P_Prefs.key_back or event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
@@ -541,15 +541,18 @@ class DifficultySelectionScene(Scene):
                 if event.key == self.P_Prefs.key_up:
                     self.w_diffmenu.select_up()
                     self.selected_diff = self.w_diffmenu.get_selected()
+
                 elif event.key == self.P_Prefs.key_down:
                     self.w_diffmenu.select_down()
                     self.selected_diff = self.w_diffmenu.get_selected()
-                elif event.key == self.P_Prefs.key_fire:
+
+                elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     if self.w_diffmenu.get_selected_str() != "BACK":
                         self.P_Prefs.game_difficulty = self.selected_diff
                         self.manager.go_to(GameScene(self.P_Prefs))
                     elif self.w_diffmenu.get_selected_str() == "BACK":
                         self.manager.go_to(TitleScene(self.P_Prefs))
+
                 elif event.key == self.P_Prefs.key_back:
                     self.manager.go_to(TitleScene(self.P_Prefs))
     
@@ -774,7 +777,7 @@ class GameScene(Scene):
                     if event.key == pygame.K_ESCAPE:
                         self.paused = not self.paused # Dirty toggling hack
                     
-                    if event.key == self.P_Prefs.key_back and self.paused:
+                    if event.key == pygame.K_x and self.paused:
                         self.manager.go_to(TitleScene(self.P_Prefs))
 
         if not self.is_gg and not self.can_pause:

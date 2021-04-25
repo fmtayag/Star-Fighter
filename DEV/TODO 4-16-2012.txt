@@ -1,6 +1,8 @@
 4-16-2012
 + /// implement pause option
 + add sfx
++ make readme 
++ make promo materials
 + /// implement fullscreen / frameless options
 + /// implement controls mapping
 + SCRAPPED: fullscreen / frameless without having to restart the game (?)
