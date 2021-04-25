@@ -235,7 +235,7 @@ class VideoOptionsScene(Scene):
         self.par_y = 0
 
         # Menu widget
-        self.menu_widget = VideoOptionsSceneMenuWidget()
+        self.menu_widget = VideoOptionsSceneMenuWidget(self.P_Prefs)
 
     def handle_events(self, events):
         for event in events:
@@ -338,7 +338,7 @@ class GameOptionsScene(Scene):
         self.par_y = 0
 
         # Menu widget
-        self.menu_widget = GameOptionsSceneMenuWidget()
+        self.menu_widget = GameOptionsSceneMenuWidget(self.P_Prefs)
 
     def handle_events(self, events):
         for event in events:
@@ -564,7 +564,7 @@ class GameScene(Scene):
         self.score = 0
         self.score_multiplier = SCORE_MULTIPLIER[self.g_diff]
         self.win_offset = repeat((0,0)) 
-        self.hp_pref = self.P_Prefs.hp_pref
+        self.hp_pref = HP_OPTIONS[self.P_Prefs.hp_pref]
         self.gg_timer = pygame.time.get_ticks()
         self.gg_delay = 3000
         self.is_gg = False
@@ -703,14 +703,14 @@ class GameScene(Scene):
 
         # Sounds
         self.sfx_explosions = [
-            load_sound("sfx_explosion1.wav", SFX_DIR, 1),
-            load_sound("sfx_explosion2.wav", SFX_DIR, 1),
-            load_sound("sfx_explosion3.wav", SFX_DIR, 1)
+            load_sound("sfx_explosion1.wav", SFX_DIR, self.P_Prefs.sfx_vol),
+            load_sound("sfx_explosion2.wav", SFX_DIR, self.P_Prefs.sfx_vol),
+            load_sound("sfx_explosion3.wav", SFX_DIR, self.P_Prefs.sfx_vol)
         ]
         self.sfx_hit = [
-            load_sound("sfx_hit.wav", SFX_DIR, 1)
+            load_sound("sfx_hit.wav", SFX_DIR, self.P_Prefs.sfx_vol)
         ]
-        self.sfx_shoot = load_sound("sfx_lasershoot.wav", SFX_DIR, 1)
+        self.sfx_shoot = load_sound("sfx_lasershoot.wav", SFX_DIR, self.P_Prefs.sfx_vol)
         self.channel0 = pygame.mixer.Channel(0)
         self.channel1 = pygame.mixer.Channel(1)
         self.channel2 = pygame.mixer.Channel(2)
@@ -851,7 +851,7 @@ class GameScene(Scene):
         draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
         
         # Draw hp bar
-        if self.hp_pref == "SQUARE":
+        if self.hp_pref == HP_OPTIONS[1]:
             # Draw square hp bar
             self.hp_surf.fill("BLACK")
             self.hp_surf.set_colorkey("BLACK")
@@ -864,8 +864,8 @@ class GameScene(Scene):
                 )
             )
 
-        elif self.hp_pref == "PIE":
-            # Draw pie hp bar
+        elif self.hp_pref == HP_OPTIONS[0]:
+            # Draw circle hp bar
             semicirc_size = 32
             semicirc_end = 360 - (self.player.health * (360 / PLAYER_MAX_HEALTH)) + 270
             semicirc = Image.new("RGBA", (semicirc_size, semicirc_size))

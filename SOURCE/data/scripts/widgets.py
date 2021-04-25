@@ -211,10 +211,10 @@ class ScoresTableWidget():
 # Options Scenes Widgets =======================================================
 
 class TextSelector:
-    def __init__(self, options, position, alignment="LEFT", active=False):
+    def __init__(self, init_value, options, position, alignment="LEFT", active=False):
         self.options = options
         self.alignment = alignment
-        self.index = 0
+        self.index = init_value
         self.ts_surf = pygame.Surface((64,32))
         self.position = position
         self.active = active
@@ -441,7 +441,8 @@ class Button:
         self.active = False
 
 class VideoOptionsSceneMenuWidget:
-    def __init__(self):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
         self.image = pygame.Surface((WIN_RES["w"], 350))
         x_alignment = self.image.get_width()*0.30
         btn_x_size = 128
@@ -449,8 +450,8 @@ class VideoOptionsSceneMenuWidget:
         # Options
         self.ts_fullscreen_y = 16
         self.ts_frameless_y = 64
-        self.ts_fullscreen = TextSelector(YESNO_OPTIONS, (x_alignment,self.ts_fullscreen_y), alignment="CENTER", active=True)
-        self.ts_frameless = TextSelector(YESNO_OPTIONS, (x_alignment, self.ts_frameless_y), alignment="CENTER")
+        self.ts_fullscreen = TextSelector(self.P_Prefs.is_fullscreen, YESNO_OPTIONS, (x_alignment,self.ts_fullscreen_y), alignment="CENTER", active=True)
+        self.ts_frameless = TextSelector(self.P_Prefs.is_frameless, YESNO_OPTIONS, (x_alignment, self.ts_frameless_y), alignment="CENTER")
         self.btn_back = Button(
             "BACK", 
             (btn_x_size,32), 
@@ -469,6 +470,10 @@ class VideoOptionsSceneMenuWidget:
     def update(self):
         for option in self.options:
             option.update()
+
+        # Update preferences
+        self.P_Prefs.is_fullscreen = self.ts_fullscreen.get_selected()
+        self.P_Prefs.is_frameless = self.ts_frameless.get_selected()
 
     def draw(self, window):
         self.image.fill("BLACK")
@@ -564,6 +569,12 @@ class SoundOptionsSceneMenuWidget:
         for option in self.options:
             option.update()
 
+        # Update preferences
+        self.P_Prefs.sfx_vol = self.rs_sfx.get_value() / 100
+        self.P_Prefs.music_vol = self.rs_ost.get_value() / 100
+
+        pygame.mixer.music.set_volume(self.P_Prefs.music_vol)
+
     def draw(self, window):
         self.image.fill("BLACK")
         self.image.set_colorkey("BLACK")
@@ -628,7 +639,9 @@ class SoundOptionsSceneMenuWidget:
         return self.MAX_OPTIONS - 1
 
 class GameOptionsSceneMenuWidget:
-    def __init__(self):
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+
         self.image = pygame.Surface((WIN_RES["w"], 350))
         x_alignment = self.image.get_width()*0.30
         btn_x_size = 128
@@ -636,8 +649,8 @@ class GameOptionsSceneMenuWidget:
         # Options
         self.ts_hp_y = 16
         self.ts_canpause_y = 64
-        self.ts_hp = TextSelector(HP_OPTIONS, (x_alignment,self.ts_hp_y), alignment="CENTER", active=True)
-        self.ts_canpause = TextSelector(YESNO_OPTIONS, (x_alignment, self.ts_canpause_y), alignment="CENTER")
+        self.ts_hp = TextSelector(self.P_Prefs.hp_pref, HP_OPTIONS, (x_alignment,self.ts_hp_y), alignment="CENTER", active=True)
+        self.ts_canpause = TextSelector(self.P_Prefs.can_pause, YESNO_OPTIONS, (x_alignment, self.ts_canpause_y), alignment="CENTER")
         self.btn_back = Button(
             "BACK", 
             (btn_x_size,32), 
@@ -656,6 +669,10 @@ class GameOptionsSceneMenuWidget:
     def update(self):
         for option in self.options:
             option.update()
+
+        # Update preferences
+        self.P_Prefs.hp_pref = self.ts_hp.get_selected()
+        self.P_Prefs.can_pause = self.ts_canpause.get_selected()
 
     def draw(self, window):
         self.image.fill("BLACK")
