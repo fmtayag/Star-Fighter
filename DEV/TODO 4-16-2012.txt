@@ -1,14 +1,14 @@
 4-16-2012
 + /// gui work, exciting stuff!! i should probably do this now lmao
 + add sounds
-+ add functionality to score table
++ /// add functionality to score table
 + /// finish credits scene
 + /// finish game difficulty selection scene
 + /// data saving and loading
 + /// add options
     + // controls
-    + // video settings
-    + // hp bar preference
+    + /// video settings
+    + /// hp bar preference
 + /// back button on difficulty selection scene
 + implement pause option
 

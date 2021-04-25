@@ -21,20 +21,33 @@ from data.scripts.muda import (
     write_savedata,
     SceneManager
 )
-from data.scripts.m_PlayerPrefs import PlayerPrefs
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 
 pygame.init()
 pygame.mixer.init()
 
+# Player Preferences class =====================================================
+class PlayerPrefs:
+    def __init__(self):
+        self.is_fullscreen = False
+        self.is_frameless = True
+        self.music_vol = 0.15
+        self.sfx_vol = 0.30
+        self.game_difficulty = 0
+        self.hp_pref = 0
+        self.can_pause = False
+
+        self.score = 0
+        self.title_selected = 0
+        self.options_scene_selected = 0
+
 # Game loop ====================================================================
 
 def main():
     # Load / create PlayerPrefs object
-    filepath = os.path.join(SCRIPTS_DIR, "userdat.dat")
     P_Prefs = None
     try:
-        with open(filepath, 'rb') as f:
+        with open(USERDAT_FILE, 'rb') as f:
             P_Prefs = pickle.load(f)
 
             # Reset these variables
@@ -82,13 +95,16 @@ def main():
         prev_time = now
 
         if pygame.event.get(QUIT) or (type(manager.scene) == TitleScene and manager.scene.exit): # TODO - This is a dumb hack but it will work for now.
-            running = False
             # Save player preferences
             try:
-                with open(filepath, 'wb') as f:
+                with open(USERDAT_FILE, 'wb') as f:
                     pickle.dump(P_Prefs, f)
             except:
-                print("Failed to save.")
+                print("ERROR: Failed to save.")
+            
+            # Exit loop and function
+            running = False
+            return
 
             
         manager.scene.handle_events(pygame.event.get())

@@ -1,4 +1,4 @@
-import pygame, sys, random, math
+import pygame, sys, random, math, pickle
 from PIL import Image, ImageDraw
 from data.scripts.spawner import Spawner
 from data.scripts.sprites import Player
@@ -109,7 +109,15 @@ class ScoresScene(Scene):
     def __init__(self, P_Prefs):
         # Player preferences
         self.P_Prefs = P_Prefs
-        
+
+        # Load scores list
+        self.scores_list = list()
+        try:
+            with open(SCORES_FILE, 'rb') as f:
+                self.scores_list = pickle.load(f)
+        except:
+            pass
+
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
         self.bg_rect = self.BG_IMG.get_rect()
@@ -119,7 +127,7 @@ class ScoresScene(Scene):
         self.par_y = 0
 
         # Scores table
-        self.scores_table = ScoresTableWidget()
+        self.scores_table = ScoresTableWidget(self.scores_list)
 
         # Control panel
         self.control_widget = ScoresControlWidget()
@@ -1169,7 +1177,7 @@ class GameOverScene(Scene):
         self.bckspace_delay = 200
         self.MAX_CHAR = 3
         self.score_comment = self._get_comment(self.score)
-        #print(self.score_comment)
+        self.difficulty = self.P_Prefs.game_difficulty
 
         # Background
         self.BG_IMG = load_img("background.png", IMG_DIR, SCALE)
@@ -1201,7 +1209,7 @@ class GameOverScene(Scene):
                 if str(event.unicode).isalpha() and len(self.name) < self.MAX_CHAR:
                     self.name += event.unicode
                 elif event.key == pygame.K_RETURN and len(self.name) == self.MAX_CHAR:
-                    self.manager.go_to(TitleScene(self.P_Prefs))
+                    self._exit_scene()
         
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_BACKSPACE]:
@@ -1262,6 +1270,24 @@ class GameOverScene(Scene):
                     WIN_RES["h"]*0.75
                 )
             )
+
+    def _exit_scene(self):
+        # Load scores list
+        scores_list = list()
+        try:
+            with open(SCORES_FILE, 'rb') as f:
+                scores_list = pickle.load(f)
+        except:
+            pass
+
+        # Save score data to file
+        score_dat = (self.name, int(self.score), self.difficulty)
+        scores_list.append(score_dat)
+        with open(SCORES_FILE, 'wb') as f:
+            pickle.dump(scores_list, f)
+
+        # Go to title scene
+        self.manager.go_to(TitleScene(self.P_Prefs))
 
     def _get_comment(self, score):
         if score < 0:

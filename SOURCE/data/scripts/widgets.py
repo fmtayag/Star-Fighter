@@ -64,7 +64,7 @@ class TitleMenuWidget:
 
 # Scores Scene Widgets =========================================================
 
-class ScoresControlWidget():
+class ScoresControlWidget:
     def __init__(self):
         # Panels
         self.sub_panels = ("DIRECTION", "BACK")
@@ -163,8 +163,8 @@ class ScoresControlWidget():
         if self.active_panel == self.sub_panels[0]:
             return self.dp_options[self.sel_i]
 
-class ScoresTableWidget():
-    def __init__(self):
+class ScoresTableWidget:
+    def __init__(self, scores_list):
         self.spacing = FONT_SIZE / 2
 
         # Table
@@ -172,10 +172,7 @@ class ScoresTableWidget():
         self.table_rect = self.table_surf.get_rect()
         #self.table_surf.fill('red')
         
-        # Scores - TODO: Just an example. No sorting yet.
-        self.scores = [
-            ("ZYE", "231", "HARD")
-        ]
+        self.scores = sorted(scores_list,key=lambda x: x[1],reverse=True) # Sort by the SCORE column
         self.splice_n = 5
         self.scores = slice_list(self.scores, self.splice_n)
         self.cur_tbl = 0
@@ -189,10 +186,20 @@ class ScoresTableWidget():
 
         if len(self.scores) != 0:
             for i in range(len(self.scores[self.cur_tbl])):
+                name = self.scores[self.cur_tbl][i][0].upper()
+                score = self.scores[self.cur_tbl][i][1]
+                difficulty = DIFFICULTIES[self.scores[self.cur_tbl][i][2]]
+
+                # If difficulty is HARD, then set color to yellow
+                difficulty_color = "WHITE"
+                if difficulty == DIFFICULTIES[2]:
+                    difficulty_color = "YELLOW"
+
+                # Draw text
                 draw_text(self.table_surf, f"{(i+1)+(self.cur_tbl*self.splice_n)}.", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.35 + len(str(i)), FONT_SIZE*(i+1) + self.spacing*(i+1), "YELLOW")
-                draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][0]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.6, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
-                draw_text(self.table_surf, f"{self.scores[self.cur_tbl][i][1]}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 1.0, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
-                draw_text2(self.table_surf, f"{self.scores[self.cur_tbl][i][2]}", GAME_FONT, FONT_SIZE, (self.table_rect.centerx * 1.4, FONT_SIZE*(i+1) + self.spacing*(i+1)), "WHITE")
+                draw_text(self.table_surf, f"{name}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 0.6, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
+                draw_text(self.table_surf, f"{score}", FONT_SIZE, GAME_FONT, self.table_rect.centerx * 1.0, FONT_SIZE*(i+1) + self.spacing*(i+1), "WHITE")
+                draw_text2(self.table_surf, f"{difficulty}", GAME_FONT, FONT_SIZE, (self.table_rect.centerx * 1.4, FONT_SIZE*(i+1) + self.spacing*(i+1)), difficulty_color)
                 draw_text(window, f"PAGE {self.cur_tbl+1} OF {len(self.scores)}", FONT_SIZE, GAME_FONT, self.table_rect.centerx, self.table_rect.bottom * 1.25, "WHITE", "centered")
         else:
             draw_text2(self.table_surf, "No scores yet...", GAME_FONT, FONT_SIZE, (self.table_rect.centerx, 64), "WHITE", align="center")
