@@ -447,6 +447,75 @@ class Button:
         self.surface_color = "BLACK"
         self.active = False
 
+class Textbox:
+    def __init__(self, key_, size, position):
+        self.image = pygame.Surface(size)
+        self.key_ = key_
+        if self.key_ == None:
+            self.text = "UNDEFINED"
+        else:
+            self.text = pygame.key.name(self.key_).upper()
+        self.position = position
+        self.text_color = "WHITE"
+        self.surface_color = "BLACK"
+
+        self.active = False
+        self.selected = False
+        self.font_size = FONT_SIZE
+
+    def update(self):
+        pass
+
+    def draw(self, surface):
+        self.image.fill(self.surface_color)
+        self.image.set_colorkey("BLACK")
+
+        # Draw outline / change colors of image and text
+        if self.active and not self.selected:
+            pygame.draw.rect(self.image, "WHITE", ((0,0),self.image.get_size()), 4)
+        elif self.active and self.selected:
+            self.text_color = "BLACK"
+            self.surface_color = "WHITE"
+
+        # Draw text
+        if self.key_ == None:
+            self.text = "UNDEFINED"
+            self.text_color = "RED"
+        else:
+            self.text = pygame.key.name(self.key_).upper()
+        draw_text2(
+            self.image,
+            self.text,
+            GAME_FONT,
+            self.font_size,
+            (self.image.get_width()/2 , self.image.get_height()/2 - self.font_size/2),
+            self.text_color,
+            align="center"
+        )
+        surface.blit(self.image, self.position)
+
+    def select(self):
+        self.selected = True
+
+    def deselect(self):
+        self.selected = False
+        self.text_color = "WHITE"
+        self.surface_color = "BLACK"
+
+    def activate(self):
+        self.active = True
+
+    def deactivate(self):
+        self.active = False
+
+    def change_text(self, key_):
+        self.key_ = key_
+        self.text = pygame.key.name(self.key_).upper()
+        if len(self.text) > 5:
+            self.font_size = int(FONT_SIZE / 2)
+        else:
+            self.font_size = FONT_SIZE
+
 class VideoOptionsSceneMenuWidget:
     def __init__(self, P_Prefs):
         self.P_Prefs = P_Prefs
@@ -729,6 +798,179 @@ class GameOptionsSceneMenuWidget:
         # Deactivate current text selector
         selected_option = self.options[self.index]
         selected_option.deactivate()
+
+        # Move current text selector 
+        if self.index >= self.MAX_OPTIONS - 1:
+            self.index = 0
+        else:
+            self.index += 1
+
+        # Activate current text selector
+        selected_option = self.options[self.index]
+        selected_option.activate()
+
+    def select_left(self):
+        selected_option = self.options[self.index]
+        option_type = type(selected_option)
+        if option_type == TextSelector:
+            selected_option.go_left()
+
+    def select_right(self):
+        selected_option = self.options[self.index]
+        option_type = type(selected_option)
+        if option_type == TextSelector:
+            selected_option.go_right()
+
+    def get_selected(self):
+        return self.index
+
+    def get_max_index(self):
+        return self.MAX_OPTIONS - 1
+
+class ControlsOptionsSceneMenuWidget:
+    def __init__(self, P_Prefs):
+        self.P_Prefs = P_Prefs
+        self.is_changingkey = False
+        
+        # Menu surface
+        self.image = pygame.Surface((WIN_RES["w"], 350))
+        x_alignment = self.image.get_width()*0.6
+        btn_x_size = 128
+
+        # Initialize textboxes
+        self.txtbox_up = Textbox(self.P_Prefs.key_up, (108,24), (x_alignment,0))
+        self.txtbox_down = Textbox(self.P_Prefs.key_down, (108,24), (x_alignment,32))
+        self.txtbox_left = Textbox(self.P_Prefs.key_left, (108,24), (x_alignment,64))
+        self.txtbox_right = Textbox(self.P_Prefs.key_right, (108,24), (x_alignment,96))
+        self.txtbox_fire = Textbox(self.P_Prefs.key_fire, (108,24), (x_alignment,128))
+        self.txtbox_exit = Textbox(self.P_Prefs.key_back, (108,24), (x_alignment,160))
+        self.btn_back = Button(
+            "APPLY & EXIT", 
+            (btn_x_size,32), 
+            (self.image.get_width()/2 - btn_x_size/2,self.image.get_height()*0.7)
+        )
+        self.options = (
+            self.txtbox_up,
+            self.txtbox_down,
+            self.txtbox_left,
+            self.txtbox_right,
+            self.txtbox_fire,
+            self.txtbox_exit,
+            self.btn_back
+        )
+        self.options[0].activate()
+        self.MAX_OPTIONS = len(self.options)
+        self.index = 0
+
+        self.has_undefined = False
+
+    def update(self):
+        pass
+
+    def draw(self, window):
+        self.image.fill("BLACK")
+        self.image.set_colorkey("BLACK")
+
+        # Draw labels
+        draw_text2(self.image, "FORWARD", GAME_FONT, FONT_SIZE, (32, 0 + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "BACKWARD", GAME_FONT, FONT_SIZE, (32, 32 + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "LEFT", GAME_FONT, FONT_SIZE, (32, 64 + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "RIGHT", GAME_FONT, FONT_SIZE, (32, 96 + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "SHOOT/ENTER", GAME_FONT, FONT_SIZE, (32, 128 + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "EXIT/BACK", GAME_FONT, FONT_SIZE, (32, 160 + FONT_SIZE/2), "WHITE")
+
+        # Draw textboxes
+        for option in self.options:
+            option.draw(self.image)
+
+        # Draw disclaimer if there are duplicate keys
+        self.has_undefined = False
+        for option in self.options:
+            if type(option) == Textbox:
+                if option.key_ == None:
+                    draw_text2(
+                        self.image, 
+                        "Has undefined keys.", 
+                        GAME_FONT, 
+                        FONT_SIZE, 
+                        (self.image.get_width()/2 - FONT_SIZE/2, self.image.get_height()*0.55), 
+                        "WHITE",
+                        align="center"
+                    )
+                    draw_text2(
+                        self.image, 
+                        "Settings will not be saved.", 
+                        GAME_FONT, 
+                        FONT_SIZE, 
+                        (self.image.get_width()/2 - FONT_SIZE/2, self.image.get_height()*0.6), 
+                        "WHITE",
+                        align="center"
+                    )
+                    self.has_undefined = True
+
+        window.blit(self.image, (0,window.get_height()*0.3))
+    
+    def save_prefs(self):
+        if not self.has_undefined:
+            self.P_Prefs.key_up = self.txtbox_up.key_
+            self.P_Prefs.key_down = self.txtbox_down.key_
+            self.P_Prefs.key_left = self.txtbox_left.key_
+            self.P_Prefs.key_right = self.txtbox_right.key_
+            self.P_Prefs.key_fire = self.txtbox_fire.key_
+            self.P_Prefs.key_back = self.txtbox_exit.key_
+
+    def change_key(self, key_):
+        if type(self.options[self.index]) == Textbox:
+            # Duplicate check
+            has_duplicate = False
+            loc = 0
+            for option in self.options:
+                if type(option) == Textbox:
+                    if option.key_ == key_:
+                        has_duplicate = True
+                        loc = self.options.index(option)
+                        break
+                    else:
+                        continue
+
+            if has_duplicate:
+                self.options[loc].key_ = None
+            else:
+                self.options[self.index].change_text(key_)
+
+    def highlight(self):
+        if type(self.options[self.index]) == Textbox:
+            self.options[self.index].select()
+            self.is_changingkey = True
+
+    def unhighlight(self):
+        if type(self.options[self.index]) == Textbox:
+            self.options[self.index].deselect()
+            self.is_changingkey = False
+
+    def select_up(self):
+        # Deactivate current text selector
+        selected_option = self.options[self.index]
+        selected_option.deactivate()
+
+        self.unhighlight()
+
+        # Move current text selector 
+        if self.index <= 0:
+            self.index = self.MAX_OPTIONS - 1
+        else:
+            self.index -= 1
+
+        # Activate current text selector
+        selected_option = self.options[self.index]
+        selected_option.activate()
+
+    def select_down(self):
+        # Deactivate current text selector
+        selected_option = self.options[self.index]
+        selected_option.deactivate()
+
+        self.unhighlight()
 
         # Move current text selector 
         if self.index >= self.MAX_OPTIONS - 1:

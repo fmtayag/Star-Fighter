@@ -14,9 +14,10 @@ Vec2 = pygame.math.Vector2
 # PLAYER =======================================================================
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, images, bullet_image):
+    def __init__(self, images, bullet_image, P_Prefs):
         # Sprite defines
         super().__init__()
+        self.P_Prefs = P_Prefs
         self.images = images
         self.image = pygame.Surface((32,32))
         self.image.set_colorkey("BLACK")
@@ -173,14 +174,14 @@ class Player(pygame.sprite.Sprite):
                 self.current_frame = 0
 
     def move(self, keyspressed):
-        if keyspressed[pygame.K_UP]:
+        if keyspressed[self.P_Prefs.key_up]:
             self.velocity.y = -self.speed
-        if keyspressed[pygame.K_DOWN]:
+        if keyspressed[self.P_Prefs.key_down]:
             self.velocity.y = self.speed
-        if keyspressed[pygame.K_LEFT]:
+        if keyspressed[self.P_Prefs.key_left]:
             self.orientation_ = self.orientations_[1]
             self.velocity.x = -self.speed
-        if keyspressed[pygame.K_RIGHT]:
+        if keyspressed[self.P_Prefs.key_right]:
             self.orientation_ = self.orientations_[2]
             self.velocity.x = self.speed
 
@@ -202,7 +203,7 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.shoot_timer > self.shoot_delay:
             self.shoot_timer = now
-            if keyspressed[pygame.K_z]:
+            if keyspressed[self.P_Prefs.key_fire]:
                 if self.bullet_increase_timer >= self.bullet_increase_delay * 2 and self.gun_level == 3:
                     self.attack3()
                 elif self.bullet_increase_timer >= self.bullet_increase_delay and self.gun_level >= 2:

@@ -2,7 +2,7 @@
 + /// implement pause option
 + add sfx
 + /// implement fullscreen / frameless options
-+ implement controls mapping
++ /// implement controls mapping
 + SCRAPPED: fullscreen / frameless without having to restart the game (?)
 
 + /// gui work, exciting stuff!! i should probably do this now lmao
