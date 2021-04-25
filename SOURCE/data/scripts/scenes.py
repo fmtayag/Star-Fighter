@@ -1204,7 +1204,6 @@ class GameScene(Scene):
             int(FONT_SIZE*2), 
             (window.get_width()/2, window.get_height()*0.5), 
             "WHITE", 
-            italic=True, 
             align="center"
         )
         draw_text2(
@@ -1214,7 +1213,6 @@ class GameScene(Scene):
             int(FONT_SIZE*2), 
             (window.get_width()/2, window.get_height()*0.55), 
             "WHITE", 
-            italic=True, 
             align="center"
         )
 # GAME OVER SCENE ================================================================

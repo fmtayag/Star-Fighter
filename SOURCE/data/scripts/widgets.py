@@ -473,6 +473,9 @@ class VideoOptionsSceneMenuWidget:
         )
         self.MAX_OPTIONS = len(self.options) 
         self.index = 0
+        
+        # To display the disclaimer
+        self.settings_changed = False
 
     def update(self):
         for option in self.options:
@@ -493,6 +496,11 @@ class VideoOptionsSceneMenuWidget:
         # Draw text selectors
         for option in self.options:
             option.draw(self.image)
+
+        # Draw disclaimer
+        if self.settings_changed:
+            draw_text2(self.image, "Please restart the game", GAME_FONT, FONT_SIZE, (32, self.image.get_height()*0.4), "WHITE", align="center")
+            draw_text2(self.image, "to apply changes.", GAME_FONT, FONT_SIZE, (32, self.image.get_height()*0.45), "WHITE", align="center")
 
         # Draw the widget to the screen
         window.blit(self.image, (0,window.get_height()*0.3))
@@ -533,11 +541,17 @@ class VideoOptionsSceneMenuWidget:
         if option_type == TextSelector:
             selected_option.go_left()
 
+        if not self.settings_changed:
+            self.settings_changed = True
+
     def select_right(self):
         selected_option = self.options[self.index]
         option_type = type(selected_option)
         if option_type == TextSelector:
             selected_option.go_right()
+
+        if not self.settings_changed:
+            self.settings_changed = True
 
     def get_selected(self):
         return self.index

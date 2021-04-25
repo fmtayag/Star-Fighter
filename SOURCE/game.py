@@ -30,7 +30,7 @@ pygame.mixer.init()
 class PlayerPrefs:
     def __init__(self):
         self.is_fullscreen = False
-        self.is_frameless = True
+        self.is_frameless = False
         self.music_vol = 0.15
         self.sfx_vol = 0.30
         self.game_difficulty = 0
@@ -61,7 +61,7 @@ def main():
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(P_Prefs.music_vol)
     
-    # Get window flags
+    # Set window flags
     window_flags = HWACCEL | DOUBLEBUF
     if P_Prefs.is_fullscreen:
         window_flags = window_flags | FULLSCREEN
@@ -96,7 +96,7 @@ def main():
     while running:
         # Lock FPS
         clock.tick(FPS)
-        pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps(),2)})")
+        #pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps(),2)})")
 
         # Calculate delta time
         now = time.time()
