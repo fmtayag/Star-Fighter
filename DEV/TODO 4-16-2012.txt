@@ -1,8 +1,9 @@
 4-16-2012
 + /// implement pause option
 + add sfx
-+ fullscreen / frameless without having to restart the game (?)
++ /// implement fullscreen / frameless options
 + implement controls mapping
++ SCRAPPED: fullscreen / frameless without having to restart the game (?)
 
 + /// gui work, exciting stuff!! i should probably do this now lmao
 + /// add functionality to score table

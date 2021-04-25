@@ -60,13 +60,22 @@ def main():
     pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(P_Prefs.music_vol)
+    
+    # Get window flags
+    window_flags = HWACCEL | DOUBLEBUF
+    if P_Prefs.is_fullscreen:
+        window_flags = window_flags | FULLSCREEN
+    if P_Prefs.is_frameless:
+        window_flags = window_flags | NOFRAME
 
     # Initialize the window
     window = None
     if P_Prefs.is_fullscreen:
-        window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), FULLSCREEN, NOFRAME)
+        window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h), window_flags)
     else:
-        window = pygame.display.set_mode((int(WIN_RES["w"]), int(WIN_RES["h"])), NOFRAME)
+        w = int(WIN_RES["w"]) * SCALE
+        h = int(WIN_RES["h"]) * SCALE
+        window = pygame.display.set_mode((w,h), window_flags)
 
     # Create a scene manager
     manager = SceneManager(TitleScene(P_Prefs))
@@ -94,7 +103,9 @@ def main():
         dt = now - prev_time
         prev_time = now
 
-        if pygame.event.get(QUIT) or (type(manager.scene) == TitleScene and manager.scene.exit): # TODO - This is a dumb hack but it will work for now.
+        # Check for QUIT event
+        if pygame.event.get(QUIT) or \
+           (type(manager.scene) == TitleScene and manager.scene.exit): # This is a dumb hack but it will work for now.
             # Save player preferences
             try:
                 with open(USERDAT_FILE, 'wb') as f:
@@ -106,14 +117,14 @@ def main():
             running = False
             return
 
-            
+        # Call scene methods    
         manager.scene.handle_events(pygame.event.get())
         manager.scene.update(dt)
         manager.scene.draw(render_target)   
 
         # Draw screen
-
-        if P_Prefs.is_fullscreen:
+        
+        if (window_flags & FULLSCREEN) != 0:
             xscale = window.get_rect().width / WIN_RES["w"]
             yscale = window.get_rect().height / WIN_RES["h"]
             if xscale < 1 and yscale < 1:
@@ -122,7 +133,6 @@ def main():
                 scale = min(xscale, yscale)
             else:
                 scale = 1.0
-            #print(xscale, yscale)
             targetx = int(WIN_RES["w"] * xscale)
             targety = int(WIN_RES["h"] * yscale)
 
