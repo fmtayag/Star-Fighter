@@ -9,7 +9,7 @@
 #   > GitHub: github.com/zyenapz
 #   > Twitter: @zyenapz
 
-import pygame, os, random, math, time
+import pygame, os, random, math, time, pickle
 from pygame.locals import *
 from pygame._sdl2.video import Window
 from data.scripts.scenes import *
@@ -30,8 +30,18 @@ pygame.mixer.init()
 # Game loop ====================================================================
 
 def main():
-    # Create PlayerPrefs object
-    P_Prefs = PlayerPrefs()
+    # Load / create PlayerPrefs object
+    filepath = os.path.join(SCRIPTS_DIR, "userdat.dat")
+    P_Prefs = None
+    try:
+        with open(filepath, 'rb') as f:
+            P_Prefs = pickle.load(f)
+
+            # Reset these variables
+            P_Prefs.title_selected = 0
+            P_Prefs.options_scene_selected = 0
+    except:
+        P_Prefs = PlayerPrefs()
 
     # Play music
     pygame.mixer.music.load("data/sfx/ost_fighter.ogg")
@@ -71,11 +81,16 @@ def main():
         dt = now - prev_time
         prev_time = now
 
-        if pygame.event.get(QUIT):
+        if pygame.event.get(QUIT) or (type(manager.scene) == TitleScene and manager.scene.exit): # TODO - This is a dumb hack but it will work for now.
             running = False
-        if pygame.event.get(VIDEORESIZE):
-            print('derp')
+            # Save player preferences
+            try:
+                with open(filepath, 'wb') as f:
+                    pickle.dump(P_Prefs, f)
+            except:
+                print("Failed to save.")
 
+            
         manager.scene.handle_events(pygame.event.get())
         manager.scene.update(dt)
         manager.scene.draw(render_target)   

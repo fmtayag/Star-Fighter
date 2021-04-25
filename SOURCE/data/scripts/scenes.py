@@ -51,6 +51,8 @@ class TitleScene(Scene):
         self.bob_timer = pygame.time.get_ticks()
         self.bob_m = 0
 
+        self.exit = False # Dumb hack
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -76,7 +78,7 @@ class TitleScene(Scene):
                         self.manager.go_to(CreditsScene(self.P_Prefs))
 
                     elif self.title_menu.get_selected() == 4:
-                        sys.exit()
+                        self.exit = True
 
     def update(self, dt):
         self.bg_y += BG_SPD * dt

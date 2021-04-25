@@ -4,7 +4,7 @@
 + add functionality to score table
 + /// finish credits scene
 + /// finish game difficulty selection scene
-+ data saving and loading
++ /// data saving and loading
 + /// add options
     + // controls
     + // video settings
