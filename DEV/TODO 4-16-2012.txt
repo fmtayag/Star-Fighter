@@ -1,6 +1,10 @@
 4-16-2012
++ /// implement pause option
++ add sfx
++ fullscreen / frameless without having to restart the game (?)
++ implement controls mapping
+
 + /// gui work, exciting stuff!! i should probably do this now lmao
-+ add sounds
 + /// add functionality to score table
 + /// finish credits scene
 + /// finish game difficulty selection scene
@@ -10,7 +14,6 @@
     + /// video settings
     + /// hp bar preference
 + /// back button on difficulty selection scene
-+ implement pause option
 
 polishing ideas
 + replace the "exit progress" with a pause menu. exiting the pause menu should take at least 3 seconds to prevent pause scumming (is that even a word?)

@@ -578,6 +578,8 @@ class GameScene(Scene):
         self.gg_timer = pygame.time.get_ticks()
         self.gg_delay = 3000
         self.is_gg = False
+        self.can_pause = self.P_Prefs.can_pause
+        self.paused = False
 
         # PLAYER AND BULLET IMAGES - If you are reading this...uhh...good luck lol
         PLAYER_SPRITESHEET = load_img("player_sheet.png", IMG_DIR, SCALE)
@@ -756,8 +758,15 @@ class GameScene(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_l and DEBUG_MODE:
                     self.player.gun_level += 1
-        
-        if not self.is_gg:
+
+                if self.can_pause and not self.is_gg:
+                    if event.key == pygame.K_ESCAPE:
+                        self.paused = not self.paused # Dirty toggling hack
+                    
+                    if event.key == pygame.K_x and self.paused:
+                        self.manager.go_to(TitleScene(self.P_Prefs))
+
+        if not self.is_gg and not self.can_pause:
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_x] or pressed[pygame.K_ESCAPE]:
                 self.is_exiting = True
@@ -771,154 +780,100 @@ class GameScene(Scene):
         self.spawner.handle_events(events)
     
     def update(self, dt):
-        # Update parallax and background
-        self.bg_y += BG_SPD * dt
-        self.par_y += PAR_SPD * dt
+        if not self.paused:
+            # Update parallax and background
+            self.bg_y += BG_SPD * dt
+            self.par_y += PAR_SPD * dt
 
-        # Exit progress
-        if self.is_exiting:
-            now = pygame.time.get_ticks()
-            if now - self.exit_timer > self.exit_delay:
-                self.player.health -= PLAYER_HEALTH * 999
+            # Exit progress
+            if self.is_exiting:
+                now = pygame.time.get_ticks()
+                if now - self.exit_timer > self.exit_delay:
+                    self.player.health -= PLAYER_HEALTH * 999
+                    self.win_offset = shake(30,5)
+                    self.is_exiting = False
+            
+            # Collisions
+            if not self.is_gg:
+                self._handle_collisions()
+
+            # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
+            if self.player.health <= 0 and not self.is_gg:
+                # Spawn big explosion on player
+                bullet_x = self.player.rect.centerx
+                bullet_y = self.player.rect.centery
+                bullet_pos = Vec2(bullet_x, bullet_y)
+                self.spawner.spawn_explosion(bullet_pos, "BIG")
+
+                # Spawn explosion particles
+                self.spawner.spawn_exp_particles(
+                    (self.player.rect.centerx, self.player.rect.centery),
+                    (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
+                    100
+                )   
+
+                # Generate screen shake
                 self.win_offset = shake(30,5)
-                self.is_exiting = False
-        
-        # Collisions
-        if not self.is_gg:
-            self._handle_collisions()
 
-        # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
-        if self.player.health <= 0 and not self.is_gg:
-            # Spawn big explosion on player
-            bullet_x = self.player.rect.centerx
-            bullet_y = self.player.rect.centery
-            bullet_pos = Vec2(bullet_x, bullet_y)
-            self.spawner.spawn_explosion(bullet_pos, "BIG")
+                # Set to game over
+                self.player.kill()
+                self.is_gg = True
+                self.gg_timer = pygame.time.get_ticks()
 
-            # Spawn explosion particles
-            self.spawner.spawn_exp_particles(
-                (self.player.rect.centerx, self.player.rect.centery),
-                (EP_YELLOW1, EP_YELLOW2, EP_YELLOW3),
-                100
-            )   
+            # Transition to game over scene if game is over
+            if self.is_gg:
+                now = pygame.time.get_ticks()
+                if now - self.gg_timer > self.gg_delay:
+                    self.P_Prefs.score = self.score
+                    self.manager.go_to(GameOverScene(self.P_Prefs))
 
-            # Generate screen shake
-            self.win_offset = shake(30,5)
-
-            # Set to game over
-            self.player.kill()
-            self.is_gg = True
-            self.gg_timer = pygame.time.get_ticks()
-
-        # Transition to game over scene if game is over
-        if self.is_gg:
-            now = pygame.time.get_ticks()
-            if now - self.gg_timer > self.gg_delay:
-                self.P_Prefs.score = self.score
-                self.manager.go_to(GameOverScene(self.P_Prefs))
-
-        self.spawner.update(self.score)
-        self.scorefeed.update()
-        all_sprites_g.update(dt)
+            self.spawner.update(self.score)
+            self.scorefeed.update()
+            all_sprites_g.update(dt)
 
     def draw(self, window):
-        # Draw background
-        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
-        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+        if not self.paused:
+            # Draw background
+            draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+            draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        # Draw sprites
-        all_sprites_g.draw(window)
-        
-        # Draw score feed
-        self.scorefeed.draw(window)
+            # Draw sprites
+            all_sprites_g.draw(window)
+            
+            # Draw score feed
+            self.scorefeed.draw(window)
 
-        # Draw exit progress
-        if self.is_exiting:
-            now = pygame.time.get_ticks()
-            bar_length = int((now - self.exit_timer) / 8)
-            bar_color = "WHITE"
-            if now - self.exit_timer > self.exit_delay / 2:
-                bar_color = HP_RED1
-            self.exit_bar = pygame.Surface((bar_length,16))
-            self.exit_bar.fill(bar_color)
-            draw_text2(
-                self.exit_bar,
-                "EXITING",
-                GAME_FONT,
-                FONT_SIZE,
-                (self.exit_bar.get_width()/2, 0),
-                "BLACK",
-                align="center"
-            )
-            window.blit(
-                self.exit_bar,
-                (window.get_width()/2 - self.exit_bar.get_width()/2, window.get_height()/2)
-            )
+            # Draw exit progress
+            self._draw_exitprogress(window)
 
-        # Draw score
-        cur_score = str(int(self.score)).zfill(6)
-        draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 10), HP_RED2, italic=True)
-        draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
-        
-        # Draw hp bar
-        if self.hp_pref == HP_OPTIONS[1]:
-            # Draw square hp bar
-            self.hp_surf.fill("BLACK")
-            self.hp_surf.set_colorkey("BLACK")
-            draw_hpbar(self.hp_surf, self.hpbar_color, (4,4,96,8), self.player.health, "WHITE")
-            self.hp_surf.blit(self.hpbar_outline, (0,0))
-            window.blit(self.hp_surf, 
-                (
-                    (window.get_width()/2) - 38,
-                    10
+            # Draw score
+            cur_score = str(int(self.score)).zfill(6)
+            draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 10), HP_RED2, italic=True)
+            draw_text2(window, f"{cur_score}", GAME_FONT, int(FONT_SIZE*1.4), (12, 8), "WHITE", italic=True)
+            
+            # Draw hp bar
+            self._draw_hpbar(window)
+
+            # Draw difficulty icon
+            self.difficulty_icon = self.DIFFICULTY_ICONS[self.g_diff][self.spawner.current_stage]
+            window.blit(self.difficulty_icon, (window.get_width() * 0.885,4))
+
+            if self.is_gg:
+                draw_text2(
+                    window, 
+                    "GAME OVER", 
+                    GAME_FONT, 
+                    int(FONT_SIZE*3), 
+                    (window.get_width()/2, window.get_height()*0.4), 
+                    "WHITE", 
+                    italic=True, 
+                    align="center"
                 )
-            )
 
-        elif self.hp_pref == HP_OPTIONS[0]:
-            # Draw circle hp bar
-            semicirc_size = 32
-            semicirc_end = 360 - (self.player.health * (360 / PLAYER_MAX_HEALTH)) + 270
-            semicirc = Image.new("RGBA", (semicirc_size, semicirc_size))
-            semicirc_d = ImageDraw.Draw(semicirc)
-            semicirc_d.pieslice((0, 0, semicirc_size-1, semicirc_size-1), 271, semicirc_end + 1, fill="BLACK")
-            semicirc_surf = pygame.image.fromstring(semicirc.tobytes(), semicirc.size, semicirc.mode)
-
-            self.pie_surf.fill("BLACK")
-            self.pie_surf.set_colorkey("BLACK")
-            self.pie_surf.blit(self.pie_health, (0,0))
-            self.pie_surf.blit(semicirc_surf, (0,0))
-            self.pie_surf.blit(self.pie_outline, (0,0))
-            window.blit(self.pie_surf, 
-                (
-                    window.get_width()/2,
-                    4
-                )
-            )
-
-        # Draw difficulty icon
-        self.difficulty_icon = self.DIFFICULTY_ICONS[self.g_diff][self.spawner.current_stage]
-        window.blit(self.difficulty_icon, (window.get_width() * 0.885,4))
-
-        if self.is_gg:
-            draw_text2(
-                window, 
-                "GAME OVER", 
-                GAME_FONT, 
-                int(FONT_SIZE*3), 
-                (window.get_width()/2, window.get_height()*0.4), 
-                "WHITE", 
-                italic=True, 
-                align="center"
-            )
-
-        # Debug mode stats
-        if DEBUG_MODE:
-            draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
-            draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
-            draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
-            draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
-
-        window.blit(window, next(self.win_offset))
+            # Draw debug text
+            self._draw_debugtext(window)
+        else:
+            self._draw_pausetext(window)
 
     def _handle_collisions(self):
         # Call collision functions
@@ -1163,6 +1118,105 @@ class GameScene(Scene):
 
                     sentry.kill()
 
+    def _draw_exitprogress(self, window): 
+        if self.is_exiting:
+            now = pygame.time.get_ticks()
+            bar_length = int((now - self.exit_timer) / 8)
+            bar_color = "WHITE"
+            if now - self.exit_timer > self.exit_delay / 2:
+                bar_color = HP_RED1
+            self.exit_bar = pygame.Surface((bar_length,16))
+            self.exit_bar.fill(bar_color)
+            draw_text2(
+                self.exit_bar,
+                "EXITING",
+                GAME_FONT,
+                FONT_SIZE,
+                (self.exit_bar.get_width()/2, 0),
+                "BLACK",
+                align="center"
+            )
+            window.blit(
+                self.exit_bar,
+                (window.get_width()/2 - self.exit_bar.get_width()/2, window.get_height()/2)
+            )
+
+    def _draw_hpbar(self, window):
+        if self.hp_pref == HP_OPTIONS[1]:
+            # Draw square hp bar
+            self.hp_surf.fill("BLACK")
+            self.hp_surf.set_colorkey("BLACK")
+            draw_hpbar(self.hp_surf, self.hpbar_color, (4,4,96,8), self.player.health, "WHITE")
+            self.hp_surf.blit(self.hpbar_outline, (0,0))
+            window.blit(self.hp_surf, 
+                (
+                    (window.get_width()/2) - 38,
+                    10
+                )
+            )
+
+        elif self.hp_pref == HP_OPTIONS[0]:
+            # Draw circle hp bar
+            semicirc_size = 32
+            semicirc_end = 360 - (self.player.health * (360 / PLAYER_MAX_HEALTH)) + 270
+            semicirc = Image.new("RGBA", (semicirc_size, semicirc_size))
+            semicirc_d = ImageDraw.Draw(semicirc)
+            semicirc_d.pieslice((0, 0, semicirc_size-1, semicirc_size-1), 271, semicirc_end + 1, fill="BLACK")
+            semicirc_surf = pygame.image.fromstring(semicirc.tobytes(), semicirc.size, semicirc.mode)
+
+            self.pie_surf.fill("BLACK")
+            self.pie_surf.set_colorkey("BLACK")
+            self.pie_surf.blit(self.pie_health, (0,0))
+            self.pie_surf.blit(semicirc_surf, (0,0))
+            self.pie_surf.blit(self.pie_outline, (0,0))
+            window.blit(self.pie_surf, 
+                (
+                    window.get_width()/2,
+                    4
+                )
+            )
+
+    def _draw_debugtext(self, window):
+        # Debug mode stats
+        if DEBUG_MODE:
+            draw_text(window, f"{int(self.score)}", FONT_SIZE, GAME_FONT, 48, 8, "WHITE", "centered")
+            draw_text(window, f"HP: {int(self.player.health)}", FONT_SIZE, GAME_FONT, 48, 16 + FONT_SIZE, "WHITE", "centered")
+            draw_text(window, f"STAGE: {self.spawner.current_stage}", FONT_SIZE, GAME_FONT, 48, 32 + FONT_SIZE, "WHITE")
+            draw_text(window, f"DIFF: {self.g_diff}", FONT_SIZE, GAME_FONT, 48, 64 + FONT_SIZE, "WHITE", )
+
+        window.blit(window, next(self.win_offset))
+
+    def _draw_pausetext(self, window):
+        draw_text2(
+            window, 
+            "PAUSED", 
+            GAME_FONT, 
+            int(FONT_SIZE*3), 
+            (window.get_width()/2, window.get_height()*0.4), 
+            "WHITE", 
+            italic=True, 
+            align="center"
+        )
+        draw_text2(
+            window, 
+            "ESC to Resume", 
+            GAME_FONT, 
+            int(FONT_SIZE*2), 
+            (window.get_width()/2, window.get_height()*0.5), 
+            "WHITE", 
+            italic=True, 
+            align="center"
+        )
+        draw_text2(
+            window, 
+            "X to Exit", 
+            GAME_FONT, 
+            int(FONT_SIZE*2), 
+            (window.get_width()/2, window.get_height()*0.55), 
+            "WHITE", 
+            italic=True, 
+            align="center"
+        )
 # GAME OVER SCENE ================================================================
 
 class GameOverScene(Scene):
