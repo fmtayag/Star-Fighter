@@ -67,6 +67,9 @@ class Player(pygame.sprite.Sprite):
         self.is_hurt = False
         self.prev_hurt = False
 
+        # Sounds
+        self.sfx_shoot = load_sound("sfx_shoot.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+    
     def update(self, dt):
         if self.state_ == "NORMAL":
             # Reset velocity and image
@@ -199,11 +202,17 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
             self.position.y = self.rect.y
     
+    def play_shoot_sound(self):
+        self.sfx_shoot.play(loops=1, fade_ms=100) # Play sound
+
     def shoot(self,  keyspressed):
         now = pygame.time.get_ticks()
         if now - self.shoot_timer > self.shoot_delay:
             self.shoot_timer = now
             if keyspressed[self.P_Prefs.key_fire]:
+
+                self.play_shoot_sound()
+
                 if self.bullet_increase_timer >= self.bullet_increase_delay * 2 and self.gun_level == 3:
                     self.attack3()
                 elif self.bullet_increase_timer >= self.bullet_increase_delay and self.gun_level >= 2:

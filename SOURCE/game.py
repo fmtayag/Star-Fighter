@@ -31,7 +31,7 @@ class PlayerPrefs:
     def __init__(self):
         self.is_fullscreen = False
         self.is_frameless = False
-        self.music_vol = 0.15
+        self.music_vol = 0.40
         self.sfx_vol = 0.30
         self.game_difficulty = 0
         self.hp_pref = 0
@@ -86,7 +86,7 @@ def main():
         window = pygame.display.set_mode((w,h), window_flags)
 
     # Create a scene manager
-    manager = SceneManager(ScoresScene(P_Prefs))
+    manager = SceneManager(TitleScene(P_Prefs))
 
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))

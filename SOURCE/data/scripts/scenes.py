@@ -865,6 +865,22 @@ class GameScene(Scene):
         # Killfeed
         self.scorefeed = Scorefeed()
 
+        # Sounds
+        self.sfx_explosions = [
+            load_sound("sfx_explosion1.wav", SFX_DIR, self.P_Prefs.sfx_vol),
+            load_sound("sfx_explosion2.wav", SFX_DIR, self.P_Prefs.sfx_vol),
+            load_sound("sfx_explosion3.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+        ]
+        self.sfx_hits = [
+            load_sound("sfx_hit1.wav", SFX_DIR, self.P_Prefs.sfx_vol),
+            load_sound("sfx_hit2.wav", SFX_DIR, self.P_Prefs.sfx_vol),
+            load_sound("sfx_hit3.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+        ]
+        self.sfx_powerup_gun = load_sound("sfx_powerup_gun.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+        self.sfx_powerup_hp = load_sound("sfx_powerup_hp.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+        self.sfx_powerup_coin = load_sound("sfx_powerup_coin.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+        self.sfx_powerup_sentry = load_sound("sfx_powerup_sentry.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -911,6 +927,9 @@ class GameScene(Scene):
 
             # END GAME IF PLAYER HAS LESS THAN 0 HEALTH
             if self.player.health <= 0 and not self.is_gg:
+                # Play sound
+                random.choice(self.sfx_explosions).play()
+
                 # Spawn big explosion on player
                 bullet_x = self.player.rect.centerx
                 bullet_y = self.player.rect.centery
@@ -989,7 +1008,7 @@ class GameScene(Scene):
 
     def _handle_collisions(self):
         # Call collision functions
-        self._hostile_player_collide()
+        self._hostile_playerbullet_collide()
         self._player_enemybullet_collide()
         self._player_enemy_collide()
         self._player_powerup_collide()
@@ -997,11 +1016,13 @@ class GameScene(Scene):
         self._sentry_enemy_collide()
         self._sentry_enemybullet_collide()
 
-    def _hostile_player_collide(self):
+    def _hostile_playerbullet_collide(self):
         # HOSTILES - PLAYER BULLET COLLISION
         for bullet in p_bullets_g:
             hits = pygame.sprite.spritecollide(bullet, hostiles_g, False, pygame.sprite.collide_circle)
             for hit in hits:
+                # Play sound
+                random.choice(self.sfx_hits).play()
 
                 # Deduct enemy health
                 hit.health -= self.player.BULLET_DAMAGE
@@ -1027,7 +1048,9 @@ class GameScene(Scene):
 
                 # Logic if enemy is dead
                 if hit.health <= 0:
-
+                    # Play sound
+                    random.choice(self.sfx_explosions).play()
+                    
                     # Kill sprite
                     hit.kill()
 
@@ -1061,6 +1084,9 @@ class GameScene(Scene):
         # PLAYER - ENEMY BULLET COLLISION
         hits = pygame.sprite.spritecollide(self.player, e_bullets_g, True, pygame.sprite.collide_circle)
         for hit in hits:
+            # Play sound
+            random.choice(self.sfx_hits).play()
+
             # Damage player
             self.player.health -= hit.DAMAGE
 
@@ -1087,6 +1113,9 @@ class GameScene(Scene):
         # PLAYER - ENEMY COLLISION
         hits = pygame.sprite.spritecollide(self.player, hostiles_g, True, pygame.sprite.collide_circle)
         for hit in hits:
+            # Play sound
+            random.choice(self.sfx_explosions).play()
+
             self.player.health -= ENEMY_COLLISION_DAMAGE
 
             # Spawn big explosion on player
@@ -1119,14 +1148,22 @@ class GameScene(Scene):
         for hit in hits:
             particles_color = ((255,255,255)) # Default case
             if hit.POW_TYPE == "GUN":
+                # Play sound 
+                self.sfx_powerup_gun.play()
+
+                # Gun level limit check / increase
                 if self.player.gun_level >= PLAYER_MAX_GUN_LEVEL:
                     self.player.gun_level = 3
                 else:
                     self.player.gun_level += 1
+
                 # Set particle colors
                 particles_color = GP_COLORS
 
             elif hit.POW_TYPE == "HEALTH":
+                # Play sound 
+                self.sfx_powerup_hp.play()
+
                 self.player.health += POWERUP_HEALTH_AMOUNT[self.g_diff]
                 if self.player.health >= PLAYER_MAX_HEALTH:
                     self.player.health = PLAYER_MAX_HEALTH
@@ -1134,6 +1171,9 @@ class GameScene(Scene):
                 particles_color = HP_COLORS
                     
             elif hit.POW_TYPE == "SCORE":
+                # Play sound 
+                self.sfx_powerup_coin.play()
+
                 # Add score
                 p_score = POWERUP_SCORE_BASE_WORTH * self.score_multiplier
                 self.score += p_score
@@ -1143,7 +1183,12 @@ class GameScene(Scene):
                 particles_color = SCR_COLORS
 
             elif hit.POW_TYPE == "SENTRY":
+                # Play sound 
+                self.sfx_powerup_sentry.play()
+
+                # Spawn sentry
                 self.spawner.spawn_sentry()
+
                 # Set particle colors
                 particles_color = SP_COLORS
 
@@ -1164,6 +1209,9 @@ class GameScene(Scene):
         for sentry in sentries_g:
             hits = pygame.sprite.spritecollide(sentry, hostiles_g, False, pygame.sprite.collide_circle)
             for hit in hits:
+                # Play sound
+                random.choice(self.sfx_explosions).play()
+
                 sentry.kill()
                 hit.kill()
 
@@ -1191,6 +1239,9 @@ class GameScene(Scene):
         for sentry in sentries_g:
             hits = pygame.sprite.spritecollide(sentry, e_bullets_g, True, pygame.sprite.collide_circle)
             for hit in hits:
+                # Play sound
+                random.choice(self.sfx_hits).play()
+
                 # Deduct sentry health
                 sentry.health -= hit.DAMAGE
 
@@ -1211,6 +1262,9 @@ class GameScene(Scene):
                 )
 
                 if sentry.health <= 0:
+                    # Play sound
+                    random.choice(self.sfx_explosions).play()
+                    
                     # Spawn big explosion
                     bullet_x = sentry.rect.centerx
                     bullet_y = sentry.rect.centery
@@ -1323,6 +1377,7 @@ class GameScene(Scene):
             "WHITE", 
             align="center"
         )
+
 # GAME OVER SCENE ================================================================
 
 class GameOverScene(Scene):
