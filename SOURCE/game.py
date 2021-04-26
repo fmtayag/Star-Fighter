@@ -41,7 +41,7 @@ class PlayerPrefs:
         self.key_up = pygame.K_UP
         self.key_down = pygame.K_DOWN
         self.key_left = pygame.K_LEFT
-        self.key_right = pygame.K_RIGHT
+        self.key_right = pygame.K_RIGHT 
         self.key_fire = pygame.K_z
         self.key_back = pygame.K_x
 
@@ -86,7 +86,7 @@ def main():
         window = pygame.display.set_mode((w,h), window_flags)
 
     # Create a scene manager
-    manager = SceneManager(TitleScene(P_Prefs))
+    manager = SceneManager(ScoresScene(P_Prefs))
 
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))

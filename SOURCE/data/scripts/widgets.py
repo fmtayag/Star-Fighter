@@ -3,7 +3,8 @@ from data.scripts.defines import *
 from data.scripts.muda import (
     draw_text2,
     draw_text,
-    slice_list
+    slice_list,
+    load_sound
 )
 
 # Title Scene Widgets ==========================================================
@@ -165,13 +166,14 @@ class ScoresControlWidget:
 
 class ScoresTableWidget:
     def __init__(self, scores_list):
+        # Font spacing
         self.spacing = FONT_SIZE / 2
 
         # Table
         self.table_surf = pygame.Surface((WIN_RES["w"], WIN_RES["h"] / 2))
         self.table_rect = self.table_surf.get_rect()
-        #self.table_surf.fill('red')
-        
+
+        # Scores list
         self.scores = sorted(scores_list,key=lambda x: x[1],reverse=True) # Sort by the SCORE column
         self.splice_n = 5
         self.scores = slice_list(self.scores, self.splice_n)
@@ -655,6 +657,9 @@ class SoundOptionsSceneMenuWidget:
         self.MAX_OPTIONS = len(self.options) 
         self.index = 0
 
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+
     def update(self):
         for option in self.options:
             option.update()
@@ -662,6 +667,9 @@ class SoundOptionsSceneMenuWidget:
         # Update preferences
         self.P_Prefs.sfx_vol = self.rs_sfx.get_value() / 100
         self.P_Prefs.music_vol = self.rs_ost.get_value() / 100
+
+        # Update sound volumes
+        self.sfx_keypress.set_volume(self.P_Prefs.sfx_vol)
 
         pygame.mixer.music.set_volume(self.P_Prefs.music_vol)
 
@@ -714,12 +722,21 @@ class SoundOptionsSceneMenuWidget:
         selected_option = self.options[self.index]
         option_type = type(selected_option)
         if option_type == RangeSelector:
+            # Play sound
+            if selected_option.get_value() > selected_option.min_:
+                self.sfx_keypress.play()
+
+            # Decrease value 
             selected_option.decrease()
 
     def select_right(self):
         selected_option = self.options[self.index]
         option_type = type(selected_option)
         if option_type == RangeSelector:
+            # Play sound
+            if selected_option.get_value() > selected_option.min_:
+                self.sfx_keypress.play()
+                
             selected_option.increase()
 
     def get_selected(self):

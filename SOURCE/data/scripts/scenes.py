@@ -51,16 +51,26 @@ class TitleScene(Scene):
         self.bob_timer = pygame.time.get_ticks()
         self.bob_m = 0
 
-        self.exit = False # Dumb hack
+        self.exit = False # Dumb hack to set running = False on the main loop
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
 
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
+                
                 if event.key == self.P_Prefs.key_up:
                     self.title_menu.select_up()
+                    self.sfx_keypress.play() # Play key press sound
+
                 elif event.key == self.P_Prefs.key_down:
                     self.title_menu.select_down()
+                    self.sfx_keypress.play() # Play key press sound
+
                 elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play key press sound
+                    
                     if self.title_menu.get_selected() == 0:
                         self.P_Prefs.title_selected = 0
                         self.manager.go_to(DifficultySelectionScene(self.P_Prefs))
@@ -131,29 +141,48 @@ class ScoresScene(Scene):
 
         # Control panel
         self.control_widget = ScoresControlWidget()
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == self.P_Prefs.key_left:
+                    self.sfx_keypress.play() # Play keypress sound
                     self.control_widget.move_left()
                 elif event.key == self.P_Prefs.key_right:
+                    self.sfx_keypress.play() # Play keypress sound
                     self.control_widget.move_right()
                 elif event.key == self.P_Prefs.key_up:
+                    self.sfx_keypress.play() # Play keypress sound
                     self.control_widget.move_up()
                 elif event.key == self.P_Prefs.key_down:
+                    self.sfx_keypress.play() # Play keypress sound
                     self.control_widget.move_down()
 
                 elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+
                     if self.control_widget.get_active_panel() == "DIRECTION":
+
                         if self.control_widget.get_dp_selected_option() == "PREV":
+                            if self.scores_table.cur_tbl > 0:
+                                self.sfx_keypress.play() # Play keypress sound
+
                             self.scores_table.prev_table()
+
                         elif self.control_widget.get_dp_selected_option() == "NEXT":
+                            if self.scores_table.cur_tbl < len(self.scores_table.scores) - 1:
+                                self.sfx_keypress.play() # Play keypress sound
+
                             self.scores_table.next_table()
+
                     elif self.control_widget.get_active_panel() == "BACK":
+                        self.sfx_keypress.play() # Play keypress sound
                         self.manager.go_to(TitleScene(self.P_Prefs))
 
                 elif event.key == self.P_Prefs.key_back:
+                    self.sfx_keypress.play() # Play keypress sound
                     self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
@@ -184,21 +213,31 @@ class OptionsScene(Scene):
 
         # Menu widget
         self.menu_widget = OptionsSceneMenuWidget(self.P_Prefs.options_scene_selected)
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
+
+                # Key press events
                 if event.key == self.P_Prefs.key_back:
+                    self.sfx_keypress.play() # Play key press sound
                     self.P_Prefs.options_scene_selected = 0
                     self.manager.go_to(TitleScene(self.P_Prefs))
 
                 elif event.key == self.P_Prefs.key_up:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_up()
 
                 elif event.key == self.P_Prefs.key_down:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_down()
-
+                
                 elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play key press sound
+
                     if self.menu_widget.get_selected_str() == "VIDEO":
                         self.P_Prefs.options_scene_selected = 0
                         self.manager.go_to(VideoOptionsScene(self.P_Prefs))
@@ -247,23 +286,38 @@ class VideoOptionsScene(Scene):
         # Menu widget
         self.menu_widget = VideoOptionsSceneMenuWidget(self.P_Prefs)
 
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
+
+                # Key press events
                 if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play key press sound
+
                     if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
                         self.manager.go_to(OptionsScene(self.P_Prefs))
-                if event.key == self.P_Prefs.key_back:
-                    self.manager.go_to(OptionsScene(self.P_Prefs))
 
-                # Testing
-                if event.key == self.P_Prefs.key_up:
+                elif event.key == self.P_Prefs.key_back:
+                    self.sfx_keypress.play() # Play key press sound
+                    self.manager.go_to(OptionsScene(self.P_Prefs))
+                
+                elif event.key == self.P_Prefs.key_up:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_up()
-                if event.key == self.P_Prefs.key_down:
+
+                elif event.key == self.P_Prefs.key_down:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_down()
-                if event.key == self.P_Prefs.key_left:
+
+                elif event.key == self.P_Prefs.key_left:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_left()
-                if event.key == self.P_Prefs.key_right:
+
+                elif event.key == self.P_Prefs.key_right:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_right()
 
     def update(self, dt):
@@ -298,20 +352,33 @@ class SoundOptionsScene(Scene):
         self.press_timer = pygame.time.get_ticks()
         self.press_delay = 75
 
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+
     def handle_events(self, events):
+        # KEYDOWN EVENTS
         for event in events:
             if event.type == pygame.KEYDOWN:
+
                 if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play key press sound
+
                     if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
                         self.manager.go_to(OptionsScene(self.P_Prefs))
-                if event.key == self.P_Prefs.key_back:
+
+                elif event.key == self.P_Prefs.key_back:
+                    self.sfx_keypress.play() # Play key press sound
                     self.manager.go_to(OptionsScene(self.P_Prefs))
 
-                if event.key == self.P_Prefs.key_up:
+                elif event.key == self.P_Prefs.key_up:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_up()
-                if event.key == self.P_Prefs.key_down:
+
+                elif event.key == self.P_Prefs.key_down:
+                    self.sfx_keypress.play() # Play key press sound
                     self.menu_widget.select_down()
 
+        # Volume knob key presses
         now = pygame.time.get_ticks()
         if now - self.press_timer > self.press_delay:
             self.press_timer = now
@@ -319,12 +386,20 @@ class SoundOptionsScene(Scene):
             pressed = pygame.key.get_pressed()
             if pressed[self.P_Prefs.key_left]:
                 self.menu_widget.select_left()
+
             elif pressed[self.P_Prefs.key_right]:
                 self.menu_widget.select_right()
 
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
+
+        # Update preferences
+        self.P_Prefs.sfx_vol = self.menu_widget.rs_sfx.get_value() / 100
+        self.P_Prefs.music_vol = self.menu_widget.rs_ost.get_value() / 100
+
+        # Update sound volumes
+        self.sfx_keypress.set_volume(self.P_Prefs.sfx_vol)
 
         self.menu_widget.update()
 
@@ -350,23 +425,36 @@ class GameOptionsScene(Scene):
         # Menu widget
         self.menu_widget = GameOptionsSceneMenuWidget(self.P_Prefs)
 
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
+
                 if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play sound
                     if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
                         self.manager.go_to(OptionsScene(self.P_Prefs))
-                if event.key == self.P_Prefs.key_back:
+
+                elif event.key == self.P_Prefs.key_back:
+                    self.sfx_keypress.play() # Play sound
                     self.manager.go_to(OptionsScene(self.P_Prefs))
 
-                # Testing
-                if event.key == self.P_Prefs.key_up:
+                elif event.key == self.P_Prefs.key_up:
+                    self.sfx_keypress.play() # Play sound
                     self.menu_widget.select_up()
-                if event.key == self.P_Prefs.key_down:
+
+                elif event.key == self.P_Prefs.key_down:
+                    self.sfx_keypress.play() # Play sound
                     self.menu_widget.select_down()
-                if event.key == self.P_Prefs.key_left:
+
+                elif event.key == self.P_Prefs.key_left:
+                    self.sfx_keypress.play() # Play sound
                     self.menu_widget.select_left()
-                if event.key == self.P_Prefs.key_right:
+
+                elif event.key == self.P_Prefs.key_right:
+                    self.sfx_keypress.play() # Play sound
                     self.menu_widget.select_right()
 
     def update(self, dt):
@@ -397,34 +485,49 @@ class ControlsOptionsScene(Scene):
         # Menu widget
         self.menu_widget = ControlsOptionsSceneMenuWidget(self.P_Prefs)
 
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if not self.menu_widget.is_changingkey:
                     if event.key == self.P_Prefs.key_up:
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.select_up()
-                    if event.key == self.P_Prefs.key_down:
+
+                    elif event.key == self.P_Prefs.key_down:
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.select_down()
-                    if event.key == self.P_Prefs.key_left:
+
+                    elif event.key == self.P_Prefs.key_left:
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.select_left()
-                    if event.key == self.P_Prefs.key_right:
+
+                    elif event.key == self.P_Prefs.key_right:
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.select_right()
-                    if event.key == pygame.K_RETURN:
+
+                    elif event.key == pygame.K_RETURN and self.menu_widget.get_selected() != self.menu_widget.get_max_index():
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.highlight()
 
-                    # Exit
-                    if event.key == self.P_Prefs.key_back:
+                    elif event.key == self.P_Prefs.key_back:
+                        self.sfx_keypress.play() # Play sound
                         self.manager.go_to(OptionsScene(self.P_Prefs))
                         self.menu_widget.save_prefs()
-                    if event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+
+                    elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                         if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
+                            self.sfx_keypress.play() # Play sound
                             self.manager.go_to(OptionsScene(self.P_Prefs))
                             self.menu_widget.save_prefs()
-                            
                 else:
                     if event.key == pygame.K_RETURN:
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.unhighlight()
                     else:
+                        self.sfx_keypress.play() # Play sound
                         self.menu_widget.change_key(event.key)
                         
     def update(self, dt):
@@ -463,10 +566,14 @@ class CreditsScene(Scene):
         DEVS_SHEET = load_img("devs_sheet.png", IMG_DIR, SCALE)
         self.zye_icon = image_at(DEVS_SHEET, scale_rect(SCALE, [0,0,16,16]), True)
         self.rio_icon = image_at(DEVS_SHEET, scale_rect(SCALE, [16,0,16,16]), True)
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
+                self.sfx_keypress.play()
                 if event.key == self.P_Prefs.key_back or event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
                     self.manager.go_to(TitleScene(self.P_Prefs))
     
@@ -531,29 +638,34 @@ class DifficultySelectionScene(Scene):
             2: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE*2, [0,32,16,16]), True)
         }
 
-        # # Description box
-        # self.desc_surf = pygame.Surface((WIN_RES["w"]*0.75, 64))
-        # self.desc_surf.fill("WHITE")
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
     
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == self.P_Prefs.key_up:
+                    self.sfx_keypress.play() # Play sound
                     self.w_diffmenu.select_up()
                     self.selected_diff = self.w_diffmenu.get_selected()
 
                 elif event.key == self.P_Prefs.key_down:
+                    self.sfx_keypress.play() # Play sound
                     self.w_diffmenu.select_down()
                     self.selected_diff = self.w_diffmenu.get_selected()
 
                 elif event.key == self.P_Prefs.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play sound
+
                     if self.w_diffmenu.get_selected_str() != "BACK":
                         self.P_Prefs.game_difficulty = self.selected_diff
                         self.manager.go_to(GameScene(self.P_Prefs))
+                        
                     elif self.w_diffmenu.get_selected_str() == "BACK":
                         self.manager.go_to(TitleScene(self.P_Prefs))
 
                 elif event.key == self.P_Prefs.key_back:
+                    self.sfx_keypress.play() # Play sound
                     self.manager.go_to(TitleScene(self.P_Prefs))
     
     def update(self, dt):
@@ -727,20 +839,6 @@ class GameScene(Scene):
         }
         self.difficulty_icon = pygame.Surface((32,32))
 
-        # Sounds
-        self.sfx_explosions = [
-            load_sound("sfx_explosion1.wav", SFX_DIR, self.P_Prefs.sfx_vol),
-            load_sound("sfx_explosion2.wav", SFX_DIR, self.P_Prefs.sfx_vol),
-            load_sound("sfx_explosion3.wav", SFX_DIR, self.P_Prefs.sfx_vol)
-        ]
-        self.sfx_hit = [
-            load_sound("sfx_hit.wav", SFX_DIR, self.P_Prefs.sfx_vol)
-        ]
-        self.sfx_shoot = load_sound("sfx_lasershoot.wav", SFX_DIR, self.P_Prefs.sfx_vol)
-        self.channel0 = pygame.mixer.Channel(0)
-        self.channel1 = pygame.mixer.Channel(1)
-        self.channel2 = pygame.mixer.Channel(2)
-
         # Clear the sprite groups
         all_sprites_g.empty()
         hostiles_g.empty()
@@ -904,8 +1002,6 @@ class GameScene(Scene):
         for bullet in p_bullets_g:
             hits = pygame.sprite.spritecollide(bullet, hostiles_g, False, pygame.sprite.collide_circle)
             for hit in hits:
-                # Play sound
-                self.channel0.play(random.choice(self.sfx_hit))
 
                 # Deduct enemy health
                 hit.health -= self.player.BULLET_DAMAGE
@@ -931,8 +1027,6 @@ class GameScene(Scene):
 
                 # Logic if enemy is dead
                 if hit.health <= 0:
-                    # Play explosion sound
-                    self.channel1.play(random.choice(self.sfx_explosions))
 
                     # Kill sprite
                     hit.kill()
@@ -1241,7 +1335,8 @@ class GameOverScene(Scene):
         self.name = str()
         self.bckspace_timer = pygame.time.get_ticks()
         self.bckspace_delay = 200
-        self.MAX_CHAR = 3
+        self.MIN_CHAR = 2
+        self.MAX_CHAR = 5
         self.score_comment = self._get_comment(self.score)
         self.difficulty = self.P_Prefs.game_difficulty
 
@@ -1268,19 +1363,30 @@ class GameOverScene(Scene):
             "ADMIRAL": image_at(RANKS_SHEET, scale_rect(SCALE*2, [80,0,16,16]), True)
         }
         self.rank = self.score_comment.upper()
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.P_Prefs.sfx_vol)
     
     def handle_events(self, events):
+        # Keydown events
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if str(event.unicode).isalpha() and len(self.name) < self.MAX_CHAR:
+                    self.sfx_keypress.play()
                     self.name += event.unicode
-                elif event.key == pygame.K_RETURN and len(self.name) == self.MAX_CHAR:
+                elif event.key == pygame.K_RETURN and len(self.name) >= self.MIN_CHAR:
+                    self.sfx_keypress.play()
                     self._exit_scene()
         
+        # Key presses event
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_BACKSPACE]:
+
             now = pygame.time.get_ticks()
             if now - self.bckspace_timer > self.bckspace_delay:
+                if len(self.name) != 0:
+                    self.sfx_keypress.play()
+
                 self.bckspace_timer = now
                 self.name = self.name[:-1]
 
@@ -1318,7 +1424,7 @@ class GameOverScene(Scene):
             draw_text2(window, f"> {self.name.upper()} <", GAME_FONT, int(FONT_SIZE*2), (WIN_RES["w"]/2, WIN_RES["h"]*0.645), "WHITE", align="center")
         
         # Draw enter button
-        if len(self.name) == self.MAX_CHAR:
+        if len(self.name) >= self.MIN_CHAR:
             draw_text2(
                 self.enter_button, 
                 "ENTER", 
