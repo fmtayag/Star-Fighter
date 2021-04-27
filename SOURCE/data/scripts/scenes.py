@@ -596,8 +596,9 @@ class CreditsScene(Scene):
 
         draw_text2(window, "Special thanks", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.560), "WHITE", align="center")
         draw_text2(window, "@ooshkei,", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.600), "WHITE", align="center")
-        draw_text2(window, "the pygame community,", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.630), "WHITE", align="center")
-        draw_text2(window, "and you!", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.665), "WHITE", align="center")
+        draw_text2(window, "my friends,", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.640), "WHITE", align="center")
+        draw_text2(window, "the pygame community,", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.680), "WHITE", align="center")
+        draw_text2(window, "and you!", GAME_FONT, FONT_SIZE, (WIN_RES["w"]/2, WIN_RES["h"]*0.720), "WHITE", align="center")
 
         draw_text2(
             self.back_button, 

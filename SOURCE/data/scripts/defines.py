@@ -39,6 +39,7 @@ FONT_SIZE = 16
 
 # DIFFICULTY LIST ==============================================================
 DIFFICULTIES = ("EASY", "MEDIUM", "HARD")
+DIFFICULTIES_LORE = ("LENIENT", "FAIR", "CRUEL")
 
 # SPRITE GROUPS ================================================================
 all_sprites_g = pygame.sprite.Group()

@@ -1,0 +1,3 @@
+Update 1.1.1
+- Score tables' difficulty names have been replaced with the LENIENT, FAIR, CRUEL difficulties instead of EASY, MEDIUM, HARD
+- Also added labels to the scores table
