@@ -9,11 +9,7 @@ Author: zyenapz
 E-mail: zyenapz@gmail.com
 Website: zyenapz.github.io
 
-Source code licensed under the GNU GPL-3.0 License.
-
-Artistic assets (graphics files, and sound files) are 
-licensed under the Creative Commons Attribution v4.0
-International License.
+Copyright (c) 2020-2021 zyenapz. All rights reserved.
 
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ ABOUT
