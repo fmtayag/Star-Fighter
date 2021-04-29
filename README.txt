@@ -3,13 +3,17 @@
 █ STAR FIGHTER
 █
 
-Release version: 1.1
+Release version: 1.1.1
 Pygame version: 2.0.1
 Author: zyenapz
 E-mail: zyenapz@gmail.com
 Website: zyenapz.github.io
 
-Copyright (c) 2020 - 2021 zyenapz. All rights reserved.
+Source code licensed under the GNU GPL-3.0 License.
+
+Artistic assets (graphics files, and sound files) are 
+licensed under the Creative Commons Attribution v4.0
+International License.
 
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ ABOUT
@@ -62,20 +66,5 @@ Bfxr for the sound effects
 █ CHANGELOGS
 
 UPDATE 1.1
-- Major graphical overhaul
-- Added a menu system
-- Overhauled the high scores list
-- Added a credits scene
-- Added options
-- Tweaked the Hellfighter enemy
-- Tweaked the Fatty enemy
-- Tweaked the Raider enemy
-- Added the Solturret enemy
-- Added the Helleye enemy
-- Added difficulty options
-- Added the sentry powerup
-- Overhauled the enemy spawning logic
-- Changed the sound effects, and added a few new ones
-- Miscellaneous bug fixes
-- Changed the logo
-- Updated to pygame version 2.0.1 for faster performance
+- Score tables' difficulty names have been replaced with the LENIENT, FAIR, CRUEL difficulties instead of EASY, MEDIUM, HARD
+- Also added labels to the scores table
