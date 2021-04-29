@@ -1,7 +1,4 @@
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-█
 █ STAR FIGHTER
-█
 
 Release version: 1.1.1
 Pygame version: 2.0.1
@@ -15,7 +12,6 @@ Artistic assets (graphics files, and sound files) are
 licensed under the Creative Commons Attribution v4.0
 International License.
 
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ ABOUT
 
 Star Fighter is a retro-style arcade shoot 'em up.
@@ -23,7 +19,6 @@ Set in the infinite void of outer space, you must
 battle the forces of Hell, who has launched a deadly
 incursion into mankind's territory.
 
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ CONTROLS
 
 These are the default controls in-game. However, if you
@@ -34,7 +29,6 @@ options.
 	Z - fire / menu enter
 	X - menu exit / back
 
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ SPECIAL THANKS
 
 Hello, I thank you very much for downloading Star Fighter! 
@@ -56,13 +50,11 @@ music. Please do check out and follow his accounts:
 Soundcloud: https://soundcloud.com/yoitsrion
 Spotify: https://open.spotify.com/artist/681EEZ6n5PnGnXTDJOIVY4
 
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ MISC CREDITS
 
 Font '04b03' by 04 downloaded from dafont.com
 Bfxr for the sound effects
 
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 █ CHANGELOGS
 
 UPDATE 1.1
