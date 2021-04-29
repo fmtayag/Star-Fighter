@@ -6,7 +6,13 @@ Author: zyenapz
 E-mail: zyenapz@gmail.com
 Website: zyenapz.github.io
 
-Copyright (c) 2020-2021 zyenapz. All rights reserved.
+The game's source code is licensed under a GNU General
+Public License v3.0 License.
+
+All artistic content (such as graphics files, fonts) are the 
+properties of their respective owners. Unless stated otherwise, 
+all other content is licensed under a Creative Commons Attribution
+v4.0 International License.
 
 █ ABOUT
 
