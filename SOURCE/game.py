@@ -84,13 +84,13 @@ def main():
         w = int(WIN_RES["w"]) * SCALE
         h = int(WIN_RES["h"]) * SCALE
         window = pygame.display.set_mode((w,h), window_flags)
-
-    # Create a scene manager
-    manager = SceneManager(TitleScene(P_Prefs))
-
+    
     pygame.display.set_caption(TITLE)
     pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)
+
+    # Create a scene manager
+    manager = SceneManager(TitleScene(P_Prefs))
 
     # Create Render target
     render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
@@ -102,6 +102,9 @@ def main():
     dt = 0
 
     while running:
+        # Fill window
+        window.fill("BLACK")
+
         # Lock FPS
         clock.tick(FPS)
         #pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps(),2)})")
@@ -133,20 +136,19 @@ def main():
         # Draw screen
         
         if (window_flags & FULLSCREEN) != 0:
-            xscale = window.get_rect().width / WIN_RES["w"]
-            yscale = window.get_rect().height / WIN_RES["h"]
-            if xscale < 1 and yscale < 1:
-                scale = max(xscale, yscale)
-            elif xscale > 1 and yscale > 1:
-                scale = min(xscale, yscale)
-            else:
-                scale = 1.0
+            xscale = window.get_width() / WIN_RES["w"] / 2
+            yscale = window.get_height() / WIN_RES["h"]
             targetx = int(WIN_RES["w"] * xscale)
             targety = int(WIN_RES["h"] * yscale)
 
-            window.fill("BLACK")
-            window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
-            
+            #window.blit(pygame.transform.scale(render_target, (round(WIN_RES["w"]*2.25), targety)), (window.get_rect().width / 2 - WIN_RES["w"]*1.125, 0))
+            window.blit(
+                pygame.transform.scale(
+                    render_target,
+                    (targetx, targety)
+                ), 
+                (window.get_width() / 2 - targetx / 2,0)
+            )
         else:
             window.blit(pygame.transform.scale(render_target,(window.get_width(), window.get_height())),(0,0))
 
