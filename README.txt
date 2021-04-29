@@ -6,13 +6,7 @@ Author: zyenapz
 E-mail: zyenapz@gmail.com
 Website: zyenapz.github.io
 
-The game's source code is licensed under a GNU General
-Public License v3.0 License.
-
-All artistic content (such as graphics files, fonts) are the 
-properties of their respective owners. Unless stated otherwise, 
-all other content is licensed under a Creative Commons Attribution
-v4.0 International License.
+(c) 2020 zyenapz.
 
 █ ABOUT
 
@@ -52,13 +46,22 @@ music. Please do check out and follow his accounts:
 Soundcloud: https://soundcloud.com/yoitsrion
 Spotify: https://open.spotify.com/artist/681EEZ6n5PnGnXTDJOIVY4
 
-█ MISC CREDITS
+█ CREDITS AND LICENSES
 
 Font '04b03' by 04 downloaded from dafont.com
 Bfxr for the sound effects
+
+The game's source code is licensed under a GNU General
+Public License v3.0 License.
+
+All artistic content (such as music and font) are the 
+properties of their respective owners. All other content is 
+licensed under a Creative Commons Attribution-NonCommercial 4.0 
+International (CC BY-NC 4.0) license.
 
 █ CHANGELOGS
 
 UPDATE 1.1
 - Score tables' difficulty names have been replaced with the LENIENT, FAIR, CRUEL difficulties instead of EASY, MEDIUM, HARD
 - Also added labels to the scores table
+- Added copyright and license notices
