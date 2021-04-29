@@ -54,8 +54,8 @@ Bfxr for the sound effects
 The game's source code is licensed under a GNU General
 Public License v3.0 License.
 
-Unless stated otherwise, all other content is licensed under a 
-Creative Commons Attribution-NonCommercial 4.0 
+Unless stated otherwise, all artistic content is licensed 
+under a Creative Commons Attribution-NonCommercial 4.0 
 International (CC BY-NC 4.0) license.
 
 █ CHANGELOGS
