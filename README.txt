@@ -1,6 +1,6 @@
 █ STAR FIGHTER
 
-Release version: 1.1.1
+Release version: 1.1.2
 Pygame version: 2.0.1
 Author: zyenapz
 E-mail: zyenapz@gmail.com
@@ -60,7 +60,8 @@ International (CC BY-NC 4.0) license.
 
 █ CHANGELOGS
 
-UPDATE 1.1.1
-- Score tables' difficulty names have been replaced with the LENIENT, FAIR, CRUEL difficulties instead of EASY, MEDIUM, HARD
-- Also added labels to the scores table
-- Added copyright and license notices
+UPDATE 1.1.2
+- Fixed an issue with fullscreen mode not appearing correct with certain resolutions
+- code cleanup...bug fixes...boring stuff
+- updated the game version to the correct version...whoops. i always miss something.
+- included the license in the distributables

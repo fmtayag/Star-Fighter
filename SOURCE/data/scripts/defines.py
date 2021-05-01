@@ -6,7 +6,7 @@ Vec2 = pygame.math.Vector2
 WIN_RES = {"w": 320, "h": 480}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
-VERSION = "1.1.0"
+VERSION = "1.1.2"
 
 # GAME OPTIONS =================================================================
 HP_OPTIONS = ("CIRCLE", "SQUARE")
