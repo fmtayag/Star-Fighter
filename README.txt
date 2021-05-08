@@ -1,6 +1,6 @@
 █ STAR FIGHTER
 
-Release version: 1.1.2
+Release version: 1.1.3
 Pygame version: 2.0.1
 Author: zyenapz
 E-mail: zyenapz@gmail.com
@@ -60,8 +60,5 @@ International (CC BY-NC 4.0) license.
 
 █ CHANGELOGS
 
-UPDATE 1.1.2
-- Fixed an issue with fullscreen mode not appearing correct with certain resolutions
-- code cleanup...bug fixes...boring stuff
-- updated the game version to the correct version...whoops. i always miss something.
-- included the license in the distributables
+UPDATE 1.1.3
+- Fixed diagonal speed of the player

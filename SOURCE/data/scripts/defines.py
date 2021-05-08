@@ -6,7 +6,7 @@ Vec2 = pygame.math.Vector2
 WIN_RES = {"w": 320, "h": 480}
 TITLE = "Star Fighter"
 AUTHOR = "zyenapz"
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 
 # GAME OPTIONS =================================================================
 HP_OPTIONS = ("CIRCLE", "SQUARE")
@@ -28,6 +28,9 @@ SCORES_FILE = os.path.join(SCRIPTS_DIR, "_scores.dat")
 # LOOP DEFINES =================================================================
 FPS = 60
 DEBUG_MODE = False
+
+# MOVEMENT DEFINES ============================================================
+DIAGONAL_SPEED = 0.7071
 
 # BG AND PARALLAX DEFINES ======================================================
 BG_SPD = 25

@@ -185,6 +185,10 @@ class Player(pygame.sprite.Sprite):
             self.orientation_ = self.orientations_[2]
             self.velocity.x = self.speed
 
+        # Diagonal speed fix
+        if self.velocity.x != 0 and self.velocity.y != 0:
+            self.velocity *= DIAGONAL_SPEED
+
     def _check_bounds(self):
         if self.rect.right > WIN_RES["w"]:
             self.rect.right = WIN_RES["w"]

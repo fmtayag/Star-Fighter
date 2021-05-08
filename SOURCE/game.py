@@ -1,6 +1,6 @@
 # Star Fighter
 # An arcade shoot 'em up (shmup) set in outer space.
-# Written in: Python, pygame 2.0.0
+# Written in: Python, pygame 2.0.1
 # Author: zyenapz
 #   > Email: zyenapz@gmail.com
 #   > Website: zyenapz.github.io
